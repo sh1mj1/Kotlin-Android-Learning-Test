@@ -13,4 +13,13 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
         2 + 2 shouldBe 4
     }
+
+    fun dummyFoo(a: Int, b: Int): Int {
+        return a + b;
+    }
+
+    @Test
+    fun `실패하는 테스트`() {
+        2 + 2 shouldBe 5
+    }
 }
