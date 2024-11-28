@@ -1,6 +1,6 @@
 package com.example.learningtest
 
-import org.junit.Assert.assertEquals
+import io.kotest.matchers.shouldBe
 import org.junit.Test
 
 /**
@@ -11,6 +11,6 @@ import org.junit.Test
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+        2 + 2 shouldBe 4
     }
 }

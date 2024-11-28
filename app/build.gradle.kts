@@ -33,6 +33,12 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
+    packaging {
+        resources {
+            excludes += "META-INF/**"
+            excludes += "win32-x86*/**"
+        }
+    }
 }
 
 dependencies {
@@ -45,4 +51,17 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly(libs.junit.vintage.engine)
+    testImplementation(libs.kotest.runner.junit5)
+    testImplementation(libs.android.test.runner)
+
+    // Kotest for Android Instrumentation Tests
+    androidTestImplementation(libs.kotest.runner.junit5)
+    androidTestImplementation(libs.android.test.runner)
+    androidTestImplementation(libs.junit.jupiter)
+
+    // Required for Kotest & JUnit 5 integration
+    androidTestRuntimeOnly(libs.junit.vintage.engine)
 }

@@ -1,5 +1,9 @@
 [versions]
 agp = "8.7.2"
+androidTestRunner = "1.4.0"
+junitJupiter = "5.10.2"
+junitVintageEngine = "5.10.2"
+kotestRunnerJunit5 = "5.8.0"
 kotlin = "1.9.24"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -15,11 +19,15 @@ ktlint = "12.1.0"
 
 [libraries]
 
+android-test-runner = { module = "de.mannodermaus.junit5:android-test-runner", version.ref = "androidTestRunner" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
+junit-vintage-engine = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "junitVintageEngine" }
+kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotestRunnerJunit5" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
@@ -31,4 +39,5 @@ ktlint = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref = "ktlin
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }

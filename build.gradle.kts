@@ -11,20 +11,19 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
 }
 
-subprojects {
+allprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
-    tasks {
-        withType<Test> {
-            useJUnitPlatform()
+    tasks.withType<KotlinCompile>().configureEach {
+        kotlinOptions {
+            jvmTarget = "17"
         }
+    }
 
-        withType<KotlinCompile>().configureEach {
-            kotlinOptions {
-                jvmTarget = JavaVersion.VERSION_17.toString()
-            }
-        }
+    tasks.withType<Test> {
+        useJUnitPlatform()
     }
 }
