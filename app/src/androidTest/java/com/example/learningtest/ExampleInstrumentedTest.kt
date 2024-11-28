@@ -19,9 +19,4 @@ class ExampleInstrumentedTest {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         appContext.packageName shouldBe "com.example.learningtest"
     }
-
-    @Test
-    fun failTest() {
-        2 + 2 shouldBe 5;
-    }
 }
