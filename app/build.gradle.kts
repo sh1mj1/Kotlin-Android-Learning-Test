@@ -64,4 +64,10 @@ dependencies {
 
     // Required for Kotest & JUnit 5 integration
     androidTestRuntimeOnly(libs.junit.vintage.engine)
+    testImplementation(libs.robolectric)
+
+    testImplementation(libs.mockk)
+    testImplementation(libs.mockk.agent)
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.mockk.agent)
 }
