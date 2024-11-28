@@ -15,13 +15,9 @@ activity = "1.9.3"
 constraintlayout = "2.2.0"
 robolectric = "4.13"
 mockk = "1.13.9"
-
-
-# Third-Party
 ktlint = "12.1.0"
 
 [libraries]
-
 android-test-runner = { module = "de.mannodermaus.junit5:android-test-runner", version.ref = "androidTestRunner" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -38,10 +34,37 @@ robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectr
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockk" }
-
-# Third-Party
 ktlint = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref = "ktlint" }
 
+[bundles]
+androidx = [
+    "androidx-core-ktx",
+    "androidx-appcompat",
+    "androidx-constraintlayout",
+    "androidx-activity",
+    "androidx-junit",
+    "androidx-espresso-core"
+]
+
+test = [
+    "junit",
+    "junit-jupiter",
+    "junit-vintage-engine",
+    "kotest-runner-junit5",
+    "android-test-runner",
+    "mockk",
+    "mockk-agent",
+    "robolectric"
+]
+
+androidTest = [
+    "kotest-runner-junit5",
+    "android-test-runner",
+    "junit-jupiter",
+    "junit-vintage-engine",
+    "mockk-android",
+    "mockk-agent"
+]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
