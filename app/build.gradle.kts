@@ -49,4 +49,6 @@ dependencies {
 
     testImplementation(libs.bundles.test)
     androidTestImplementation(libs.bundles.androidTest)
+
+    implementation(libs.kotlin.reflect)
 }
