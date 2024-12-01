@@ -40,10 +40,18 @@ class TestDataClass : FreeSpec({
                 original shouldBe PersonData("sh1mj1", 29)
             }
         }
-        "should support destructuring declarations" {
-            val (name, age) = PersonData("sh1mj1", 29)
-            name shouldBe "sh1mj1"
-            age shouldBe 29
+        "componentN method" - {
+            val person = PersonData("sh1mj1", 29)
+            "should support componentN methods" {
+                person.component1() shouldBe "sh1mj1"
+                person.component2() shouldBe 29
+            }
+
+            "should support destructuring declarations" {
+                val (name, age) = PersonData("sh1mj1", 29)
+                name shouldBe "sh1mj1"
+                age shouldBe 29
+            }
         }
     }
     "Normal class(Not data class)" - {
