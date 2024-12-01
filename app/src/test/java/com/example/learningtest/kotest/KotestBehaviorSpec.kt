@@ -7,6 +7,9 @@ import io.kotest.matchers.shouldBe
  * Popular with people who like to write tests in the BDD style.
  *
  * BehaviorSpec allows you to use `context`, `given`, `when`, `then`.
+ *
+ * BDD 스타일로 테스트를 작성할 때 좋습니다.
+ * BehaviorSpec 을 사용하면 `context`, `given`, `when`, `then` 을 사용할 수 있습니다.
  */
 class KotestBehaviorSpec : BehaviorSpec({
     context("a broomstick should be able to be fly and come back on it's own") {

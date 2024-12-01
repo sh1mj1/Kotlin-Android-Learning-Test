@@ -8,6 +8,10 @@ import io.kotest.matchers.shouldBe
  * StringSpec reduces the syntax to the absolute minimum.
  *
  * Just write a string followed by a lambda expression with your test code.
+ *
+ * StringSpec 은 문법을 테스트 문법을 최소화합니다.
+ * 테스트 코드에 대한 람다 표현식을 사용하여 문자열 뒤에 작성하면 됩니다.
+ *
  */
 class KotestStringSpec : StringSpec(
     {
