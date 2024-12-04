@@ -70,3 +70,5 @@ class UserViewModel @Inject constructor(
 
 * [LateinitTest.kt](LateinitTest.kt)
 * [LateinitAndroidComponentTest.kt](LateinitAndroidComponentTest.kt)
+
+Refer the [`lateinit` VS `by lazy`](../by/by.md)
