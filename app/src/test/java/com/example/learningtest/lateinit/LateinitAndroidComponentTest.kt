@@ -52,16 +52,16 @@ class LateinitAndroidComponentTest {
 
 private class StubActivity : ComponentActivity() {
     lateinit var textView: TextView
-    lateinit var viewModel: StubViewModel
+    lateinit var viewModel: StubViewModelLateinit
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         textView = TextView(this) // `findViewById(R.id.textView)` in production
-        viewModel = ViewModelProvider(this)[StubViewModel::class.java]
+        viewModel = ViewModelProvider(this)[StubViewModelLateinit::class.java]
     }
 }
 
-class StubViewModel : ViewModel() {
+class StubViewModelLateinit : ViewModel() {
     var data: String = "Initial Data"
 
     fun updateData(newData: String) {
