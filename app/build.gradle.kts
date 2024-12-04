@@ -51,4 +51,11 @@ dependencies {
     androidTestImplementation(libs.bundles.androidTest)
 
     implementation(libs.kotlin.reflect)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+    testImplementation(libs.mockwebserver)
 }
