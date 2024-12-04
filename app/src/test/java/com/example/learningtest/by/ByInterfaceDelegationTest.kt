@@ -1,4 +1,4 @@
-package com.example.learningtest.bylazy
+package com.example.learningtest.by
 
 import io.kotest.core.spec.DisplayName
 import io.kotest.core.spec.style.FreeSpec
