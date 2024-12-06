@@ -31,9 +31,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        jvmTarget = "11"
     }
 
     packaging {
@@ -41,6 +40,9 @@ android {
             excludes += "META-INF/**"
             excludes += "win32-x86*/**"
         }
+    }
+    buildFeatures {
+        compose = true
     }
 }
 
@@ -51,6 +53,13 @@ composeCompiler {
 dependencies {
     implementation(libs.bundles.androidx)
     implementation(libs.material)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
 
     testImplementation(libs.bundles.test)
     androidTestImplementation(libs.bundles.androidTest)
@@ -63,4 +72,8 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
     testImplementation(libs.mockwebserver)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }
