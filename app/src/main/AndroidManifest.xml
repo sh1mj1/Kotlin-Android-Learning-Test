@@ -13,7 +13,7 @@
         android:theme="@style/Theme.LearningTest"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity2"
+            android:name=".BasicComposeActivity"
             android:exported="true"
             android:label="@string/title_activity_main2"
             android:theme="@style/Theme.LearningTest">
