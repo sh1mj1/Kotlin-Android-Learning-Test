@@ -6,6 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
+/**
+ * when you want to logically group related classes together but they don’t require direct access to the outer class’s instance.
+ *
+ * A common scenario is structuring UI states, event classes, or utility objects within a ViewModel or Activity class.
+ *
+ * This keeps the code more organized without introducing unnecessary coupling.
+ *
+ */
 private class StubViewModel : ViewModel() {
     private val _state = MutableLiveData<State>(State.Loading)
     val state: LiveData<State> get() = _state

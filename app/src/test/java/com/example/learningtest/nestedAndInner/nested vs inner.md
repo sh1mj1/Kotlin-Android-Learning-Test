@@ -24,5 +24,21 @@ if you want to define nested class, the class has to be marked with `static` key
 
 ![img.png](nested%20vs%20inner.png)
 
+## inner class example in android
 
+* [InnerClassAndroidExample.kt](InnerClassAndroidExample.kt)
+    * When the nested class logically needs to access and manipulate the outer class's instance
+      properties or functions.
+    * A common production scenario is a **bound service**, where the inner Binder class must
+      reference the service's methods and data.
+* Android Broadcast receiver
+
+## nested class example in android
+
+* [AndroidNestedClassStubTest.kt](NestedClassAndroidExample.kt)
+    * When you want to logically group related classes together, but they don't require direct
+      access to the outer class's instance.
+    * A common scenario structuring UI states, event classes, or utility object within a viewmodel
+      or activity class.
+    * This keeps the code more organized without introducing unnecessary coupling.
 
