@@ -10,16 +10,3 @@ public final class OuterForNestedJava {
         }
     }
 }
-
-/*
-class OuterForNested {
-    private val outerProperty: Int = 33
-
-    class Nested {
-        fun nestedFunction(): Int {
-//            return outerProperty // [COMPILE ERROR] Unresolved reference: outerProperty
-            return 10
-        }
-    }
-}
- */
