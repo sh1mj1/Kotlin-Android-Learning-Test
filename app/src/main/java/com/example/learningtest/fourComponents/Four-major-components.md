@@ -8,7 +8,7 @@ Some components depend on others.
 
 There are four types of app components:
 
-* Activities
+* [Activities](activity/activity.md)
     * It **represents a single screen with a user interface**.
 * Services
     * It is a general-purpose entry point for **keeping an app running in the background** for
