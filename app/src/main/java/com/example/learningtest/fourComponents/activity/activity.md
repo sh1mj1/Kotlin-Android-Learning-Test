@@ -8,6 +8,12 @@ It's the main place where the app shows what's important right now.
 And it can manage saving and restoring states if your app gets paused or stopped.  
 Activities also make it easier for apps to work together, like when sharing stuff between apps.
 
+### Why do we need to use activity?
+
+Unlike programming paradigms in which apps are launched with a `main()` method,  
+the Android system initiates code in an Activity instance by invoking specific callback methods that
+correspond to specific stages of its lifecycle.  
+
 ### the activity that don't show UI (no `setContentView`)
 
 You can have an activity with no UI that basically acts like a traffic controller(front controller)
