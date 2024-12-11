@@ -44,3 +44,5 @@ you create a PendingIntent so the notification manager can launch an activity wh
 it,  
 without needing your app to actively be running at that moment.  
 It's about delegating responsibility while keeping security and intent consistency in check.  
+It uses the **permissions of the app that originally created it**, rather than another process
+calling the PendingIntent.  
