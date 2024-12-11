@@ -1,7 +1,7 @@
 package com.example.learningtest.solid
 
 class SRPRefactored {
-    class LottoSeller {
+    private class LottoSeller {
         fun soldLotto(money: Int): List<Lottery> {
             // calculate lotteries count with money and price
             val count = money / LOTTO_PRICE
@@ -12,7 +12,7 @@ class SRPRefactored {
         }
     }
 
-    data class Lottery(val numbers: List<Int>) {
+    private data class Lottery(val numbers: List<Int>) {
         // validate lotteries
         init {
             numbers.forEach {
@@ -31,7 +31,7 @@ class SRPRefactored {
     }
 
     // generate lottery with random numbers
-    class LotteryGenerateStrategy {
+    private class LotteryGenerateStrategy {
         fun autoGenerate(): Lottery =
             Lottery(
                 (Lottery.numberRange).shuffled().take(Lottery.NUMBER_COUNT).sorted(),

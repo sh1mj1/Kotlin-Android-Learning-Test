@@ -2,7 +2,7 @@ package com.example.learningtest.solid
 
 class SRPViolated {
     class LottoSeller {
-        fun soldLotto(money: Int): List<Lottery> {
+        private fun soldLotto(money: Int): List<Lottery> {
             // calculate lotteries count with money and price
             val count = money / LOTTO_PRICE
 
