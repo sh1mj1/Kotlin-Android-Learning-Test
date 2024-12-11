@@ -4,8 +4,11 @@ class SRPRefactored {
     class LottoSeller {
         fun soldLotto(money: Int): List<Lottery> {
             // calculate lotteries count with money and price
-            val count = money / 1000
-            return (1..count).map { LotteryGenerateStrategy().autoGenerate() }
+            val count = money / LOTTO_PRICE
+            return List(count) { LotteryGenerateStrategy().autoGenerate() }
+        }
+        companion object {
+            private const val LOTTO_PRICE = 1000
         }
     }
 
@@ -13,25 +16,25 @@ class SRPRefactored {
         // validate lotteries
         init {
             numbers.forEach {
-                require(numbers.size == LOTTO_NUMBER_COUNT) { "Invalid lotto number count" }
-                require(it in MIN_LOTTO_NUMBER..MAX_LOTTO_NUMBER) { "Invalid lotto number" }
+                require(numbers.size == NUMBER_COUNT) { "Invalid lotto number count" }
+                require(it in MIN_NUMBER..MAX_NUMBER) { "Invalid lotto number" }
             }
         }
 
         companion object {
-            private const val MIN_LOTTO_NUMBER = 1
-            private const val MAX_LOTTO_NUMBER = 45
-            val numberRange = (MIN_LOTTO_NUMBER..MAX_LOTTO_NUMBER)
+            private const val MIN_NUMBER = 1
+            private const val MAX_NUMBER = 45
+            val numberRange = (MIN_NUMBER..MAX_NUMBER)
 
-            const val LOTTO_NUMBER_COUNT = 6
+            const val NUMBER_COUNT = 6
         }
     }
 
     // generate lottery with random numbers
-        class LotteryGenerateStrategy {
+    class LotteryGenerateStrategy {
         fun autoGenerate(): Lottery =
             Lottery(
-                (Lottery.numberRange).shuffled().take(Lottery.LOTTO_NUMBER_COUNT).sorted(),
+                (Lottery.numberRange).shuffled().take(Lottery.NUMBER_COUNT).sorted(),
             )
     }
 }
