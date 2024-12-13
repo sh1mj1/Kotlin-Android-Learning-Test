@@ -28,7 +28,38 @@ Then LottoSeller class has to be changed.
 Let's see this [this code](SRPRefactored.kt).  
 `LottoSeller` only calculates the price.  
 And it delegate the responsibility for generating Lotto to the `LotteryGenerateStrategy`
-Also, the validation for lotto numbers is `Lottery`'s responsibility.   
+Also, the validation for lotto numbers is `Lottery`'s responsibility.
 
 In this example, it says just the SRP for class.  
-But it can be applied to the module, package, function in the same way.  
+But it can be applied to the module, package, function in the same way.
+
+## OCP(Open/Closed Principle)
+
+It means that a software entity should be open for extension but closed for modification.  
+In simple terms, you should be able to add new features or behaviors without changing existing code,
+to avoid breaking things.
+
+Let's suppose the customer have to buy the Lotteries from a LottoSeller.  
+This is very simple.
+
+```koltin
+private class Customer {
+    fun buyLotto(money: Int, lottoSeller, LottoSeller): List<Lottery> {
+        return lottoSeller.soldLotto(money)
+    }
+}
+```
+
+But what if there are two kinds of lotto sellers?  
+One of the lotto seller is just same with the previous case, but the new one(`IllegalLottoSeller`)
+sold a lotto for 500 price.  
+
+We can do like [this](OCPViolated.kt).
+
+This case violates the OCP.  
+The OCP states that "a module should be open for extension but closed for modification,"  
+which means you should be able to add new functionality without altering existing code.  
+
+We can simply keep the OCP introducing interface.  
+
+
