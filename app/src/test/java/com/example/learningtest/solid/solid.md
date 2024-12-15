@@ -77,28 +77,51 @@ with objects of a subclass(or implementation) without affecting the correctness 
 
 Let's suppose the `Lottery` class has a new requirement.  
 It has the rectangle in the `Lottery` class.  
-Some special `Lottery` has a `Square`, but some of them have a `Rectangle` which is not a `Square`.  
+Some special `Lottery` has a `Square`, but some of them have a `Rectangle` which is not a `Square`.
 
-[Look at the Rectangle and Square class in LSPViolated.kt](LSPViolated.kt)  
+[Look at the Rectangle and Square class in LSPViolated.kt](LSPViolated.kt)
 
 To adhere to the LSP, the `Square` class must be able to substitute the `Rectangle` class.  
-[But in this test code](LSPViolatedTest.kt), the `Square` class cannot substitute the `Rectangle` class.  
+[But in this test code](LSPViolatedTest.kt), the `Square` class cannot substitute the `Rectangle`
+class.
 
-* Given the `Square` class is a subclass of the `Rectangle` class,  
-* When we set the width to 2 and the height to 5,  
-* Then the area should be 10, for adhering to the LSP, but it is 25.  
+* Given the `Square` class is a subclass of the `Rectangle` class,
+* When we set the width to 2 and the height to 5,
+* Then the area should be 10, for adhering to the LSP, but it is 25.
 * That means the `Square` class cannot substitute the `Rectangle` class.
-* That is the violation of the LSP.  
+* That is the violation of the LSP.
 
 Why does this happen?  
-In the first place, the inheritance relationship between the `Square` class and the `Rectangle` class is wrong.  
+In the first place, the inheritance relationship between the `Square` class and the `Rectangle`
+class is wrong.
 
 We have to consider the LSP not only `is-A` when we design the inheritance relationship.  
-This example shows that `is-A` is not always enough or right.  
+This example shows that `is-A` is not always enough or right.
 
 We can refactor this code, [like this](LSPRefactored.kt).  
 In this code, the `Square` class is not a subclass of the `Rectangle` class.  
-I introduce the `Shape` interface, and the `Rectangle` and `Square` class implement the `Shape` interface.  
-So now, There are no longer fungibility issues (LSP violations). 
+I introduce the `Shape` interface, and the `Rectangle` and `Square` class implement the `Shape`
+interface.  
+So now, There are no longer fungibility issues (LSP violations).
+
+## ISP(Interface Segregation Principle)
+
+It means that a client should not be forced to implement interfaces they do not use.
+
+LottoSellers starts to chat.  
+And there are two kinds of lotto vending machines, a general one and a noisy one.  
+These vending machines have a reset function.
+
+Then we can add the features like [this](ISPViolated.kt).  
+But the humans such as DiscountedLottoSeller, NormalLottoSeller don't need the reset function.  
+And teh vending machines can't chat.  
+But DiscountedLottoSeller and NormalLottoSeller are forced to implement the reset function.  
+and teh vending machines are forced to implement the chat function.  
+Even though they don't need it.
+
+That is, the now codes violate the ISP.  
+
+
+
 
 
