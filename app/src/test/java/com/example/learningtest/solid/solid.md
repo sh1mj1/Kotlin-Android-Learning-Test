@@ -51,7 +51,8 @@ private class Customer {
 ```
 
 But what if there are two kinds of lotto sellers?  
-One of the lotto seller is just same with the previous case, but the new one(`DiscountedLottoSeller`)
+One of the lotto seller is just same with the previous case, but the new one(
+`DiscountedLottoSeller`)
 sold a lotto for 500 price.
 
 We can do like [this](OCPViolated.kt).
@@ -60,8 +61,17 @@ This case violates the OCP.
 The OCP states that "a module should be open for extension but closed for modification,"  
 which means you should be able to add new functionality without altering existing code.
 
-We can simply keep the OCP introducing interface [like this](OCPRefactored.kt).  
+We can simply keep the OCP introducing interface [like this](OCPRefactored.kt).
 
-With 
+In this example, new seller type(`DiscountedLottoSeller`) is added.  
+In [OCPViolated.kt](OCPViolated.kt), we changed the codes in the `Customer` class.  
+But In [OCPRefactored.kt](OCPRefactored.kt), we just added a new class and implemented the interface
+without changing the existing code.
+
+This is the **good example adhering to the OCP**.
+
+
+
+
 
 
