@@ -90,9 +90,15 @@ To adhere to the LSP, the `Square` class must be able to substitute the `Rectang
 * That means the `Square` class cannot substitute the `Rectangle` class.
 * That is the violation of the LSP.  
 
+Why does this happen?  
+In the first place, the inheritance relationship between the `Square` class and the `Rectangle` class is wrong.  
 
+We have to consider the LSP not only `is-A` when we design the inheritance relationship.  
+This example shows that `is-A` is not always enough or right.  
 
-
-
+We can refactor this code, [like this](LSPRefactored.kt).  
+In this code, the `Square` class is not a subclass of the `Rectangle` class.  
+I introduce the `Shape` interface, and the `Rectangle` and `Square` class implement the `Shape` interface.  
+So now, There are no longer fungibility issues (LSP violations). 
 
 
