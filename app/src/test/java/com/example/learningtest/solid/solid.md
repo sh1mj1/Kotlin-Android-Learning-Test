@@ -70,6 +70,27 @@ without changing the existing code.
 
 This is the **good example adhering to the OCP**.
 
+## LSP(Liskov Substitution Principle)
+
+It means that objects of a superclass(or interface) should be **replaceable**  
+with objects of a subclass(or implementation) without affecting the correctness of the program.
+
+Let's suppose the `Lottery` class has a new requirement.  
+It has the rectangle in the `Lottery` class.  
+Some special `Lottery` has a `Square`, but some of them have a `Rectangle` which is not a `Square`.  
+
+[Look at the Rectangle and Square class in LSPViolated.kt](LSPViolated.kt)  
+
+To adhere to the LSP, the `Square` class must be able to substitute the `Rectangle` class.  
+[But in this test code](LSPViolatedTest.kt), the `Square` class cannot substitute the `Rectangle` class.  
+
+* Given the `Square` class is a subclass of the `Rectangle` class,  
+* When we set the width to 2 and the height to 5,  
+* Then the area should be 10, for adhering to the LSP, but it is 25.  
+* That means the `Square` class cannot substitute the `Rectangle` class.
+* That is the violation of the LSP.  
+
+
 
 
 
