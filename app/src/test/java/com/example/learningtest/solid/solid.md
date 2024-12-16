@@ -130,6 +130,30 @@ The refactored version resolves this by introducing two specialized abstractions
 
 So, we can refactor like [this](ISPRefactored.kt).
 
-And, i also introduced the Template Method pattern to reduce the duplicated code.  
+And, i also introduced the Template Method pattern to reduce the duplicated code.
 
+## DIP(Dependency Inversion Principle)
+
+THe principle states:
+
+* High-level modules should not import anything from low-level modules.  
+  Both should depend on abstractions (e.g., interfaces).
+* Abstractions should not depend on details.  
+  Details (concrete implementations) should depend on abstractions.
+
+Let's see this [code](DIPViolated.kt).  
+This code violates the DIP.
+
+Why This Violates DIP:
+
+* High-level module (Customer) is tightly coupled to low-level details:
+    * Customer depends on the concrete classes `HumanLottoSeller` and `MachineLottoSeller`.
+    * If new types of sellers are introduced (e.g., `OnlineLottoSeller`),  
+      you would need to modify the `Customer` class.
+    * This **violates the Open/Closed Principle** as well.
+
+* Abstractions are not properly utilized:
+    * `Customer` should only depend on the abstraction `LottoSeller` and not on specific subclasses.
+    * The need to explicitly check the type (is `HumanLottoSeller`, is `MachineLottoSeller`) is a
+      red flag for DIP violation.
 
