@@ -1,3 +1,22 @@
+<!-- TOC -->
+* [SOLID](#solid)
+  * [SRP(Single Responsibility Principle)](#srpsingle-responsibility-principle)
+    * [Example of SRP Violation](#example-of-srp-violation)
+    * [Example of SRP Adhered(Refactored)](#example-of-srp-adhered--refactored-)
+  * [OCP(Open/Closed Principle)](#ocpopenclosed-principle)
+    * [Example of OCP Violation](#example-of-ocp-violation)
+    * [Example of OCP Adhered(Refactored)](#example-of-ocp-adhered--refactored-)
+  * [LSP(Liskov Substitution Principle)](#lspliskov-substitution-principle)
+    * [Example of LSP Violation](#example-of-lsp-violation)
+    * [Example of LSP Adhered(Refactored)](#example-of-lsp-adhered--refactored-)
+  * [ISP(Interface Segregation Principle)](#ispinterface-segregation-principle)
+    * [Example of ISP Violation](#example-of-isp-violation)
+    * [Example of ISP Adhered(Refactored)](#example-of-isp-adhered--refactored-)
+  * [DIP(Dependency Inversion Principle)](#dipdependency-inversion-principle)
+    * [Example of DIP Violation](#example-of-dip-violation)
+    * [Example of DIP Adhered(Refactored)](#example-of-dip-adhered--refactored-)
+<!-- TOC -->
+
 # SOLID
 
 SOLID stands for five principles intended to make object-oriented designs more understandable,
