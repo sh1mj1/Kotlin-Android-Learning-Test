@@ -5,7 +5,13 @@ class ISPRefactored {
         fun buyLotto(
             money: Int,
             lottoSeller: LottoSeller,
-        ): List<Lottery> = lottoSeller.soldLotto(money)
+        ): List<Lottery> {
+            when (lottoSeller) {
+                is HumanLottoSeller -> println(lottoSeller.chat())
+                is MachineLottoSeller -> println(lottoSeller.reset())
+            }
+            return lottoSeller.soldLotto(money)
+        }
     }
 
     abstract class LottoSeller {
@@ -19,19 +25,13 @@ class ISPRefactored {
     }
 
     abstract class HumanLottoSeller : LottoSeller() {
-        override fun soldLotto(money: Int): List<Lottery> {
-            if (restRequired) println(chat())
-            return List(money / lottoPrice) { LotteryGenerateStrategy().autoGenerate() }
-        }
+        override fun soldLotto(money: Int): List<Lottery> = List(money / lottoPrice) { LotteryGenerateStrategy().autoGenerate() }
 
         abstract fun chat(): String
     }
 
     abstract class MachineLottoSeller : LottoSeller() {
-        override fun soldLotto(money: Int): List<Lottery> {
-            if (restRequired) println(reset())
-            return List(money / lottoPrice) { LotteryGenerateStrategy().autoGenerate() }
-        }
+        override fun soldLotto(money: Int): List<Lottery> = List(money / lottoPrice) { LotteryGenerateStrategy().autoGenerate() }
 
         abstract fun reset(): String
     }
