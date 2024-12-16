@@ -157,3 +157,14 @@ Why This Violates DIP:
     * The need to explicitly check the type (is `HumanLottoSeller`, is `MachineLottoSeller`) is a
       red flag for DIP violation.
 
+Let's see the [refactored code](DIPRefactored.kt).  
+In changed code:
+
+* Customer now depends on LottoSeller (an abstraction).
+* Polymorphism Resolves Seller Behavior.
+* LottoSeller Subclasses Specialize Behavior.
+
+So, we can say that the DIP is adhered to, because:
+
+* High-Level Modules Depend on Abstractions.
+* Abstractions Do Not Depend on Details.
