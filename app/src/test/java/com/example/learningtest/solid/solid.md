@@ -119,9 +119,17 @@ But DiscountedLottoSeller and NormalLottoSeller are forced to implement the rese
 and teh vending machines are forced to implement the chat function.  
 Even though they don't need it.
 
-That is, the now codes violate the ISP.  
+That is, the now codes violate the ISP.
 
+@e violated ISP by forcing human sellers and vending machines to implement methods (`chat` and
+`reset`) that were irrelevant to their functionality.
+The refactored version resolves this by introducing two specialized abstractions:
 
+* HumanLottoSeller – for sellers with chat capabilities
+* MachineLottoSeller – for vending machines with reset capabilities.
 
+So, we can refactor like [this](ISPRefactored.kt).
+
+And, i also introduced the Template Method pattern to reduce the duplicated code.  
 
 

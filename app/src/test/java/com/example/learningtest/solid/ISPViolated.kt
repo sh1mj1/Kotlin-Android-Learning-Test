@@ -18,7 +18,6 @@ class ISPViolated {
         abstract fun chat(): String
 
         abstract fun reset(): String
-
     }
 
     private class DiscountedLottoSeller : LottoSeller() {
