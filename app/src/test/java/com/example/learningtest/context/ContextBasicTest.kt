@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.os.IBinder
+import android.view.LayoutInflater
 import androidx.activity.ComponentActivity
 import androidx.test.core.app.ApplicationProvider
 import com.example.learningtest.R
@@ -17,7 +18,9 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.staticFunctions
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmName
 
@@ -126,6 +129,23 @@ class ContextBasicTest {
 
         // then
         applicationContext shouldNotBe null
+    }
+
+    @Test
+    fun `context is used to startActivity, startService, LayoutInflate etc`() {
+        Context::class.memberFunctions.find { it.name == "startActivity" } shouldNotBe null
+        Context::class.memberFunctions.find { it.name == "startService" } shouldNotBe null
+
+        LayoutInflater::class.memberFunctions.filter { it.name == "createView" }
+            .any { kFunction ->
+                kFunction.parameters.map { it.type.classifier }.contains(Context::class)
+            } shouldNotBe null
+
+        LayoutInflater::class.staticFunctions.find { kFunction ->
+            kFunction.name == "from" &&
+                kFunction.parameters.map { it.type.classifier }
+                    .contains(Context::class)
+        } shouldNotBe null
     }
 }
 
