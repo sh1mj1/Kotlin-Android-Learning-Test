@@ -102,6 +102,31 @@ class ContextBasicTest {
         service1.baseContext::class.jvmName shouldBe "android.app.ContextImpl"
         application.baseContext::class.jvmName shouldBe "android.app.ContextImpl"
     }
+
+    @Test
+    fun `activity context is released (not available) after activity destroyed`() {
+        // given
+        activity1Controller.create()
+        activity1.peekAvailableContext() shouldNotBe null
+        // when
+        activity1Controller.destroy()
+
+        // then
+        activity1.peekAvailableContext() shouldBe null
+    }
+
+    @Test
+    fun `application context in activity is not released after activity destroyed`() {
+        // given
+        activity1Controller.create()
+        val applicationContext = activity1.applicationContext
+
+        // when
+        activity1Controller.destroy()
+
+        // then
+        applicationContext shouldNotBe null
+    }
 }
 
 class StubApplication : Application()
