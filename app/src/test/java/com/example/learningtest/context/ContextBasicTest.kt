@@ -25,10 +25,14 @@ import kotlin.reflect.jvm.jvmName
 @Config(application = StubApplication::class)
 class ContextBasicTest {
     private val activity1Controller = Robolectric.buildActivity(StubActivity1::class.java)
+    private val activity2Controller = Robolectric.buildActivity(StubActivity2::class.java)
     private val activity1 = activity1Controller.get()
+    private val activity2 = activity2Controller.get()
 
     private val service1Controller = Robolectric.buildService(StubService1::class.java)
+    private val service2Controller = Robolectric.buildService(StubService2::class.java)
     private val service1 = service1Controller.get()
+    private val service2 = service2Controller.get()
 
     private val application = ApplicationProvider.getApplicationContext<StubApplication>()
 
@@ -67,6 +71,19 @@ class ContextBasicTest {
     }
 
     @Test
+    fun `the application context is singleton`() {
+        val applicationContexts =
+            listOf(
+                activity1.applicationContext,
+                activity2.applicationContext,
+                service1.applicationContext,
+                service2.applicationContext,
+            ).distinct()
+        applicationContexts.size shouldBe 1
+        applicationContexts.first() shouldBe application.applicationContext
+    }
+
+    @Test
     fun `ContextWrapper has ContextImpl as baseContext`() {
         val baseContextField =
             ContextWrapper::class.memberProperties.find { it.name == "mBase" }
@@ -91,6 +108,12 @@ class StubApplication : Application()
 
 private class StubActivity1 : ComponentActivity()
 
+private class StubActivity2 : ComponentActivity()
+
 private class StubService1 : Service() {
+    override fun onBind(intent: Intent?): IBinder? = null
+}
+
+private class StubService2 : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 }
