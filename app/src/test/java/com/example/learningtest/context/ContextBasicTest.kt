@@ -17,6 +17,9 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.jvmName
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = StubApplication::class)
@@ -61,6 +64,26 @@ class ContextBasicTest {
 
         application.getString(R.string.app_name) shouldBe "LearningTest"
         application.getDrawable(R.drawable.ic_launcher_foreground) shouldNotBe null
+    }
+
+    @Test
+    fun `ContextWrapper has ContextImpl as baseContext`() {
+        val baseContextField =
+            ContextWrapper::class.memberProperties.find { it.name == "mBase" }
+                ?: error("mBase field not found")
+        baseContextField.isAccessible = true
+
+        val baseContext = baseContextField.get(activity1) ?: error("baseContext is null")
+        val kClassName = baseContext::class.jvmName
+
+        kClassName shouldBe "android.app.ContextImpl"
+    }
+
+    @Test
+    fun `baseContext of activity, service, application is ContextImpl instance`() {
+        activity1.baseContext::class.jvmName shouldBe "android.app.ContextImpl"
+        service1.baseContext::class.jvmName shouldBe "android.app.ContextImpl"
+        application.baseContext::class.jvmName shouldBe "android.app.ContextImpl"
     }
 }
 
