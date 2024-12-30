@@ -2,8 +2,7 @@
 
 You will always encounter the Context class when developing an app.  
 Context is very important concept in android development.  
-Without Context, you cannot start an activity, broadcast, or service.  
-Context is the superclass of many components, and it connects many components through Context.
+Without Context, you cannot start an activity, broadcast, or service.
 
 So understanding Context itself is helpful in understanding the components.
 Various components(Activity, Service, Broadcast Receiver, Content Provider) are able to access
