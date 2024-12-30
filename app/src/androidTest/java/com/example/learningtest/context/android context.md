@@ -65,6 +65,68 @@ AlertDialog.Builder(getApplicationContext())
 
 ```
 
+## Common Pitfalls: Context Misuse
+
+1. Leaking Activity Context
+   Avoid holding a reference to a Activity Context in a static variable or singleton,  
+   as this prevents the Activity from being garbage collected.
+
+   Example of Bad Practices:
+
+   ```kotlin
+   object Singleton {
+       var context: Context? = null
+   }
+   Singleton.context = this // Memory leak!
+   ```
+
+   Solution: Use Application Context instead:
+
+   ```kotlin
+   Singleton.context = applicationContext
+   ```
+
+2. Using Application Context for UI Tasks
+   Application Context cannot handle certain UI tasks, such as inflating layouts or displaying
+   dialogs.
+
+3. Directly Instantiating Context
+   Context is a system-managed class and cannot be directly instantiated.
+
+4. Using Incorrect Context for Views
+   Ensure the proper Context is passed when creating or inflating views.
+
+   Example of Bad Practice:
+   ```kotlin
+   val view = LayoutInflater.from(applicationContext).inflate(R.layout.activity_main, null)
+   // May cause incorrect behavior due to missing Activity-specific attributes
+   ```
+
+   Solution:
+   ```kotlin
+   val view = LayoutInflater.from(this).inflate(R.layout.activity_main, null)
+   ``` 
+
+## Conclusion
+
+Understanding and correctly using Context is vital for creating efficient and memory-safe Android
+applications.  
+Choosing the right Context for the right task -
+
+* Application Context for global operations
+* Activity Context for UI-related tasks
+  is a key to avoiding pitfalls like memory leaks and incorrect behavior.
+
+### Key Takeaways:
+
+* Understand the lifecycle and scope of different Context types.
+* Use the Application Context for tasks that span the entire application.
+* Use Activity Context for tasks specific to the UI or Activity lifecycle.
+* Avoid common mistakes like holding static references to Activity Context.
+
+With proper Context usage, your Android applications will be more robust, efficient, and
+maintainable.
+
 ## Reference
 
 - Android Developer - [Context](https://developer.android.com/reference/android/content/Context)
