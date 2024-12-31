@@ -23,9 +23,11 @@ ktlint = "12.1.0"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
 composeBom = "2024.11.00"
+androidx-test-core = "1.6.1"
 
 [libraries]
 android-test-runner = { module = "de.mannodermaus.junit5:android-test-runner", version.ref = "androidTestRunner" }
+
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
@@ -59,6 +61,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-core = { module = "androidx.test:core", version.ref = "androidx-test-core" }
 
 [bundles]
 androidx = [
@@ -79,7 +82,8 @@ test = [
     "android-test-runner",
     "mockk",
     "mockk-agent",
-    "robolectric"
+    "robolectric",
+    "androidx-core",
 ]
 
 androidTest = [
@@ -88,7 +92,7 @@ androidTest = [
     "junit-jupiter",
     "junit-vintage-engine",
     "mockk-android",
-    "mockk-agent"
+    "mockk-agent",
 ]
 
 [plugins]
