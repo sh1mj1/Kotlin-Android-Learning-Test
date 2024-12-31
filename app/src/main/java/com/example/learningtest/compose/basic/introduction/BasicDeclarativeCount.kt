@@ -1,4 +1,4 @@
-package com.example.compose.basic
+package com.example.learningtest.compose.basic.introduction
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text

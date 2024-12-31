@@ -103,7 +103,7 @@ If you're new to Jetpack Compose, here are some key concepts to get you started:
     * [BasicReusingComposable.kt](BasicReusingComposable.kt)
 5. Themes
     * Compose supports theming for consistent styling.
-    * [Theme.kt](../../learningtest/ui/theme/Theme.kt)
+    * [Theme.kt](../../../learningtest/ui/theme/Theme.kt)
 
 ## Conclusion
 
