@@ -5,7 +5,7 @@ import androidx.compose.ui.test.onNodeWithText
 import org.junit.Rule
 import org.junit.Test
 
-class GreetingKtTest {
+class GreetingV1KtTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -16,7 +16,7 @@ class GreetingKtTest {
 
         // when
         composeTestRule.setContent {
-            Greeting(name = name)
+            GreetingV1(name = name)
         }
 
         // then

@@ -6,8 +6,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.learningtest.ui.theme.LearningTestTheme
 
+/**
+ * The basic composable function Text
+ */
 @Composable
-fun Greeting(
+fun GreetingV1(
     name: String,
     modifier: Modifier = Modifier,
 ) {
@@ -19,8 +22,8 @@ fun Greeting(
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun GreetingV1Preview() {
     LearningTestTheme {
-        Greeting("Android")
+        GreetingV1("Android")
     }
 }

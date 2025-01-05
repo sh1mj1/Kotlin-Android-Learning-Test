@@ -7,8 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
+/**
+ * Greeting use Surface.
+ */
 @Composable
-fun GreetingWithSurface(
+fun GreetingV2(
     name: String,
     modifier: Modifier = Modifier,
 ) {
@@ -22,8 +25,8 @@ fun GreetingWithSurface(
 
 @Preview(showBackground = true)
 @Composable
-private fun GreetingWithSurfacePreview() {
-    GreetingWithSurface(
+private fun GreetingV2Preview() {
+    GreetingV2(
         name = "Android",
         modifier = Modifier,
     )

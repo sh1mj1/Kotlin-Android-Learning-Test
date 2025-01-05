@@ -30,7 +30,7 @@ You can set a different background color for the `Greeting` by wrapping the Text
 Surface takes a color, so use `MaterialTheme.colorScheme.primary`
 
 The components nested inside `Surface` will be drawn on top of that background color.
-[GreetingWithSurface.kt](GreetingWithSurface.kt)
+[GreetingV2.kt](GreetingV2.kt): `GreetingV2` use `Surface`.
 
 Look at the text color.  
 The text is now white even we didn't define it.

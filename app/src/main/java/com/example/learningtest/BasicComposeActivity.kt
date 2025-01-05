@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.example.learningtest.compose.basic.codelab.Greeting
+import com.example.learningtest.compose.basic.codelab.GreetingV1
 import com.example.learningtest.ui.theme.LearningTestTheme
 
 class BasicComposeActivity : ComponentActivity() {
@@ -19,7 +19,7 @@ class BasicComposeActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    Greeting("Android")
+                    GreetingV1("Android")
                 }
             }
         }
