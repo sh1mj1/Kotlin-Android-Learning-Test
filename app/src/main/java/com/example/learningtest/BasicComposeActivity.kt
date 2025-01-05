@@ -3,12 +3,14 @@ package com.example.learningtest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.learningtest.compose.basic.codelab.GreetingV3
+import com.example.learningtest.compose.basic.codelab.GreetingV4
 import com.example.learningtest.ui.theme.LearningTestTheme
 
 class BasicComposeActivity : ComponentActivity() {
@@ -16,14 +18,14 @@ class BasicComposeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             LearningTestTheme {
-                MyApp(modifier = Modifier.fillMaxSize())
+                MyAppV2(modifier = Modifier.fillMaxSize())
             }
         }
     }
 }
 
 @Composable
-fun MyApp(modifier: Modifier = Modifier) {
+fun MyAppV1(modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier,
         color = MaterialTheme.colorScheme.background,
@@ -31,5 +33,17 @@ fun MyApp(modifier: Modifier = Modifier) {
         GreetingV3(
             name = "Android",
         )
+    }
+}
+
+@Composable
+fun MyAppV2(
+    modifier: Modifier = Modifier,
+    names: List<String> = listOf("World", "Compose"),
+) {
+    Column(modifier) {
+        for (name in names) {
+            GreetingV4(name = name)
+        }
     }
 }

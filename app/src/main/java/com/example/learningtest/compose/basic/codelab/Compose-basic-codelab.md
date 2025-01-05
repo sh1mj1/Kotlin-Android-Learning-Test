@@ -84,7 +84,28 @@ function.
 Create a Composable called MyApp that includes the greeting.
 
 [BasicComposeActivity.kt](../../../BasicComposeActivity.kt)
-and [GreetingV3Preview.kt](GreetingV3.kt) reuse `MyApp` composable function.  
+and [GreetingV3Preview.kt](GreetingV3.kt) reuse `MyApp` composable function.
+
+잘 이해가 안 가는데 조금 이따 또 있는 거 확인하기.
+
+## Columns and Rows
+
+The three basic standard layout elements in Compose are `Column`, `Row` and `Box`.  
+![img.png](Basic-standard-layout-elements-in-Compose.png)
+
+They are Composable functions that take Composable content, so you can place items inside.  
+For example, each child inside of a `Column` will be placed vertically.
+
+[GreetingV4.kt](GreetingV4.kt): use `Column`.
+
+Composable functions can be used like any other functions in Kotlin.    
+This makes building UIs powerful since you can add statements to influence how the UI will be
+displayed.  
+For example, you can use a `for` loop to add elements to the
+`Column`: [BasicComposeActivity.kt](../../../BasicComposeActivity.kt): just like `MyApp2`  
 
 
 https://developer.android.com/develop/ui/compose/modifiers
+
+https://developer.android.com/codelabs/jetpack-compose-basics#5
+

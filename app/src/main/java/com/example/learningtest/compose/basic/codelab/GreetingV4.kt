@@ -1,5 +1,7 @@
 package com.example.learningtest.compose.basic.codelab
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -8,29 +10,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.learningtest.MyAppV1
-import com.example.learningtest.ui.theme.LearningTestTheme
 
-/**
- * Greeting use Surface and Modifier.
- */
 @Composable
-fun GreetingV3(
+fun GreetingV4(
     name: String,
     modifier: Modifier = Modifier,
 ) {
-    Surface(color = MaterialTheme.colorScheme.primary) {
-        Text(
-            text = "Hello $name!",
-            modifier = modifier.padding(24.dp),
-        )
+    Surface(
+        color = MaterialTheme.colorScheme.primary,
+        modifier = modifier.padding(vertical = 4.dp, horizontal = 8.dp),
+    ) {
+        Column(modifier = modifier.fillMaxWidth().padding(24.dp)) {
+            Text(text = "Hello ")
+            Text(text = name)
+        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun GreetingV3Preview() {
-    LearningTestTheme {
-        MyAppV1()
-    }
+private fun GreetingV4Preview() {
+    GreetingV4(name = "Android")
 }
