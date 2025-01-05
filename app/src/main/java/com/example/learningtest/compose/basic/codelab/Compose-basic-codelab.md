@@ -69,6 +69,22 @@ Modifiers allow you to decorate or augment a composable. Modifiers let you do th
 * Process user input
 * Add high-level interactions, like making an element clickable, scrollable, draggable, or zoomable
 
+## Reusing composables
+
+By making small reusable components it's easy to build up a library of UI elements used in your
+app.  
+Each one is responsible for one small part of the screen and can be edited independently.
+
+As a best practice, ur function should include a Modifier parameter that is assigned an empty
+Modifier by default.  
+Forward this modifier to the first composable you call inside your function.  
+This way, the calling site can adapt instructions and behaviors from outside of your composable
+function.
+
+Create a Composable called MyApp that includes the greeting.
+
+[BasicComposeActivity.kt](../../../BasicComposeActivity.kt)
+and [GreetingV3Preview.kt](GreetingV3.kt) reuse `MyApp` composable function.  
 
 
 https://developer.android.com/develop/ui/compose/modifiers
