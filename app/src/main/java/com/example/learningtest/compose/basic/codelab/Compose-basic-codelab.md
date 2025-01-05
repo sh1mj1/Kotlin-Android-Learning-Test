@@ -49,4 +49,26 @@ which are also accessible from your app components in case you need more flexibi
 In this case, `Surface` understands that, when the background is set to the `primary` color,  
 any text on top of it should use the `onPrimary` color, which is also defined in the theme.
 
+## Modifier
 
+Most Compose Ui elements such as `Surface` and `Text` accept an **optional modifier parameter**.  
+`Modifier`s tell a UI element how to lay out, display, or behave within its parent layout.
+
+For example, the padding modifier will apply an amount of space around the element it decorates.    
+You can create a padding modifier with `Modifier.padding()`.    
+You can also add multiple modifiers by chaining them,  
+so in our case we can add the padding modifier to the default one: `modifier.padding(24.dp)`.
+
+Now, add padding to your Text on the screen: [GreetingV3.kt](GreetingV3.kt): GreetingV3 use
+`Modifier.padding()` and `Surface`.
+
+Modifiers allow you to decorate or augment a composable. Modifiers let you do these sorts of things:
+
+* Change the `composable`'s size, layout, behavior, and appearance
+* Add information, like accessibility labels
+* Process user input
+* Add high-level interactions, like making an element clickable, scrollable, draggable, or zoomable
+
+
+
+https://developer.android.com/develop/ui/compose/modifiers
