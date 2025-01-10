@@ -104,6 +104,10 @@ displayed.
 For example, you can use a `for` loop to add elements to the
 `Column`: [BasicComposeActivity.kt](../../../BasicComposeActivity.kt): just like `MyApp2`
 
+[Column's children Test](../../../../../../../../androidTest/java/com/example/learningtest/compose/basic/codelab/GreetingV4KtTest.kt):
+use `onParent`.  
+if it has only one composable layout, you can use `Modifier.testTag(...)`.
+
 ### Add ElevatedButton 
 [GreetingV5.kt](GreetingV5.kt)
 The `Column` is part of a Row, which contains:

@@ -24,7 +24,7 @@ fun GreetingV4(
         modifier = modifier.padding(vertical = 4.dp, horizontal = 8.dp),
     ) {
         Column(modifier = modifier.fillMaxWidth().padding(24.dp)) {
-            Text(text = "Hello ")
+            Text(text = "Hello")
             Text(text = name)
         }
     }
