@@ -102,8 +102,26 @@ Composable functions can be used like any other functions in Kotlin.
 This makes building UIs powerful since you can add statements to influence how the UI will be
 displayed.  
 For example, you can use a `for` loop to add elements to the
-`Column`: [BasicComposeActivity.kt](../../../BasicComposeActivity.kt): just like `MyApp2`  
+`Column`: [BasicComposeActivity.kt](../../../BasicComposeActivity.kt): just like `MyApp2`
 
+### Add ElevatedButton 
+[GreetingV5.kt](GreetingV5.kt)
+The `Column` is part of a Row, which contains:
+
+* The Column (with `Modifier.weight(1f)`).
+* An `ElevatedButton` (with no weight applied).
+
+Effect of weight(1f) on the Column:
+
+* The Column is instructed to take up all remaining horizontal space in thr `Row` after the
+  `ElevatedButton` is measured and laid out.
+* Since the `ElevatedButton` doesn't have a weight, it only takes up as much space as it needs to
+  display its content (`Text("Show more")`).
+
+The `Column` expands to fill all available space not occupied by the `ElevatedButton`.  
+There's no `alignEnd` modifier so, instead, you give some `weight` to the composable at the start.
+
+[ElevatedButton Reference](https://m3.material.io/components/buttons/overview) 
 
 https://developer.android.com/develop/ui/compose/modifiers
 

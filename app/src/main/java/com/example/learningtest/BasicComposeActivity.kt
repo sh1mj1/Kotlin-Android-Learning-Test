@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.learningtest.compose.basic.codelab.GreetingV3
 import com.example.learningtest.compose.basic.codelab.GreetingV4
+import com.example.learningtest.compose.basic.codelab.GreetingV5
 import com.example.learningtest.ui.theme.LearningTestTheme
 
 class BasicComposeActivity : ComponentActivity() {
@@ -18,7 +19,7 @@ class BasicComposeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             LearningTestTheme {
-                MyAppV2(modifier = Modifier.fillMaxSize())
+                MyAppV3(modifier = Modifier.fillMaxSize())
             }
         }
     }
@@ -44,6 +45,18 @@ fun MyAppV2(
     Column(modifier) {
         for (name in names) {
             GreetingV4(name = name)
+        }
+    }
+}
+
+@Composable
+fun MyAppV3(
+    modifier: Modifier = Modifier,
+    names: List<String> = listOf("World", "Compose"),
+) {
+    Column(modifier) {
+        for (name in names) {
+            GreetingV5(name = name)
         }
     }
 }
