@@ -71,7 +71,7 @@ fun MyAppV4(modifier: Modifier = Modifier) {
         if (shouldShowOnboarding) {
             OnboardingScreenV2(onContinueClicked = { shouldShowOnboarding = false })
         } else {
-            Greetings(names = listOf("World", "Android"))
+            GreetingsV1(names = listOf("World", "Android"))
         }
     }
 }
@@ -80,4 +80,17 @@ fun MyAppV4(modifier: Modifier = Modifier) {
 @Composable
 private fun MyAppV4Preview() {
     MyAppV4()
+}
+
+@Composable
+fun MyAppV5(modifier: Modifier = Modifier) {
+    var shouldShowOnboarding by remember { mutableStateOf(true) }
+
+    Surface(modifier) {
+        if (shouldShowOnboarding) {
+            OnboardingScreenV2(onContinueClicked = { shouldShowOnboarding = false })
+        } else {
+            GreetingsV2(names = List(1000) { "$it" })
+        }
+    }
 }

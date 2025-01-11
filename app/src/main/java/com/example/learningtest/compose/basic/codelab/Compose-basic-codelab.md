@@ -268,29 +268,32 @@ by Compose. Also, each time Greeting is called, the variable will be reset to fa
 To add internal state to a composable, you can use the mutableStateOf function, which makes Compose
 recompose functions that read that State.  
 State and MutableState are interfaces that hold some value and trigger UI updates (recompositions)
-whenever that value changes.  
+whenever that value changes.
 
 However you can't just assign mutableStateOf to a variable inside a composable.  
-As explained before, recomposition can happen at any time which would call the composable again, resetting the state to a new mutable state with a value of false.
+As explained before, recomposition can happen at any time which would call the composable again,
+resetting the state to a new mutable state with a value of false.
 
 Composable functions can execute frequently and in any order,  
-you must not rely on the ordering in which the code is executed, 
-or on how many times this function will be recomposed.  
+you must not rely on the ordering in which the code is executed,
+or on how many times this function will be recomposed.
 
-To preserve state across recompositions, remember the mutable state using `remember`.  
+To preserve state across recompositions, remember the mutable state using `remember`.
 
 ```kotlin
 val expanded = remember { mutableStateOf(false) }
 ```
 
-Note that if you call the same composable from different parts of the screen you will create different UI elements,  
+Note that if you call the same composable from different parts of the screen you will create
+different UI elements,  
 each with its own version of the state.  
 You can think of internal state as a private variable in a class.
 
 The composable function will automatically be "subscribed" to the state.  
 If the state changes, composables that read these fields will be recomposed to display the updates.
 
-You don't need to remember extraPadding against recomposition because it's doing a simple calculation.
+You don't need to remember extraPadding against recomposition because it's doing a simple
+calculation.
 
 ## State Hoisting
 
@@ -298,11 +301,11 @@ You don't need to remember extraPadding against recomposition because it's doing
 What if i wanna show OnBoardingScreen if `shouldShowOnBoarding` is true or Greeting if it's false?  
 You don't have access to the `shouldShowOnBoarding` variable in the parent composable.  
 You need to share the state between the two composables.  
-Instead, you can hoist the state up to the parent composable.  
+Instead, you can hoist the state up to the parent composable.
 
-Let's see [Greetings.kt](Greetings.kt), [OnboardingScreenV2.kt](OnboardingScreenV2.kt).  
-We hoist the shouldShowOnBoarding state up to the parent composable, MyAppV4. 
-And we didn't hoist the expanded state up to the parent composable, Greetings.  
+Let's see [Greetings.kt](GreetingsV1.kt), [OnboardingScreenV2.kt](OnboardingScreenV2.kt).  
+We hoist the shouldShowOnBoarding state up to the parent composable, MyAppV4.
+And we didn't hoist the expanded state up to the parent composable, Greetings.
 
 Basic hoisting recommendation:  
 When the state is used together in multiple composables,  
@@ -310,7 +313,7 @@ or when you need to modify, test, or control that state from the parent (or outs
 hoist that state up.
 
 If you hoist more than you need, the parent code becomes more complex,  
-and it can be inconvenient when the child needs more than just "UI representation".  
+and it can be inconvenient when the child needs more than just "UI representation".
 
 This looks like a difficult concept, but in fact, there is a similar concept  
 in simple classes that are not composable functions.  
@@ -318,7 +321,29 @@ I think DI is a similar concept to this.
 if you inject too many properties from the outside into a class,  
 you may encounter the class explosion problem.  
 So, when creating composable functions or classes,  
-I think it is important to inject only the necessary parts from the outside.  
+I think it is important to inject only the necessary parts from the outside.
+
+## Performant lazy list
+
+If you set the `namee` list like below,
+
+```kotlin
+Greetings(names = List(1000) { "$it" })
+```
+
+You can see that the UI is slow to load.  
+And You can not even see the end of the list.  
+
+Compose provides a `LazyColumn` and `LazyRow` composable that can display a large list of items
+efficiently.  
+It is like the RecyclerView in the xml View system.  
+
+`LazyColumn` doesn't recycle its children like `RecyclerView`.  
+It emits new Composables as you scroll through it and is still performant,  
+as emitting Composables is relatively cheap compared to instantiating Android Views.  
+
+[GreetingsV2.kt](GreetingsV2.kt) use `LazyColumn` instead of `Column`.  
+You can see that the UI is loaded quickly and you can see the end of the list.
 
 
 
