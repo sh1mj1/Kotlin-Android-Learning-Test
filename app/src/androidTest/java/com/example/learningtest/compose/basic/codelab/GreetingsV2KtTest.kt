@@ -1,12 +1,17 @@
 package com.example.learningtest.compose.basic.codelab
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToIndex
 import org.junit.Rule
 import org.junit.Test
+import org.junit.jupiter.api.assertThrows
 
 class GreetingsV2KtTest {
     @get:Rule
@@ -25,5 +30,31 @@ class GreetingsV2KtTest {
 
         composeTestRule.onNodeWithText("999")
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun not_saving_show_more_or_less_state() {
+        // given
+        composeTestRule.setContent {
+            GreetingsV2(names = List(1000) { "$it" })
+        }
+
+        // when
+        composeTestRule.onAllNodesWithText("Show more").onFirst()
+            .performClick()
+        composeTestRule.onNodeWithText("Show less")
+            .assertIsDisplayed()
+
+        composeTestRule.onNode(hasScrollAction()).performScrollToIndex(999)
+
+        composeTestRule.onNode(hasScrollAction()).performScrollToIndex(0)
+
+        // then
+        assertThrows<AssertionError> {
+            composeTestRule.onNodeWithText("Show less")
+                .assertIsDisplayed()
+        }
+        composeTestRule.onNodeWithText("Show less")
+            .assertIsNotDisplayed()
     }
 }
