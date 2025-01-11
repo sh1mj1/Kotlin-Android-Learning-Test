@@ -9,6 +9,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -33,6 +35,75 @@ fun GreetingV5(
             }
             ElevatedButton(
                 onClick = { /* TODO */ },
+                modifier = Modifier,
+            ) {
+                Text("Show more")
+            }
+        }
+    }
+}
+
+@Composable
+fun GreetingV5WithTestTag(
+    name: String,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        color = MaterialTheme.colorScheme.primary,
+        modifier = modifier.padding(vertical = 4.dp, horizontal = 8.dp),
+    ) {
+        Row(
+            modifier =
+                Modifier
+                    .padding(24.dp)
+                    .testTag("RowTag"),
+        ) {
+            Column(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .testTag("ColumnTag"),
+            ) {
+                Text(text = "Hello")
+                Text(text = name)
+            }
+            ElevatedButton(
+                onClick = { /* TODO */ },
+                modifier = Modifier,
+            ) {
+                Text("Show more")
+            }
+        }
+    }
+}
+
+@Composable
+fun GreetingV5WithSemantic(
+    name: String,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        color = MaterialTheme.colorScheme.primary,
+        modifier = modifier.padding(vertical = 4.dp, horizontal = 8.dp),
+    ) {
+        Row(
+            modifier =
+                Modifier
+                    .padding(24.dp)
+                    .semantics(mergeDescendants = false) {},
+        ) {
+            Column(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .semantics(mergeDescendants = false) {},
+            ) {
+                Text(text = "Hello")
+                Text(text = name)
+            }
+            ElevatedButton(
+                onClick = { /* TODO */ },
+                modifier = Modifier,
             ) {
                 Text("Show more")
             }

@@ -108,12 +108,15 @@ For example, you can use a `for` loop to add elements to the
 use `onParent`.  
 if it has only one composable layout, you can use `Modifier.testTag(...)`.
 
-### Add ElevatedButton 
+https://developer.android.com/develop/ui/compose/modifiers
+
+### Add ElevatedButton
+
 [GreetingV5.kt](GreetingV5.kt)
 The `Column` is part of a Row, which contains:
 
 * The Column (with `Modifier.weight(1f)`).
-* An `ElevatedButton` (with no weight applied).
+* An `ElevatedButton` (with no weight applied).[ElevatedButton Reference](https://m3.material.io/components/buttons/overview)
 
 Effect of weight(1f) on the Column:
 
@@ -125,9 +128,133 @@ Effect of weight(1f) on the Column:
 The `Column` expands to fill all available space not occupied by the `ElevatedButton`.  
 There's no `alignEnd` modifier so, instead, you give some `weight` to the composable at the start.
 
-[ElevatedButton Reference](https://m3.material.io/components/buttons/overview) 
+[GreetingV5.kt](GreetingV5.kt) 에 대해서 테스트를 아래처럼 해보았다.
 
-https://developer.android.com/develop/ui/compose/modifiers
+```kotlin
+@Test
+fun greetingV5_row_has_two_children() {
+    // given && when
+    composeTestRule.setContent {
+        GreetingV5(name = "Android")
+    }
+
+    composeTestRule.onRoot()
+        .onChildren()
+        .assertCountEquals(1) // row
+
+    composeTestRule.onRoot()
+        .onChildren().onFirst() // Surface -> Row
+        .onChildren() // Children of the Row
+        .assertCountEquals(2) // Column, ElevatedButton
+}
+```
+
+그런데 실패함.
+
+나는 Surface 의 children.onFirst 가 이 Row, 그의 children 은 column 과 ElevatedButton 이라고 생각했다.  
+그런데 실제로는 assertCountEquals 를 Column 의 children 을 모두 세는 것을 확인했다.
+
+위를 통해 컴포즈를 그릴 때 Row 와 Column 의 레이아웃 중첩이 실제로 코틀린 컴포저블 코드대로 만들어지지 않고, 병합되는 것 같다.
+
+[참고할 만한 것](https://kotlinworld.com/506)
+일반적으로 Row·Column 같은 레이아웃 컨테이너는 “시각적 배치” 역할만 하고, 별도의 세멈틱 정보를 갖지 않으면 머지된 트리에서 생략(혹은 다른 노드와 합쳐져 버림)될 수
+있습니다.
+다시 말해, Row 자신이 별도의 세멈틱 노드로 잡히려면 다음과 같은 작업이 필요합니다.
+
+Modifier.semantics { ... } 를 사용해 Row에 명시적인 세멈틱을 부여하거나,
+Modifier.testTag("RowTag") 같이, 테스트 태그를 달아서 “이 노드는 테스트에서 따로 필요한 노드다”라고 표시하거나,
+Row가 무언가 접근성(탭 이동) 등이 필요한 경우에 한해 세멈틱 노드로 노출되는 경우가 있음.
+즉, 단순 레이아웃인 Row나 Column이 별도로 “보여야 한다”는 의도가 있으면 직접 “이 Row를 세멈틱 트리에 포함시켜 달라”는 정보를 줘야 합니다.
+
+위 한국어로 쓴 내용을 영어로 하면
+
+I wrote a test code for [GreetingV5.kt](GreetingV5.kt) like below.
+
+```kotlin
+composeTestRule.onRoot()
+    .onChild() // Surface
+    .onChildren() // Row
+    .assertCountEquals(1)
+```
+
+But it failed.
+
+```
+Reason: Expected '2' nodes but found '3' nodes that satisfy: ((((isRoot).children)[0]).children)
+Nodes found:
+1) Node #5 at (l=84.0, t=137.0, r=168.0, b=180.0)px
+Text = '[Hello]'
+Actions = [SetTextSubstitution, ShowTextSubstitution, ClearTextSubstitution, GetTextLayoutResult]
+Has 2 siblings
+2) Node #6 at (l=84.0, t=180.0, r=209.0, b=223.0)px
+Text = '[Android]'
+Actions = [SetTextSubstitution, ShowTextSubstitution, ClearTextSubstitution, GetTextLayoutResult]
+Has 2 siblings
+3) Node #7 at (l=684.0, t=148.0, r=996.0, b=253.0)px
+Focused = 'false'
+Role = 'Button'
+Text = '[Show more]'
+Actions = [OnClick, RequestFocus, SetTextSubstitution, ShowTextSubstitution, ClearTextSubstitution, GetTextLayoutResult]
+MergeDescendants = 'true'
+```
+
+I expected that the children of the `Row` are `Column` and `ElevatedButton`.  
+But actually, the `assertCountEquals` counts all children of the Column.
+
+I think that the layout of Row and Column is merged in the actual Compose tree, not nested as in the
+Kotlin Composable code.
+
+Basically, layout containers like Row and Column only play a "visual arrangement" role, and if they
+do not have separate semantic information, they can be omitted (or merged with other nodes) in the
+merged tree.  
+In other words, if Row itself is to be held as a separate semantic node, the following actions are
+required.
+
+* Give explicit semantics to Row using Modifier.semantics { ... } or
+* Mark it with a test tag like Modifier.testTag("RowTag") to indicate that "this node is a node that
+  is needed separately in the test" or
+* Row is exposed as a semantic node only when it requires something like accessibility (tab
+  movement).
+
+That is, if Row or Column is to be displayed separately, you must provide information that says "
+Include this Row in the semantic tree" directly.
+
+[`GreetingV5WithTestTag` or `GreetingV5WithSemantic` function](GreetingV5.kt) has a test tag for the
+Row and Column.  
+Now i can test the Row and Column separately.
+
+So, this is it?  
+It is not very good to add The code only for the test code.  
+How did we test the traditional View system using xml?  
+There are several ways to manage these identifiers, but it was generally considered easiest to get
+them through ID (view identifier).  
+reference: https://developer.android.com/training/testing/espresso/basics#finding-view
+
+```kotlin
+onView(allOf(withId(R.id.my_view), withText(“ Hello !“)))
+```
+
+Setting an identifier in the View system was not awkward because it was used in various situations,
+but Compose is designed declaratively, so the need to create identifiers is less felt, so it may be
+natural to experience this inconvenience.
+
+## State in Compose
+
+ElevatedButton has content parameter as composable trailing lambda.
+
+```kotlin
+var expanded: Boolean = false
+ElevatedButton(
+    onClick = { expanded = !expanded }
+) {
+    Text(if (expanded) "Show less" else "Show more")
+}
+```
+
+This doesn't work as expected.  
+Setting a different value for the expanded variable won't make Compose detect it as a state change
+si nothing will happen.
+
 
 https://developer.android.com/codelabs/jetpack-compose-basics#5
 

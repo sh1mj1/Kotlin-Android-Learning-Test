@@ -22,6 +22,7 @@ class GreetingV4KtTest {
             GreetingV4(name = "Android")
         }
 
+        // then
         composeTestRule.onNodeWithText("Hello")
             .assertIsDisplayed()
 
