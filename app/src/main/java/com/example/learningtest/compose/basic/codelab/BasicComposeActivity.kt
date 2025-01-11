@@ -8,7 +8,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.learningtest.ui.theme.LearningTestTheme
 
 class BasicComposeActivity : ComponentActivity() {
@@ -56,4 +61,23 @@ fun MyAppV3(
             GreetingV5(name = name)
         }
     }
+}
+
+@Composable
+fun MyAppV4(modifier: Modifier = Modifier) {
+    var shouldShowOnboarding by remember { mutableStateOf(true) }
+
+    Surface(modifier) {
+        if (shouldShowOnboarding) {
+            OnboardingScreenV2(onContinueClicked = { shouldShowOnboarding = false })
+        } else {
+            Greetings(names = listOf("World", "Android"))
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MyAppV4Preview() {
+    MyAppV4()
 }

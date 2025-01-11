@@ -292,9 +292,33 @@ If the state changes, composables that read these fields will be recomposed to d
 
 You don't need to remember extraPadding against recomposition because it's doing a simple calculation.
 
+## State Hoisting
 
+[OnboardingScreenV1.kt](OnboardingScreenV1.kt)  
+What if i wanna show OnBoardingScreen if `shouldShowOnBoarding` is true or Greeting if it's false?  
+You don't have access to the `shouldShowOnBoarding` variable in the parent composable.  
+You need to share the state between the two composables.  
+Instead, you can hoist the state up to the parent composable.  
 
+Let's see [Greetings.kt](Greetings.kt), [OnboardingScreenV2.kt](OnboardingScreenV2.kt).  
+We hoist the shouldShowOnBoarding state up to the parent composable, MyAppV4. 
+And we didn't hoist the expanded state up to the parent composable, Greetings.  
 
+Basic hoisting recommendation:  
+When the state is used together in multiple composables,  
+or when you need to modify, test, or control that state from the parent (or outside),  
+hoist that state up.
+
+If you hoist more than you need, the parent code becomes more complex,  
+and it can be inconvenient when the child needs more than just "UI representation".  
+
+This looks like a difficult concept, but in fact, there is a similar concept  
+in simple classes that are not composable functions.  
+I think DI is a similar concept to this.  
+if you inject too many properties from the outside into a class,  
+you may encounter the class explosion problem.  
+So, when creating composable functions or classes,  
+I think it is important to inject only the necessary parts from the outside.  
 
 
 
