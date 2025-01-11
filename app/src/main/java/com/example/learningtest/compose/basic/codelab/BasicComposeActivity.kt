@@ -1,4 +1,4 @@
-package com.example.learningtest
+package com.example.learningtest.compose.basic.codelab
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -9,9 +9,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.learningtest.compose.basic.codelab.GreetingV3
-import com.example.learningtest.compose.basic.codelab.GreetingV4
-import com.example.learningtest.compose.basic.codelab.GreetingV5
 import com.example.learningtest.ui.theme.LearningTestTheme
 
 class BasicComposeActivity : ComponentActivity() {
