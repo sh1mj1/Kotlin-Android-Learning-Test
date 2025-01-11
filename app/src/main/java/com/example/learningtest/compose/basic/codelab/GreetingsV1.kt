@@ -8,7 +8,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun Greetings(
+fun GreetingsV1(
     modifier: Modifier = Modifier,
     names: List<String>,
 ) {
@@ -21,6 +21,6 @@ fun Greetings(
 
 @Preview(showBackground = true)
 @Composable
-private fun GreetingV7Preview() {
-    Greetings(names = listOf("World", "Android"))
+private fun GreetingsV1Preview() {
+    GreetingsV1(names = listOf("World", "Android"))
 }
