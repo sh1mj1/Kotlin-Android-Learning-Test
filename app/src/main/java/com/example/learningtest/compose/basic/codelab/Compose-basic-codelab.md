@@ -116,7 +116,8 @@ https://developer.android.com/develop/ui/compose/modifiers
 The `Column` is part of a Row, which contains:
 
 * The Column (with `Modifier.weight(1f)`).
-* An `ElevatedButton` (with no weight applied).[ElevatedButton Reference](https://m3.material.io/components/buttons/overview)
+* An `ElevatedButton` (with no weight
+  applied).[ElevatedButton Reference](https://m3.material.io/components/buttons/overview)
 
 Effect of weight(1f) on the Column:
 
@@ -252,8 +253,49 @@ ElevatedButton(
 ```
 
 This doesn't work as expected.  
-Setting a different value for the expanded variable won't make Compose detect it as a state change
-si nothing will happen.
+Setting a different value for the `expanded` variable won't make Compose detect it as a state change
+so nothing will happen.
+
+Compose apps transform data into UI by calling composable functions.  
+If your data changes, Compose re-executes these functions with the new data, creating an updated
+UI—this is called recomposition.  
+Compose also looks at what data is needed by an individual composable so that it only needs to
+recompose components whose data has changed and skip recomposing those that are not affected.
+
+The reason why mutating this variable does not trigger recompositions is that it's not being tracked
+by Compose. Also, each time Greeting is called, the variable will be reset to false.
+
+To add internal state to a composable, you can use the mutableStateOf function, which makes Compose
+recompose functions that read that State.  
+State and MutableState are interfaces that hold some value and trigger UI updates (recompositions)
+whenever that value changes.  
+
+However you can't just assign mutableStateOf to a variable inside a composable.  
+As explained before, recomposition can happen at any time which would call the composable again, resetting the state to a new mutable state with a value of false.
+
+Composable functions can execute frequently and in any order,  
+you must not rely on the ordering in which the code is executed, 
+or on how many times this function will be recomposed.  
+
+To preserve state across recompositions, remember the mutable state using `remember`.  
+
+```kotlin
+val expanded = remember { mutableStateOf(false) }
+```
+
+Note that if you call the same composable from different parts of the screen you will create different UI elements,  
+each with its own version of the state.  
+You can think of internal state as a private variable in a class.
+
+The composable function will automatically be "subscribed" to the state.  
+If the state changes, composables that read these fields will be recomposed to display the updates.
+
+You don't need to remember extraPadding against recomposition because it's doing a simple calculation.
+
+
+
+
+
 
 
 https://developer.android.com/codelabs/jetpack-compose-basics#5
