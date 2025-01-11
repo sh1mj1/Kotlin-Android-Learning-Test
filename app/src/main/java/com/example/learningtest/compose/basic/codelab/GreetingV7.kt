@@ -11,17 +11,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun GreetingV7(name: String) {
     val expanded = rememberSaveable { mutableStateOf(false) }
     val extraPadding by animateDpAsState(
-        if (expanded.value) 48.dp else 0.dp, label = "extraPaddingAnimation",
+        if (expanded.value) 48.dp else 0.dp,
+        label = "extraPaddingAnimation",
     )
 
     Surface(
@@ -31,12 +33,18 @@ fun GreetingV7(name: String) {
         Row(modifier = Modifier.padding(24.dp)) {
             Column(
                 modifier =
-                Modifier
-                    .weight(1f)
-                    .padding(bottom = extraPadding),
+                    Modifier
+                        .weight(1f)
+                        .padding(bottom = extraPadding.coerceAtLeast(0.dp)),
             ) {
                 Text(text = "Hello")
-                Text(text = name)
+                Text(
+                    text = name,
+                    style =
+                        MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.ExtraBold,
+                        ),
+                )
             }
             ElevatedButton(
                 onClick = { expanded.value = !expanded.value },
