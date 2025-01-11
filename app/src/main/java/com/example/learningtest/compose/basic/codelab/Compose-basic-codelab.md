@@ -1,3 +1,5 @@
+# study compose basic codelab
+
 ```kotlin
 class BasicComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +88,6 @@ Create a Composable called MyApp that includes the greeting.
 [BasicComposeActivity.kt](BasicComposeActivity.kt)
 and [GreetingV3Preview.kt](GreetingV3.kt) reuse `MyApp` composable function.
 
-잘 이해가 안 가는데 조금 이따 또 있는 거 확인하기.
 
 ## Columns and Rows
 
@@ -128,46 +129,6 @@ Effect of weight(1f) on the Column:
 
 The `Column` expands to fill all available space not occupied by the `ElevatedButton`.  
 There's no `alignEnd` modifier so, instead, you give some `weight` to the composable at the start.
-
-[GreetingV5.kt](GreetingV5.kt) 에 대해서 테스트를 아래처럼 해보았다.
-
-```kotlin
-@Test
-fun greetingV5_row_has_two_children() {
-    // given && when
-    composeTestRule.setContent {
-        GreetingV5(name = "Android")
-    }
-
-    composeTestRule.onRoot()
-        .onChildren()
-        .assertCountEquals(1) // row
-
-    composeTestRule.onRoot()
-        .onChildren().onFirst() // Surface -> Row
-        .onChildren() // Children of the Row
-        .assertCountEquals(2) // Column, ElevatedButton
-}
-```
-
-그런데 실패함.
-
-나는 Surface 의 children.onFirst 가 이 Row, 그의 children 은 column 과 ElevatedButton 이라고 생각했다.  
-그런데 실제로는 assertCountEquals 를 Column 의 children 을 모두 세는 것을 확인했다.
-
-위를 통해 컴포즈를 그릴 때 Row 와 Column 의 레이아웃 중첩이 실제로 코틀린 컴포저블 코드대로 만들어지지 않고, 병합되는 것 같다.
-
-[참고할 만한 것](https://kotlinworld.com/506)
-일반적으로 Row·Column 같은 레이아웃 컨테이너는 “시각적 배치” 역할만 하고, 별도의 세멈틱 정보를 갖지 않으면 머지된 트리에서 생략(혹은 다른 노드와 합쳐져 버림)될 수
-있습니다.
-다시 말해, Row 자신이 별도의 세멈틱 노드로 잡히려면 다음과 같은 작업이 필요합니다.
-
-Modifier.semantics { ... } 를 사용해 Row에 명시적인 세멈틱을 부여하거나,
-Modifier.testTag("RowTag") 같이, 테스트 태그를 달아서 “이 노드는 테스트에서 따로 필요한 노드다”라고 표시하거나,
-Row가 무언가 접근성(탭 이동) 등이 필요한 경우에 한해 세멈틱 노드로 노출되는 경우가 있음.
-즉, 단순 레이아웃인 Row나 Column이 별도로 “보여야 한다”는 의도가 있으면 직접 “이 Row를 세멈틱 트리에 포함시켜 달라”는 정보를 줘야 합니다.
-
-위 한국어로 쓴 내용을 영어로 하면
 
 I wrote a test code for [GreetingV5.kt](GreetingV5.kt) like below.
 

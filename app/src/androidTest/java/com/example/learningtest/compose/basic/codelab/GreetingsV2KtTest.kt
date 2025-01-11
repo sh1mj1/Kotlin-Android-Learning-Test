@@ -1,7 +1,6 @@
 package com.example.learningtest.compose.basic.codelab
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -11,7 +10,6 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToIndex
 import org.junit.Rule
 import org.junit.Test
-import org.junit.jupiter.api.assertThrows
 
 class GreetingsV2KtTest {
     @get:Rule
@@ -33,7 +31,7 @@ class GreetingsV2KtTest {
     }
 
     @Test
-    fun not_saving_show_more_or_less_state() {
+    fun save_show_more_or_less_state() {
         // given
         composeTestRule.setContent {
             GreetingsV2(names = List(1000) { "$it" })
@@ -50,11 +48,7 @@ class GreetingsV2KtTest {
         composeTestRule.onNode(hasScrollAction()).performScrollToIndex(0)
 
         // then
-        assertThrows<AssertionError> {
-            composeTestRule.onNodeWithText("Show less")
-                .assertIsDisplayed()
-        }
         composeTestRule.onNodeWithText("Show less")
-            .assertIsNotDisplayed()
+            .assertIsDisplayed()
     }
 }
