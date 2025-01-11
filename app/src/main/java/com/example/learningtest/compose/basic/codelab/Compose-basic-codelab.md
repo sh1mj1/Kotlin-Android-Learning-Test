@@ -83,7 +83,7 @@ function.
 
 Create a Composable called MyApp that includes the greeting.
 
-[BasicComposeActivity.kt](../../../BasicComposeActivity.kt)
+[BasicComposeActivity.kt](BasicComposeActivity.kt)
 and [GreetingV3Preview.kt](GreetingV3.kt) reuse `MyApp` composable function.
 
 잘 이해가 안 가는데 조금 이따 또 있는 거 확인하기.
@@ -102,7 +102,7 @@ Composable functions can be used like any other functions in Kotlin.
 This makes building UIs powerful since you can add statements to influence how the UI will be
 displayed.  
 For example, you can use a `for` loop to add elements to the
-`Column`: [BasicComposeActivity.kt](../../../BasicComposeActivity.kt): just like `MyApp2`
+`Column`: [BasicComposeActivity.kt](BasicComposeActivity.kt): just like `MyApp2`
 
 [Column's children Test](../../../../../../../../androidTest/java/com/example/learningtest/compose/basic/codelab/GreetingV4KtTest.kt):
 use `onParent`.  
