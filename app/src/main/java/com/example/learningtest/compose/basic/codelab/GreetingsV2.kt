@@ -15,7 +15,7 @@ fun GreetingsV2(
 ) {
     LazyColumn(modifier = modifier.padding(vertical = 4.dp)) {
         items(items = names) { name ->
-            GreetingV6(name = name)
+            GreetingV7(name = name)
         }
     }
 }

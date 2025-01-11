@@ -332,15 +332,15 @@ Greetings(names = List(1000) { "$it" })
 ```
 
 You can see that the UI is slow to load.  
-And You can not even see the end of the list.  
+And You can not even see the end of the list.
 
 Compose provides a `LazyColumn` and `LazyRow` composable that can display a large list of items
 efficiently.  
-It is like the RecyclerView in the xml View system.  
+It is like the RecyclerView in the xml View system.
 
 `LazyColumn` doesn't recycle its children like `RecyclerView`.  
 It emits new Composables as you scroll through it and is still performant,  
-as emitting Composables is relatively cheap compared to instantiating Android Views.  
+as emitting Composables is relatively cheap compared to instantiating Android Views.
 
 [GreetingsV2.kt](GreetingsV2.kt) use `LazyColumn` instead of `Column`.  
 You can see that the UI is loaded quickly and you can see the end of the list.
@@ -350,9 +350,10 @@ You can see that the UI is loaded quickly and you can see the end of the list.
 Let's run the [BasicComposeActivity.kt](BasicComposeActivity.kt) and click the "Continue" button.  
 You can see greetings in your screen.  
 Now, rotate the screen.  
-You can see that the greetings are gone and the "Continue" button is shown again.  
+You can see that the greetings are gone and the "Continue" button is shown again.
 
-This is because the state is not persisted across configuration changes.  
+This is because the state is not persisted across configuration changes.
+
 ```kotlin
 @RunWith(AndroidJUnit4::class)
 class BasicComposeActivityTest {
@@ -386,11 +387,21 @@ class BasicComposeActivityTest {
 
 The remember function works only as long as the composable is kept in the Composition.  
 When you rotate, the whole activity is restarted so all state is lost.  
-This also happens with any configuration change and on process death.  
+This also happens with any configuration change and on process death.
 
 Instead of using remember you can use `rememberSaveable`.  
 This will save each state surviving configuration changes (such as rotations) and process death.
 
+## Animating list
+
+In Compose, there are multiple ways to animate your UI: from high-level APIs for simple animations
+to low-level methods for full control and complex transitions. You can read about them in the
+documentation.
+
+The spring spec does not take any time-related parameters.  
+Instead it relies on physical properties (damping and stiffness) to make animations more natural.
+It takes a target value and a spring spec, and returns an animated value that you can use in your
+composable.
 
 https://developer.android.com/codelabs/jetpack-compose-basics#5
 

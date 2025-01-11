@@ -1,5 +1,6 @@
 package com.example.learningtest.compose.basic.codelab
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -8,7 +9,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,7 +20,9 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun GreetingV7(name: String) {
     val expanded = rememberSaveable { mutableStateOf(false) }
-    val extraPadding = if (expanded.value) 48.dp else 0.dp
+    val extraPadding by animateDpAsState(
+        if (expanded.value) 48.dp else 0.dp, label = "extraPaddingAnimation",
+    )
 
     Surface(
         color = MaterialTheme.colorScheme.primary,
@@ -26,9 +31,9 @@ fun GreetingV7(name: String) {
         Row(modifier = Modifier.padding(24.dp)) {
             Column(
                 modifier =
-                    Modifier
-                        .weight(1f)
-                        .padding(bottom = extraPadding),
+                Modifier
+                    .weight(1f)
+                    .padding(bottom = extraPadding),
             ) {
                 Text(text = "Hello")
                 Text(text = name)
@@ -44,6 +49,6 @@ fun GreetingV7(name: String) {
 
 @Preview(showBackground = true)
 @Composable
-private fun GreetingV6Preview() {
-    GreetingV6(name = "Android")
+private fun GreetingV7Preview() {
+    GreetingV7(name = "Android")
 }
