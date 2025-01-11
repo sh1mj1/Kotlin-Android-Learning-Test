@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,7 +22,7 @@ class BasicComposeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             LearningTestTheme {
-                MyAppV5(modifier = Modifier.fillMaxSize())
+                MyAppV6(modifier = Modifier.fillMaxSize())
             }
         }
     }
@@ -76,12 +77,6 @@ fun MyAppV4(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun MyAppV4Preview() {
-    MyAppV4()
-}
-
 @Composable
 fun MyAppV5(modifier: Modifier = Modifier) {
     var shouldShowOnboarding by remember { mutableStateOf(true) }
@@ -92,5 +87,26 @@ fun MyAppV5(modifier: Modifier = Modifier) {
         } else {
             GreetingsV2(names = List(1000) { "$it" })
         }
+    }
+}
+
+@Composable
+fun MyAppV6(modifier: Modifier = Modifier) {
+    var shouldShowOnboarding by rememberSaveable { mutableStateOf(true) }
+
+    Surface(modifier) {
+        if (shouldShowOnboarding) {
+            OnboardingScreenV2(onContinueClicked = { shouldShowOnboarding = false })
+        } else {
+            GreetingsV2(names = List(1000) { "$it" })
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun MyAppV6Preview() {
+    LearningTestTheme {
+        MyAppV6()
     }
 }
