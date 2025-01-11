@@ -21,7 +21,7 @@ class BasicComposeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             LearningTestTheme {
-                MyAppV3(modifier = Modifier.fillMaxSize())
+                MyAppV5(modifier = Modifier.fillMaxSize())
             }
         }
     }

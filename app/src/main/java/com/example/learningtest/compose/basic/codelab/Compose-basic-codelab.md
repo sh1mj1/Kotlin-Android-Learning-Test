@@ -345,7 +345,44 @@ as emitting Composables is relatively cheap compared to instantiating Android Vi
 [GreetingsV2.kt](GreetingsV2.kt) use `LazyColumn` instead of `Column`.  
 You can see that the UI is loaded quickly and you can see the end of the list.
 
+## Persisting state
 
+Let's run the [BasicComposeActivity.kt](BasicComposeActivity.kt) and click the "Continue" button.  
+You can see greetings in your screen.  
+Now, rotate the screen.  
+You can see that the greetings are gone and the "Continue" button is shown again.  
+
+This is because the state is not persisted across configuration changes.  
+```kotlin
+@RunWith(AndroidJUnit4::class)
+class BasicComposeActivityTest {
+    @get:Rule
+    val composeTestRule = createAndroidComposeRule(BasicComposeActivity::class.java)
+
+    @Test
+    fun not_save_the_state_after_configuration_change() {
+        // given
+        composeTestRule.onNodeWithText("Continue")
+            .assertIsDisplayed()
+
+        // when
+        composeTestRule.onNodeWithText("Continue")
+            .performClick()
+        composeTestRule.onNodeWithText("Continue")
+            .assertDoesNotExist()
+
+        composeTestRule.activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+
+        // then
+        assertThrows<AssertionError> {
+            composeTestRule.onNodeWithText("Continue")
+                .assertDoesNotExist()
+        }
+        composeTestRule.onNodeWithText("Continue")
+            .assertExists()
+    }
+}
+```
 
 https://developer.android.com/codelabs/jetpack-compose-basics#5
 
