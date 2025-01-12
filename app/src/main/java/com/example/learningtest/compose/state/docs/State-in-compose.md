@@ -180,9 +180,11 @@ fun WellnessScreen(modifier: Modifier = Modifier) {
 }
 ```
 
-
+### Restore item state in LazyList
 
 For WellnessTask When an item leaves the Composition, state that was remembered is forgotten.   
 in [WellnessTasksList.kt](../WellnessTasksList.kt) `list: List<WellnessTask> = remember { wellnessTasks() },`  
+
+How do you fix this? Once again, use rememberSaveable. Your state will survive the activity or process recreation using the saved instance state mechanism. Thanks to how rememberSaveable works together with the LazyList, your items are able to also survive leaving the Composition.
 
 
