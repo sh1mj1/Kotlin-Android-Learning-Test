@@ -164,6 +164,25 @@ Key Point: A best practice for the design of Composables is to pass them only th
 
 
 
-
 https://developer.android.com/develop/ui/compose/state?hl=ko#state-hoisting
+
+## Work with lists
+
+[WellnessTaskItemV2.kt](../WellnessTaskItemV2.kt), [WellnessTask.kt](../WellnessTask.kt), [WellnessTasksList.kt](../WellnessTasksList.kt)
+
+```kotlin
+@Composable
+fun WellnessScreen(modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
+        WaterStatefulCounter()
+        WellnessTasksList()
+    }
+}
+```
+
+
+
+For WellnessTask When an item leaves the Composition, state that was remembered is forgotten.   
+in [WellnessTasksList.kt](../WellnessTasksList.kt) `list: List<WellnessTask> = remember { wellnessTasks() },`  
+
 

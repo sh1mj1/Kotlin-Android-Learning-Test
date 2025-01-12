@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun WellnessTaskItem(
+fun WellnessTaskItemV1(
     taskName: String,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
@@ -42,7 +42,7 @@ fun WellnessTaskItem(
 @Preview(showBackground = true)
 @Composable
 private fun WellnessTaskItemPreview() {
-    WellnessTaskItem(
+    WellnessTaskItemV1(
         taskName = "This is a taskName",
         onClose = {},
     )
