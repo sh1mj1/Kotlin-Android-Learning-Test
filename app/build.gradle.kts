@@ -37,7 +37,10 @@ android {
 
     packaging {
         resources {
-            excludes += "META-INF/**"
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/licenses/*"
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/LICENSE-notice.md"
             excludes += "win32-x86*/**"
         }
     }
