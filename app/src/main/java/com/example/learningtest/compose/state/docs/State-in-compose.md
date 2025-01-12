@@ -50,27 +50,43 @@ same way a private val property does in an object.
 ## Remember in Composition
 
 `remember` stores objects in the Composition,and forgets the object  
-if the source location where remember is called is not invoked again during a recomposition.  
+if the source location where remember is called is not invoked again during a recomposition.
 
-check the [WaterCounterV2.kt](WaterCounterV2.kt)
+check the [WaterCounterV2.kt](../WaterCounterV2.kt)
 
 #### 1. Initial State
+
 ![img.png](WaterCounterV2 initial state .png)
 
 #### 2. Click Add one button
+
 ![img_1.png](2WaterCounterV2-click-add-one-button.png)
 ![img_7.png](2WaterCounterV2-click-add-one-button-image.png)
 
 #### 3. Click task close IconButton
+
 ![img_3.png](3WaterCounterV2-click-task-close-IconButton.png)
 
 #### 4. Click Add one button
+
 ![img_4.png](4WaterCounterV2-click-Add-one-button.png)
 
 #### 5. Click clear water count button
+
 ![img_5.png](5WaterCounterV2-click-clear-water-count-button.png)
 ![img_8.png](5WaterCounterV2-click-clear-water-count-button-image.png)
 
 #### 6. Click Add one button
+
 ![img_6.png](6WaterCounterV2-click-add-one-button.png)
+
+## Restore state in Compose
+
+Use `rememberSaveable` to restore your UI state after an Activity is recreated.  
+Besides retaining state across recompositions,  
+`rememberSaveable` also retains state across Activity recreation and system-initiated process death.
+
+
+
+
 
