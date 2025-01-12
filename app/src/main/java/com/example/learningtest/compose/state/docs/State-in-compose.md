@@ -187,4 +187,32 @@ in [WellnessTasksList.kt](../WellnessTasksList.kt) `list: List<WellnessTask> = r
 
 How do you fix this? Once again, use rememberSaveable. Your state will survive the activity or process recreation using the saved instance state mechanism. Thanks to how rememberSaveable works together with the LazyList, your items are able to also survive leaving the Composition.
 
+### Common patterns in Compose
 
+```kotlin
+@Composable
+fun LazyColumn(
+    modifier: Modifier = Modifier,
+    state: LazyListState = rememberLazyListState(),
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    reverseLayout: Boolean = false,
+    verticalArrangement: Arrangement.Vertical =
+        if (!reverseLayout) Arrangement.Top else Arrangement.Bottom,
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+    flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
+    userScrollEnabled: Boolean = true,
+    content: LazyListScope.() -> Unit
+) { ... }
+```
+
+```kotlin
+    state: LazyListState = rememberLazyListState(),
+```
+The composable function rememberLazyListState creates an initial state for the list using `rememberSaveable`. When the Activity is recreated, the scroll state is maintained without you having to code anything.
+
+Many apps need to react and listen to scroll position, item layout changes, and other events related to the list's state. Lazy components, like LazyColumn or LazyRow, support this use case through hoisting the [LazyListState](https://developer.android.com/reference/kotlin/androidx/compose/foundation/lazy/LazyListState). You can learn more about this pattern in the documentation for state in lists.
+
+Having a state parameter with a default value provided by a public rememberX function is a common pattern in built-in composable functions. Another example can be found in [BottomSheetScaffold](https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary#BottomSheetScaffold(kotlin.Function1,androidx.compose.ui.Modifier,androidx.compose.material3.BottomSheetScaffoldState,androidx.compose.ui.unit.Dp,androidx.compose.ui.unit.Dp,androidx.compose.ui.graphics.Shape,androidx.compose.ui.graphics.Color,androidx.compose.ui.graphics.Color,androidx.compose.ui.unit.Dp,androidx.compose.ui.unit.Dp,kotlin.Function0,kotlin.Boolean,kotlin.Function0,kotlin.Function1,androidx.compose.ui.graphics.Color,androidx.compose.ui.graphics.Color,kotlin.Function1)), which hoists state using `rememberBottomSheetScaffoldState`.
+
+
+https://developer.android.com/develop/ui/compose/lists?hl=ko#react-to-scroll-position
