@@ -139,30 +139,34 @@ read).
 State should be hoisted to at least the highest level it may be changed (write).
 If two states change in response to the same events they should be hoisted to the same level.
 You can hoist the state higher than these rules require, but if you don't hoist the state high
-enough, it might be difficult or impossible to follow unidirectional data flow.  
+enough, it might be difficult or impossible to follow unidirectional data flow.
 
-Your stateless composable can now be reused like [LiquidStatefulCounter.kt](../LiquidStatefulCounter.kt).  
+Your stateless composable can now be reused
+like [LiquidStatefulCounter.kt](../LiquidStatefulCounter.kt).
 
-If juiceCount is modified then StatefulCounter is recomposed. During recomposition, Compose identifies which functions read juiceCount and triggers recomposition of only those functions.
-When the user taps to increment juiceCount, StatefulCounter recomposes, and so does the StatelessCounter that reads juiceCount. But the StatelessCounter that reads waterCount is not recomposed.
+If juiceCount is modified then StatefulCounter is recomposed. During recomposition, Compose
+identifies which functions read juiceCount and triggers recomposition of only those functions.
+When the user taps to increment juiceCount, StatefulCounter recomposes, and so does the
+StatelessCounter that reads juiceCount. But the StatelessCounter that reads waterCount is not
+recomposed.
 
-Your stateful composable function can provide the same state to multiple composable functions.  
+Your stateful composable function can provide the same state to multiple composable functions.
 
 ```kotlin
 @Composable
 fun StatefulCounter() {
-   var count by remember { mutableStateOf(0) }
+    var count by remember { mutableStateOf(0) }
 
-   StatelessCounter(count, { count++ })
-   AnotherStatelessMethod(count, { count *= 2 })
+    StatelessCounter(count, { count++ })
+    AnotherStatelessMethod(count, { count *= 2 })
 }
 ```
 
-Because hoisted state can be shared, be sure to pass only the state that the composables need to avoid unnecessary recompositions, and to increase reusability.
+Because hoisted state can be shared, be sure to pass only the state that the composables need to
+avoid unnecessary recompositions, and to increase reusability.
 
-Key Point: A best practice for the design of Composables is to pass them only the parameters they need.
-
-
+Key Point: A best practice for the design of Composables is to pass them only the parameters they
+need.
 
 https://developer.android.com/develop/ui/compose/state?hl=ko#state-hoisting
 
@@ -183,9 +187,12 @@ fun WellnessScreen(modifier: Modifier = Modifier) {
 ### Restore item state in LazyList
 
 For WellnessTask When an item leaves the Composition, state that was remembered is forgotten.   
-in [WellnessTasksList.kt](../WellnessTasksList.kt) `list: List<WellnessTask> = remember { wellnessTasks() },`  
+in [WellnessTasksList.kt](../WellnessTasksList.kt)
+`list: List<WellnessTask> = remember { wellnessTasks() },`
 
-How do you fix this? Once again, use rememberSaveable. Your state will survive the activity or process recreation using the saved instance state mechanism. Thanks to how rememberSaveable works together with the LazyList, your items are able to also survive leaving the Composition.
+How do you fix this? Once again, use rememberSaveable. Your state will survive the activity or
+process recreation using the saved instance state mechanism. Thanks to how rememberSaveable works
+together with the LazyList, your items are able to also survive leaving the Composition.
 
 ### Common patterns in Compose
 
@@ -202,17 +209,77 @@ fun LazyColumn(
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
     userScrollEnabled: Boolean = true,
     content: LazyListScope.() -> Unit
-) { ... }
+) {
+    ...
+}
 ```
 
 ```kotlin
     state: LazyListState = rememberLazyListState(),
 ```
-The composable function rememberLazyListState creates an initial state for the list using `rememberSaveable`. When the Activity is recreated, the scroll state is maintained without you having to code anything.
 
-Many apps need to react and listen to scroll position, item layout changes, and other events related to the list's state. Lazy components, like LazyColumn or LazyRow, support this use case through hoisting the [LazyListState](https://developer.android.com/reference/kotlin/androidx/compose/foundation/lazy/LazyListState). You can learn more about this pattern in the documentation for state in lists.
+The composable function rememberLazyListState creates an initial state for the list using
+`rememberSaveable`. When the Activity is recreated, the scroll state is maintained without you
+having to code anything.
 
-Having a state parameter with a default value provided by a public rememberX function is a common pattern in built-in composable functions. Another example can be found in [BottomSheetScaffold](https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary#BottomSheetScaffold(kotlin.Function1,androidx.compose.ui.Modifier,androidx.compose.material3.BottomSheetScaffoldState,androidx.compose.ui.unit.Dp,androidx.compose.ui.unit.Dp,androidx.compose.ui.graphics.Shape,androidx.compose.ui.graphics.Color,androidx.compose.ui.graphics.Color,androidx.compose.ui.unit.Dp,androidx.compose.ui.unit.Dp,kotlin.Function0,kotlin.Boolean,kotlin.Function0,kotlin.Function1,androidx.compose.ui.graphics.Color,androidx.compose.ui.graphics.Color,kotlin.Function1)), which hoists state using `rememberBottomSheetScaffoldState`.
+Many apps need to react and listen to scroll position, item layout changes, and other events related
+to the list's state. Lazy components, like LazyColumn or LazyRow, support this use case through
+hoisting
+the [LazyListState](https://developer.android.com/reference/kotlin/androidx/compose/foundation/lazy/LazyListState).
+You can learn more about this pattern in the documentation for state in lists.
 
+Having a state parameter with a default value provided by a public rememberX function is a common
+pattern in built-in composable functions. Another example can be found
+in [BottomSheetScaffold](https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary#BottomSheetScaffold(kotlin.Function1,androidx.compose.ui.Modifier,androidx.compose.material3.BottomSheetScaffoldState,androidx.compose.ui.unit.Dp,androidx.compose.ui.unit.Dp,androidx.compose.ui.graphics.Shape,androidx.compose.ui.graphics.Color,androidx.compose.ui.graphics.Color,androidx.compose.ui.unit.Dp,androidx.compose.ui.unit.Dp,kotlin.Function0,kotlin.Boolean,kotlin.Function0,kotlin.Function1,androidx.compose.ui.graphics.Color,androidx.compose.ui.graphics.Color,kotlin.Function1)),
+which hoists state using `rememberBottomSheetScaffoldState`.
 
 https://developer.android.com/develop/ui/compose/lists?hl=ko#react-to-scroll-position
+
+## Observing MutableList
+
+Using mutable objects for this, such as ArrayList<T> or mutableListOf, won't work.  
+These types won't notify Compose that the items in the list have changed and schedule a
+recomposition of the UI.  
+You need a different API.
+
+The mutableStateOf function returns an object of type MutableState<T>.
+
+The mutableStateListOf and toMutableStateList functions return an object of type
+SnapshotStateList<T>.
+
+> Warning: You can use the mutableStateListOf API instead to create the list. However, the way you
+> use it might result in unexpected recomposition and suboptimal UI performance.
+> If you just define the list and then add the tasks in a different operation it would result in
+> duplicated items being added for every recomposition.
+> ```kotlin
+> // Don't do this!
+> val list = remember { mutableStateListOf<WellnessTask>() }
+> list.addAll(getWellnessTasks())
+> ```
+> Instead, create the list with its initial value in a single operation and then pass it to the
+> remember function, like this:
+> ```kotlin
+> // Do this instead. Don't need to copy
+> val list = remember {
+>     mutableStateListOf<WellnessTask>().apply { addAll(getWellnessTasks()) }
+> }
+> ```
+
+The items method receives a key parameter.  
+By default, each item's state is keyed against the position of the item in the list.
+
+In a mutable list, this causes issues when the data set changes,  
+since items that change position effectively lose any remembered state.
+
+![img.png](Observable-MutableList-Result.png)
+
+This error tells you that you need to provide a [custom saver](https://developer.android.com/develop/ui/compose/state?hl=ko#restore-ui-state).  
+However, you shouldn't be using rememberSaveable to store large amounts of data or complex data
+structures that require lengthy serialization or deserialization.
+
+Similar rules apply when working with Activity's onSaveInstanceState;
+you can find more information in the Save UI states documentation.  
+If you want to do this, you need an alternative storing mechanism.  
+You can learn more
+about [different options for preserving UI state](https://developer.android.com/topic/libraries/architecture/saving-states?hl=ko#options).
+
