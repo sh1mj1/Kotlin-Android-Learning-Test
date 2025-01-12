@@ -11,7 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun WaterStatefulCounter(modifier: Modifier = Modifier) {
     var count by rememberSaveable { mutableIntStateOf(0) }
-    WaterStatelessCounter(
+    LiquidStatelessCounter(
         count = count,
         onIncrement = { count++ },
         modifier = modifier,

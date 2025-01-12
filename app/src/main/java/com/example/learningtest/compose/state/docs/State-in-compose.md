@@ -88,13 +88,15 @@ Besides retaining state across recompositions,
 
 ## State hoisting
 
-A composable that uses remember to store an object contains internal state, which makes the composable stateful.  
-composables with internal state tend to be less reusable and harder to test.  
+A composable that uses remember to store an object contains internal state, which makes the
+composable stateful.  
+composables with internal state tend to be less reusable and harder to test.
 
 Composables that don't hold any state are called stateless composables.  
-An easy way to create a stateless composable is by using state hoisting.  
+An easy way to create a stateless composable is by using state hoisting.
 
-The general pattern for state hoisting in Jetpack Compose is to replace the state variable with two parameters:
+The general pattern for state hoisting in Jetpack Compose is to replace the state variable with two
+parameters:
 
 * `value: T` - the current value to display
 * `onValueChange: (T) -> Unit` - an event that requests the value to change with a new value T
@@ -103,28 +105,65 @@ where this value represents any state that could be modified.
 
 The pattern where the state goes down, and events go up is called Unidirectional Data Flow (UDF),  
 and state hoisting is how we implement this architecture in Compose.  
-You can learn more about this in the [Compose Architecture documentation](https://developer.android.com/develop/ui/compose/architecture#udf-compose).  
+You can learn more about this in
+the [Compose Architecture documentation](https://developer.android.com/develop/ui/compose/architecture#udf-compose).
 
 State that is hoisted this way has some important properties:
 
-* Single source of truth: By moving state instead of duplicating it, we're ensuring there's only one source of truth. This helps avoid bugs.
+* Single source of truth: By moving state instead of duplicating it, we're ensuring there's only one
+  source of truth. This helps avoid bugs.
 * Shareable: Hoisted state can be shared with multiple composables.
-* Interceptable: Callers to the stateless composables can decide to ignore or modify events before changing the state.
-* Decoupled: The state for a stateless composable function can be stored anywhere. For example, in a ViewModel.
+* Interceptable: Callers to the stateless composables can decide to ignore or modify events before
+  changing the state.
+* Decoupled: The state for a stateless composable function can be stored anywhere. For example, in a
+  ViewModel.
 
 ### Stateful vs Stateless
 
-A stateless composable is a composable that doesn't own any state, meaning it doesn't hold or define or modify new state.
+A stateless composable is a composable that doesn't own any state, meaning it doesn't hold or define
+or modify new state.
 
 A stateful composable is a composable that owns a piece of state that can change over time.
 
-In real apps, having a 100% stateless composable can be difficult to achieve depending on the composable's responsibilities.    
-You should design your composables in a way that they will own as little state as possible and allow the state to be hoisted, when it makes sense, by exposing it in the composable's API.    
+In real apps, having a 100% stateless composable can be difficult to achieve depending on the
+composable's responsibilities.    
+You should design your composables in a way that they will own as little state as possible and allow
+the state to be hoisted, when it makes sense, by exposing it in the composable's API.
 
-[StatelessCounter.kt](../WaterStatelessCounter.kt) , [StatefulCounter.kt](../WaterStatefulCounter.kt)
+[StatelessCounter.kt](../LiquidStatelessCounter.kt) , [StatefulCounter.kt](../WaterStatefulCounter.kt)
+
+Key Point: When hoisting state, there are three rules to help you figure out where state should go:
+
+State should be hoisted to at least the lowest common parent of all composables that use the state (
+read).
+State should be hoisted to at least the highest level it may be changed (write).
+If two states change in response to the same events they should be hoisted to the same level.
+You can hoist the state higher than these rules require, but if you don't hoist the state high
+enough, it might be difficult or impossible to follow unidirectional data flow.  
+
+Your stateless composable can now be reused like [LiquidStatefulCounter.kt](../LiquidStatefulCounter.kt).  
+
+If juiceCount is modified then StatefulCounter is recomposed. During recomposition, Compose identifies which functions read juiceCount and triggers recomposition of only those functions.
+When the user taps to increment juiceCount, StatefulCounter recomposes, and so does the StatelessCounter that reads juiceCount. But the StatelessCounter that reads waterCount is not recomposed.
+
+Your stateful composable function can provide the same state to multiple composable functions.  
+
+```kotlin
+@Composable
+fun StatefulCounter() {
+   var count by remember { mutableStateOf(0) }
+
+   StatelessCounter(count, { count++ })
+   AnotherStatelessMethod(count, { count *= 2 })
+}
+```
+
+Because hoisted state can be shared, be sure to pass only the state that the composables need to avoid unnecessary recompositions, and to increase reusability.
+
+Key Point: A best practice for the design of Composables is to pass them only the parameters they need.
 
 
 
 
-
+https://developer.android.com/develop/ui/compose/state?hl=ko#state-hoisting
 

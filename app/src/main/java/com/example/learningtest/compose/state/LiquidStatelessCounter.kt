@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun WaterStatelessCounter(
+fun LiquidStatelessCounter(
     count: Int,
     onIncrement: () -> Unit,
     modifier: Modifier = Modifier,
@@ -37,10 +37,10 @@ class CountParameters : PreviewParameterProvider<Int> {
 
 @Preview(showBackground = true)
 @Composable
-private fun WaterStatelessCounterPreview(
+private fun LiquidStatelessCounterPreview(
     @PreviewParameter(CountParameters::class) count: Int,
 ) {
-    WaterStatelessCounter(
+    LiquidStatelessCounter(
         count = count,
         onIncrement = {},
     )
