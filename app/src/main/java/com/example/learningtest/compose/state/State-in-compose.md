@@ -30,6 +30,22 @@ fun WaterCounter(modifier: Modifier = Modifier) {
 
 it doesn't work.
 
+## Memory in a composable function
+
+* The Composition: a description of the UI built by Jetpack Compose when it executes composables.
+* Initial composition: creation of a Composition by running composables the first time.
+* Recomposition: re-running composables to update the Composition when data changes.
+
+Compose needs to know what state to track.
+
+Compose has a special state tracking system in place that schedules recompositions for any
+composables that read a particular state.
+This lets Compose be granular and just recompose those composable functions that need to change, not
+the whole UI.
+
+You can use the mutableStateOf function to create an observable MutableState.
+You can think of using remember as a mechanism to store a single object in the Composition, in the
+same way a private val property does in an object.
 
 
 
