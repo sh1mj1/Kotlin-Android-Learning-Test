@@ -11,5 +11,7 @@
     <string name="align_your_body_data_sample">sample data</string>
     <string name="align_your_body">Align Your Body</string>
     <string name="favorite_collections">Favorite Collections</string>
+    <string name="bottom_navigation_home">bottom navigation home</string>
+    <string name="bottom_navigation_profile">bottom navigation profile</string>
 
 </resources>
