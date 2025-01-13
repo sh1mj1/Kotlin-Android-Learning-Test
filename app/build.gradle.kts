@@ -37,7 +37,10 @@ android {
 
     packaging {
         resources {
-            excludes += "META-INF/**"
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/licenses/*"
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/LICENSE-notice.md"
             excludes += "win32-x86*/**"
         }
     }
@@ -84,4 +87,6 @@ dependencies {
     debugImplementation(libs.compose.ui.test.manifest)
     androidTestImplementation(libs.compose.ui.test.junit4)
     implementation(libs.androidx.material.icons.extended)
+
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 }
