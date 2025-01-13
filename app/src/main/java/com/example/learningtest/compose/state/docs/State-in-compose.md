@@ -273,7 +273,8 @@ since items that change position effectively lose any remembered state.
 
 ![img.png](Observable-MutableList-Result.png)
 
-This error tells you that you need to provide a [custom saver](https://developer.android.com/develop/ui/compose/state?hl=ko#restore-ui-state).  
+This error tells you that you need to provide
+a [custom saver](https://developer.android.com/develop/ui/compose/state?hl=ko#restore-ui-state).  
 However, you shouldn't be using rememberSaveable to store large amounts of data or complex data
 structures that require lengthy serialization or deserialization.
 
@@ -282,4 +283,45 @@ you can find more information in the Save UI states documentation.
 If you want to do this, you need an alternative storing mechanism.  
 You can learn more
 about [different options for preserving UI state](https://developer.android.com/topic/libraries/architecture/saving-states?hl=ko#options).
+
+## State in ViewModel
+
+The screen, or UI state, indicates what should display on the screen (for example, the list of
+tasks).  
+This state is usually connected with other layers of the hierarchy because it contains application
+data.
+
+ViewModels provide the UI state and access to the business logic located in other layers of the
+app.  
+Additionally, ViewModels survive configuration changes, so they have a longer lifetime than the
+Composition.  
+They can follow the lifecycle of the host of Compose content—that is,  
+activities, fragments, or the destination of a Navigation graph if you're
+using [Compose Navigation](https://developer.android.com/develop/ui/compose/navigation?hl=ko).
+
+ViewModels are not part of the Composition. Therefore, you should not hold state created in
+composables (for example, a remembered value) because this could cause memory leaks.
+
+### Migrate the list and remove method
+
+While the previous steps showed you how to manage the state directly in the Composable functions,
+it's a good practice to keep the UI logic and business logic separated from the UI state and migrate
+it to a ViewModel.
+
+#### [WellnessViewModel.kt](../WellnessViewModel.kt)
+
+Let's migrate the UI state, the list, to your ViewModel and also start extracting business logic into it.
+
+
+
+#### [WellnessScreenV2.kt](../WellnessScreenV2.kt)
+
+Instantiate the wellnessViewModel ViewModel by calling viewModel(), as parameter of the Screen composable, so it can be replaced when testing this composable, and hoisted if required. Provide WellnessTasksList with the task list and remove function to the onCloseTask lambda.
+
+viewModel() returns an existing ViewModel or creates a new one in the given scope. The ViewModel instance is retained as long as the scope is alive. For example, if the composable is used in an activity, viewModel() returns the same instance until the activity is finished or the process is killed.
+
+ViewModels are recommended to be used at screen-level composables, that is, close to a root composable called from an activity, fragment, or destination of a Navigation graph. ViewModels should never be passed down to other composables, instead you should pass only the data they need and functions that perform the required logic as parameters.
+
+
+
 
