@@ -13,5 +13,6 @@
     <string name="favorite_collections">Favorite Collections</string>
     <string name="bottom_navigation_home">home</string>
     <string name="bottom_navigation_profile">profile</string>
+    <string name="title_activity_soothe">SootheActivity</string>
 
 </resources>
