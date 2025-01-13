@@ -172,7 +172,7 @@ https://developer.android.com/develop/ui/compose/state?hl=ko#state-hoisting
 
 ## Work with lists
 
-[WellnessTaskItemV2.kt](../WellnessTaskItemV2.kt), [WellnessTask.kt](../WellnessTask.kt), [WellnessTasksList.kt](../WellnessTasksList.kt)
+[WellnessTaskItemV2.kt](../WellnessTaskItemV2.kt), [WellnessTask.kt](../WellnessTask.kt), [WellnessTasksList.kt](../WellnessTasksListV1.kt)
 
 ```kotlin
 @Composable
@@ -187,7 +187,7 @@ fun WellnessScreen(modifier: Modifier = Modifier) {
 ### Restore item state in LazyList
 
 For WellnessTask When an item leaves the Composition, state that was remembered is forgotten.   
-in [WellnessTasksList.kt](../WellnessTasksList.kt)
+in [WellnessTasksList.kt](../WellnessTasksListV1.kt)
 `list: List<WellnessTask> = remember { wellnessTasks() },`
 
 How do you fix this? Once again, use rememberSaveable. Your state will survive the activity or
@@ -310,17 +310,71 @@ it to a ViewModel.
 
 #### [WellnessViewModel.kt](../WellnessViewModel.kt)
 
-Let's migrate the UI state, the list, to your ViewModel and also start extracting business logic into it.
-
-
+Let's migrate the UI state, the list, to your ViewModel and also start extracting business logic
+into it.
 
 #### [WellnessScreenV2.kt](../WellnessScreenV2.kt)
 
-Instantiate the wellnessViewModel ViewModel by calling viewModel(), as parameter of the Screen composable, so it can be replaced when testing this composable, and hoisted if required. Provide WellnessTasksList with the task list and remove function to the onCloseTask lambda.
+Instantiate the wellnessViewModel ViewModel by calling viewModel(), as parameter of the Screen
+composable, so it can be replaced when testing this composable, and hoisted if required. Provide
+WellnessTasksList with the task list and remove function to the onCloseTask lambda.
 
-viewModel() returns an existing ViewModel or creates a new one in the given scope. The ViewModel instance is retained as long as the scope is alive. For example, if the composable is used in an activity, viewModel() returns the same instance until the activity is finished or the process is killed.
+viewModel() returns an existing ViewModel or creates a new one in the given scope. The ViewModel
+instance is retained as long as the scope is alive. For example, if the composable is used in an
+activity, viewModel() returns the same instance until the activity is finished or the process is
+killed.
 
-ViewModels are recommended to be used at screen-level composables, that is, close to a root composable called from an activity, fragment, or destination of a Navigation graph. ViewModels should never be passed down to other composables, instead you should pass only the data they need and functions that perform the required logic as parameters.
+ViewModels are recommended to be used at screen-level composables, that is, close to a root
+composable called from an activity, fragment, or destination of a Navigation graph. ViewModels
+should never be passed down to other composables, instead you should pass only the data they need
+and functions that perform the required logic as parameters.
+
+## Migrate the checked state
+
+```kotlin
+data class WellnessTask(
+    val id: Int,
+    val label: String,
+    var checked: Boolean = false,
+)
+```
+
+[WellnessTaskItemV3.kt](../WellnessTaskItemV3.kt), [WellnessTasksListV2.kt](../WellnessTasksListV2.kt), [WellnessScreenV3.kt](../WellnessScreenV3.kt)
+
+Notice that checking any task doesn't quite work yet.  
+This is because what Compose is tracking for the MutableList are changes related to adding and
+removing elements. This is why deleting works. But it's unaware of changes in the row item values (
+checkedState in our case), unless you tell it to track them too.
+
+There are two ways to fix this:
+
+* Change our data class WellnessTask so that checkedState becomes MutableState<Boolean> instead of
+  Boolean, which causes Compose to track an item change.
+* Copy the item you're about to mutate, remove the item from your list and re-add the mutated item
+  to the list, which causes Compose to track that list change.
+
+There are pros and cons to both approaches. For example, depending on your implementation of the
+list you're using, removing and reading the element might be costly.
+
+So let's say, you want to avoid potentially expensive list operations, and make checkedState
+observable as it's more efficient and Compose-idiomatic.
+
+```kotlin
+data class WellnessTask(
+    val id: Int,
+    val label: String,
+    val checked: MutableState<Boolean> = mutableStateOf(false)
+)
+```
+
+Change WellnessTask to be a class instead of a data class. Make WellnessTask receive an
+initialChecked variable with default value false in the constructor, then we can initialize the
+checked variable with the factory method mutableStateOf and taking initialChecked as default value.
+
+[WellnessTask.kt](../WellnessTask.kt)
+
+
+https://developer.android.com/codelabs/jetpack-compose-state#11
 
 
 

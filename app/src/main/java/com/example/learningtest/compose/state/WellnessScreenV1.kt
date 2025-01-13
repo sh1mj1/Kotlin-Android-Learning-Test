@@ -13,7 +13,7 @@ fun WellnessScreenV1(modifier: Modifier = Modifier) {
         WaterStatefulCounter()
 
         val wellnessTasks = remember { wellnessTasks().toMutableStateList() }
-        WellnessTasksList(list = wellnessTasks, onCloseTask = { task -> wellnessTasks.remove(task) })
+        WellnessTasksListV1(list = wellnessTasks, onCloseTask = { task -> wellnessTasks.remove(task) })
     }
 }
 

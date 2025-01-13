@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun WellnessTasksList(
+fun WellnessTasksListV1(
     list: List<WellnessTask>,
     onCloseTask: (WellnessTask) -> Unit,
     modifier: Modifier = Modifier,

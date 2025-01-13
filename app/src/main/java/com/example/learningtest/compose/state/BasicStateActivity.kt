@@ -18,7 +18,7 @@ class BasicStateActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    WellnessScreenV1()
+                    WellnessScreenV3()
                 }
             }
         }
