@@ -3,5 +3,9 @@
     <string name="title_activity_main2">MainActivity2</string>
     <string name="show_less">Show less</string>
     <string name="show_more">Show more</string>
+
     <string name="title_activity_basic_state">BasicStateActivity</string>
+
+    <string name="placeholder_search">Search</string>
+
 </resources>
