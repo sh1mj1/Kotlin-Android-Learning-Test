@@ -112,4 +112,94 @@ fun processPayment(payment: Payment) {
 
 </details>
 
+<details>
+
+  <summary><span style="font-size: 1.5em; font-weight: bold;">📌 lateinit </span></summary>
+
+lateinit은 Kotlin에서 클래스 속성과 최상위 속성에 사용할 수 있는 수정자(modifier)입니다.
+즉, var 속성을 즉시 값을 제공하지 않고 나중에 초기화할 수 있도록 해줍니다.
+
+* 제약 사항:
+  • 기본 타입(Int, Double 등)에는 사용할 수 없음
+  • null이 될 수 없는 타입(String, Int가 아닌 String? 같은 타입은 불가능)
+  • Android 개발에서 객체 생성 시 즉시 초기화할 수 없지만, 사용 전에 반드시 초기화되는 속성에 자주 사용됨
+
+### Android 개발에서 lateinit의 실제 사용 사례
+
+1. View Binding을 즉시 초기화하지 않고 사용
+   TextView, Button 등의 UI 요소는 setContentView()가 호출된 후 onCreate()에서 초기화해야 함.
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+    private lateinit var textView: TextView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        textView = findViewById(R.id.textView)
+        textView.text = "Hello, World!"
+    }
+
+}
+```
+
+2. 생명주기(Lifecycle)에 맞춘 초기화
+   Android 생명주기에 따라 초기화가 필요한 ViewModel, Fragment 속성 등에 사용됨.
+
+```kotlin
+class MyFragment : Fragment() {
+    private lateinit var adapter: MyAdapter
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        adapter = MyAdapter()
+    }
+}
+```
+
+3. 의존성 주입(Dependency Injection)과 함께 사용
+   Hilt 또는 Dagger 같은 DI 프레임워크에서 lateinit을 활용할 수 있음.👇
+
+```kotlin
+@HiltViewModel
+class UserViewModel @Inject constructor(
+    private val userRepository: UserRepository
+) : ViewModel() {
+
+    fun user(): User = userRepository.user()
+
+}
+```
+
+### lateinit의 단점
+
+1. var 속성에서만 사용 가능:
+    * val(불변 속성)에서는 사용할 수 없음
+2. 기본적으로 스레드 안전(Thread-Safe)하지 않음
+    * 여러 스레드에서 동시에 접근할 경우, 예상치 못한 상태나 충돌 발생 가능
+3. 코드 스멜(Code Smell)과 잘못된 사용 가능성
+    * 초기화를 미루다가 NullPointerException이 발생할 위험이 있음
+    * 예제: lateinit 속성을 초기화하기 전에 접근하면 런타임 예외 발생👇
+
+```kotlin
+lateinit var name: String
+
+fun printName() {
+    println(name) // 초기화되지 않으면 예외 발생
+}
+```
+
+### 테스트에서의 lateinit 사용
+
+📌 [LateinitTest.kt](app/src/test/java/com/example/learningtest/lateinit/LateinitTest.kt), [LateinitAndroidComponentTest.kt](app/src/test/java/com/example/learningtest/lateinit/LateinitAndroidComponentTest.kt)
+같은 파일에서 테스트 목적으로 활용됨.
+
+### 결론
+
+* lateinit은 Android 개발에서 UI 요소, 의존성 주입, 생명주기 관리에 유용하지만,
+* 남용하면 NullPointerException 발생 위험이 있으므로 신중하게 사용해야 함!
+
+</details>
+
 </details>
