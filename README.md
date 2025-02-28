@@ -388,3 +388,186 @@ UI를 표시하지 않는 Activity는 앱 내에서 “트래픽 컨트롤러”
 
 
 </details>
+
+<details>
+
+  <summary><span style="font-size: 2.0em; font-weight: bold;">📌 OOP </span></summary>
+
+<details>
+
+  <summary><span style="font-size: 1.5em; font-weight: bold;">📌 SOLID </span></summary>
+
+## SOLID 원칙
+
+* SOLID는 객체 지향 설계를 더욱 이해하기 쉽고, 확장 가능하며 유지보수가 용이하도록 만드는 5가지 원칙 을 의미합니다.
+    * SRP (단일 책임 원칙, Single Responsibility Principle)
+    * OCP (개방-폐쇄 원칙, Open-Closed Principle)
+    * LSP (리스코프 치환 원칙, Liskov Substitution Principle)
+    * ISP (인터페이스 분리 원칙, Interface Segregation Principle)
+    * DIP (의존성 역전 원칙, Dependency Inversion Principle)
+
+### SRP (Single Responsibility Principle, 단일 책임 원칙)
+
+“모듈(클래스, 함수, 패키지 등)은 오직 하나의 책임만 가져야 한다”  
+즉, 하나의 모듈(클래스 등)이 변경되는 이유는 단 하나여야 합니다.
+
+#### SRP 위반 예제
+
+[SRP 위반 예제](app/src/test/java/com/example/learningtest/solid/SRPViolated.kt)SRP 위반 예제
+LottoSeller 클래스 코드에서 LottoSeller 는 너무 많은 역할을 담당 하고 있습니다.
+
+* 로또 개수 계산
+* 랜덤 번호 생성
+* 로또 번호 검증
+
+#### 문제점:
+
+로또 번호 생성 전략이 바뀌면 LottoSeller 를 변경해야 합니다.  
+하지만 로또 번호 생성 전략은 LottoSeller 의 책임이 아닙니다!  
+즉, 이 클래스는 여러 이유로 변경될 가능성이 있으므로 SRP를 위반하고 있습니다.
+
+#### SRP 준수 (리팩토링)
+
+[SRP 준수 (리팩토링)](app/src/test/java/com/example/learningtest/solid/SRPRefactored.kt)SRP 준수 (리팩토링)
+리팩토링된 코드에서는 `LottoSeller` 가 가격만 계산하도록 역할을 분리했습니다.
+
+* 로또 번호 생성 책임 → `LotteryGenerateStrategy` 로 이동
+* 로또 번호 검증 책임 → `Lottery` 클래스가 처리
+* 결과:
+    * 각 클래스는 오직 하나의 변경 이유만 가지게 됨
+    * 이 원칙은 클래스뿐만 아니라, 모듈, 패키지, 함수에도 적용 가능
+
+#### OCP (Open-Closed Principle, 개방-폐쇄 원칙)
+
+“소프트웨어 요소(클래스, 모듈, 함수 등)는 확장에는 열려 있어야 하고, 변경에는 닫혀 있어야 한다”
+즉, 새로운 기능을 추가할 때 기존 코드를 수정하지 않고도 기능을 확장할 수 있어야 합니다.
+
+#### OCP 위반 예제
+
+[OCP 위반 예제](app/src/test/java/com/example/learningtest/solid/OCPViolated.kt)
+
+고객(Customer)이 LottoSeller 에서 로또를 구매한다고 가정합니다.
+
+```kotlin
+private class Customer {
+    fun buyLotto(money: Int, lottoSeller: LottoSeller): List<Lottery> {
+        return lottoSeller.soldLotto(money)
+    }
+}
+```
+
+이제 “할인된 로또 판매점(DiscountedLottoSeller)” 이 추가된다고 가정해 봅시다.  
+OCP 위반 코드에서는 Customer 클래스 내부 코드를 변경해야 합니다.
+
+* 문제점:
+    * 새로운 판매점이 추가될 때마다 Customer 클래스를 수정해야 함
+    * OCP 원칙에 따르면, 새로운 기능이 추가될 때 기존 코드를 변경하지 않아야 함
+
+#### OCP 준수 (리팩토링)
+
+[OCP 준수 (리팩토링)](app/src/test/java/com/example/learningtest/solid/OCPRefactored.kt)
+
+* 리팩토링된 코드에서는 인터페이스를 도입하여 문제를 해결 합니다.
+    * LottoSeller 인터페이스를 생성
+    * NormalLottoSeller 와 DiscountedLottoSeller 는 LottoSeller 인터페이스를 구현
+
+* 결과:
+    * Customer 클래스는 변경 없이 새로운 판매점 추가 가능
+    * OCP 원칙을 준수하여 확장은 열려 있고, 기존 코드 변경은 필요 없음
+
+### LSP (Liskov Substitution Principle, 리스코프 치환 원칙)
+
+“상위 클래스(부모 클래스)를 하위 클래스(자식 클래스)로 대체하더라도 프로그램이 정상적으로 동작해야 한다”
+
+#### LSP 위반 예제
+
+[LSP 위반 예제](app/src/test/java/com/example/learningtest/solid/LSPViolated.kt)
+로또 클래스(Lottery)에 “사각형(Rectangle)“과 “정사각형(Square)” 개념을 추가 해야 한다고 가정합니다.  
+위반 코드를 보면, Square 클래스는 Rectangle 을 상속받습니다.
+
+* 문제점:
+    * Square 는 Rectangle 의 하위 클래스이지만, 기본적인 동작이 다름
+    * Rectangle 에서는 setWidth(2), setHeight(5) 하면 면적은 10이 되어야 함
+    * 하지만 Square 에서는 높이와 너비가 항상 같아야 하므로 면적이 25가 됨 (오류 발생)
+    * 즉, Square 는 Rectangle 을 대체할 수 없으므로 LSP를 위반
+
+#### LSP 준수 (리팩토링)
+
+[LSP 준수 (리팩토링)](app/src/test/java/com/example/learningtest/solid/LSPRefactored.kt)
+
+LSP 준수 코드에서는
+
+* Rectangle 과 Square 의 관계를 부모-자식 상속 관계에서 일반 인터페이스(Shape)로 변경
+
+* 결과:
+    * Square 와 Rectangle 이 Shape 인터페이스를 따르게 변경
+    * LSP 준수: 하위 클래스가 부모 클래스를 대체할 수 있음
+
+### ISP (Interface Segregation Principle, 인터페이스 분리 원칙)
+
+“클라이언트는 사용하지 않는 메서드에 의존하면 안 된다”  
+즉, 불필요한 기능이 포함된 인터페이스를 강요해서는 안 됨
+
+#### ISP 위반 예제
+
+[ISP 위반 예제](app/src/test/java/com/example/learningtest/solid/ISPViolated.kt)
+
+로또를 파는 사람(HumanLottoSeller)과 로또 자판기(MachineLottoSeller)가 있다고 가정합니다.  
+ISP 위반 코드에서는 모든 로또 판매자는 reset() 과 chat() 을 구현해야 합니다.
+
+* 문제점:
+    * HumanLottoSeller 는 reset() 을 구현할 필요 없음
+    * MachineLottoSeller 는 chat() 을 구현할 필요 없음
+    * 불필요한 메서드 구현을 강요받으므로 ISP를 위반
+
+#### ISP 준수 (리팩토링)
+
+[ISP 준수 (리팩토링)](app/src/test/java/com/example/learningtest/solid/ISPRefactored.kt)
+
+* 리팩토링 코드에서는
+    * chat() 이 필요한 HumanLottoSeller 인터페이스
+    * reset() 이 필요한 MachineLottoSeller 인터페이스
+      로 분리하여 해결
+
+* 결과:
+    * 필요한 기능만 인터페이스로 나누어 ISP 준수
+    * 불필요한 기능 강요 없이 유연한 설계 가능
+
+### DIP (Dependency Inversion Principle, 의존성 역전 원칙)
+
+DIP의 핵심 개념:
+
+1. 상위 모듈(고수준 모듈, High-Level Module)은 하위 모듈(저수준 모듈, Low-Level Module)에 의존하면 안 된다.
+   → 둘 다 추상화(Interface)에 의존해야 함
+2. 추상화(Interface)는 구체적인 구현(Details)에 의존하면 안 된다.
+   → 구체적인 구현이 추상화에 의존해야 함
+
+#### DIP 위반 예제
+
+[DIP 위반 예제](app/src/test/java/com/example/learningtest/solid/DIPViolated.kt)
+
+DIP 위반 코드에서는
+Customer 클래스가 구체적인 구현체(HumanLottoSeller, MachineLottoSeller)에 직접 의존 합니다.
+
+* 문제점:
+    * 새로운 판매자(OnlineLottoSeller) 가 추가되면 Customer 를 변경해야 함
+    * OCP(개방-폐쇄 원칙)도 함께 위반됨
+
+#### DIP 준수 (리팩토링)
+
+[DIP 준수 (리팩토링)](app/src/test/java/com/example/learningtest/solid/DIPRefactored.kt)
+
+* DIP 준수 코드에서는
+    * LottoSeller 인터페이스를 도입하고
+    * Customer 는 인터페이스만 참조하도록 변경
+
+* 결과:
+    * 상위 모듈이 하위 모듈에 직접 의존하지 않음
+    * 새로운 판매자가 추가되어도 기존 코드 수정 불필요 (OCP도 준수)
+
+SOLID 원칙을 따르면 코드가 확장 가능하고 유지보수가 쉬운 구조가 됩니다!
+
+</details>
+
+
+</details>
