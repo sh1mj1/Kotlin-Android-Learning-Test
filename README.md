@@ -202,4 +202,82 @@ fun printName() {
 
 </details>
 
+<details>
+
+  <summary><span style="font-size: 1.5em; font-weight: bold;">📌 by &compare by lazy with lateinit </span></summary>
+
+### by 키워드
+
+by 키워드는 위임(Delegation) 을 위한 키워드로, 클래스가 특정 기능의 구현을 다른 객체에 위임 할 수 있도록 해줍니다.  
+이를 통해 데코레이터 패턴(Decorator Pattern) 을 쉽게 구현할 수 있습니다.
+
+* by 키워드를 사용한 위임의 종류:
+    * [프로퍼티 위임(Property Delegation)](app/src/test/java/com/example/learningtest/by/ByPropertyDelegationTest.kt)
+    * [인터페이스 위임(Interface Delegation)](app/src/test/java/com/example/learningtest/by/ByInterfaceDelegationTest.kt)
+
+### 데코레이터 패턴(Decorator Pattern)
+
+클래스의 기능을 확장하고 싶지만, 상속이 어려운 경우 데코레이터 패턴 을 사용할 수 있습니다.  
+이 패턴의 핵심은 원래 클래스와 같은 인터페이스를 구현하는 새로운 클래스를 만들고, 원래 클래스의 인스턴스를 필드로 저장 하는 것입니다.  
+그러나 이 방식은 보일러플레이트 코드 가 많아질 수 있습니다.
+
+위임을 사용하지 않고 수동으로 데코레이터 패턴
+구현 : [수동 데코레이터 패턴 예제](app/src/test/java/com/example/learningtest/by/ByInterfaceDelegationTest.kt))
+
+### by 키워드를 사용한 위임의 단점
+
+* 성능 오버헤드 (경미함): 위임을 사용하면 메서드 호출이 한 단계 추가 되어 성능 오버헤드가 발생할 수 있음
+
+### Android 개발에서 by 키워드 사용 사례
+
+* [Activity에서 ViewModel 초기화](app/src/test/java/com/example/learningtest/by/android/CreateViewModelLazilyTest.kt)
+    * Android의 ViewModel을 액티비티의 생명주기에 맞게 생성 및 유지
+    * by viewModels() 를 사용하면 ViewModelProvider를 직접 사용할 필요 없음
+
+* [싱글톤 또는 무거운 리소스 초기화 (예: Retrofit)](app/src/test/java/com/example/learningtest/by/android/CreateRetrofitLazilyTest.kt)
+    * 네트워크 요청을 위한 Retrofit 인스턴스를 초기화할 때 by lazy를 활용하면 앱 실행 속도를 개선
+    * 객체를 처음 사용할 때만 초기화됨
+
+* View Binding 초기화
+    * by lazy 를 활용하면 뷰가 생성될 때만 바인딩 객체가 초기화 됨
+    * 불필요한 메모리 사용을 줄일 수 있음👇
+
+```kotlin
+class StubActivity : ComponentActivity() {
+    private val binding: ActivityStubBinding by lazy {
+        ActivityStubBinding.inflate(layoutInflater)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(binding.root)
+        binding.textView.text = "Hello, Android!"
+    }
+
+}
+```
+
+### by lazy
+
+`by lazy` 는 프로퍼티가 처음 접근될 때 초기화되는 Kotlin의 위임(delegate) 기능 입니다.
+
+* 장점:
+    * 성능 최적화: 불필요한 초기화를 방지하여 앱 실행 속도 개선
+    * 리소스 관리: 사용되지 않는 객체의 불필요한 메모리 점유 방지
+    * 스레드 안전(Thread Safety): 기본적으로 LazyThreadSafetyMode.SYNCHRONIZED 적용
+
+### lateinit vs by lazy
+
+| 속성             | `lateinit`                                | `by lazy`              |
+|----------------|-------------------------------------------|------------------------|
+| 같이 쓰이는 키워드     | `var`                                     | `val`                  |
+| 초기화되는 때        | 첫 사용 이전에 반드시 초기화해야 함                      | 첫 접근할 때 자동으로 초기화됨      |
+| Null 가능성       | `null`로 사용할 수 없음                          | nullable 타입으로 사용 가능    |
+| 사용 범위          | 클래스 프로퍼티에서만 사용 가능                         | 클래스 프로퍼티 & 로컬 변수 사용 가능 |
+| 원시 타입 사용 가능 여부 | 불가능                                       | 가능                     |
+| 스레드 안전성        | 기본적으로 스레드-안전하지 않음                         | 기본적으로 스레드-안전함          |
+| 초기화되지 않았을 때 에러 | `UninitializedPropertyAccessException` 발생 | -                      |
+
+</details>
+
 </details>
