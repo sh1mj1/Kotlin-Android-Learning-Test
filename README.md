@@ -747,6 +747,213 @@ Compose에서는 다양한 애니메이션 API를 제공합니다.
 
 </details>
 
+<details>
+
+  <summary><span style="font-size: 1.5em; font-weight: bold;">📌 Compose 상태 관리 Codelab 학습 </span></summary>
+
+# Compose 상태 관리 Codelab 학습
+
+앱의 **상태(State)** 는 UI에 표시할 내용을 설명하며, **이벤트(Events)** 는 상태를 변경하는 메커니즘입니다.
+상태가 변경되면 UI가 다시 그려집니다.
+
+**핵심 개념:**
+
+- **상태는 존재한다. 이벤트는 발생한다.**
+
+모든 Android 앱에는 **UI 업데이트 루프** 가 있으며, 기본적인 흐름은 다음과 같습니다.
+
+![UI 업데이트 루프](app/src/main/java/com/example/learningtest/compose/state/docs/Ui-update-loop.png)
+
+---
+
+## **잘못된 상태 변경 방식**
+
+```kotlin
+import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.Column
+
+@Composable
+fun WaterCounter(modifier: Modifier = Modifier) {
+    Column(modifier = modifier.padding(16.dp)) {
+        var count = 0
+        Text("You've had $count glasses.")
+        Button(onClick = { count++ }, Modifier.padding(top = 8.dp)) {
+            Text("Add one")
+        }
+    }
+}
+```
+
+**이 코드가 동작하지 않는 이유**
+
+- `count` 값이 변경되어도 **Compose가 이를 상태 변경으로 인식하지 않음**
+- 매번 `WaterCounter`가 다시 호출될 때, `count`가 **항상 0으로 초기화됨**
+
+---
+
+## **Composable 함수에서의 메모리 관리**
+
+**Compose의 UI 렌더링 개념**
+
+- **Composition**: Composable이 실행될 때 생성되는 UI의 설명
+- **초기 Composition**: 처음 Composable이 실행될 때 Composition이 생성됨
+- **Recomposition**: 데이터 변경 시 필요한 Composable만 다시 실행됨
+
+Compose는 **상태를 추적** 하여 필요한 UI 요소만 다시 그립니다.
+이를 위해 `mutableStateOf` 함수를 사용하여 **관찰 가능한 `MutableState`를 생성**해야 합니다.
+
+---
+
+## **remember를 활용한 상태 저장**
+
+**`remember`는 Composition에 객체를 저장하며, Composition이 다시 실행되지 않으면 상태를 유지합니다.**
+
+```kotlin
+val count = remember { mutableStateOf(0) }
+```
+
+[WaterCounterV2.kt](app/src/main/java/com/example/learningtest/compose/state/WaterCounterV2.kt) 참고
+
+### **1. 초기 상태**
+
+![초기 상태](app/src/main/java/com/example/learningtest/compose/state/docs/1WaterCounterV2-initial-state%20.png)
+
+### **2. 'Add one' 버튼 클릭**
+
+![버튼 클릭](app/src/main/java/com/example/learningtest/compose/state/docs/2WaterCounterV2-click-add-one-button.png)
+
+### **3. 'Clear' 버튼 클릭 후 다시 'Add one' 버튼 클릭**
+
+![초기화 후 추가](app/src/main/java/com/example/learningtest/compose/state/docs/5WaterCounterV2-click-clear-water-count-button.png)
+
+---
+
+## **Compose에서 상태 복원**
+
+**`rememberSaveable`을 사용하여 Activity가 재생성된 후에도 상태를 유지할 수 있습니다.**
+
+```kotlin
+val count = rememberSaveable { mutableStateOf(0) }
+```
+
+`rememberSaveable`은 **구성 변경(예: 화면 회전) 및 시스템에 의해 프로세스가 종료된 후에도 상태를 유지** 합니다.
+
+---
+
+## **상태 끌어올리기 (State Hoisting)**
+
+상태를 `remember`로 저장하는 Composable은 **내부 상태를 가지는(stateful) Composable** 입니다.  
+**내부 상태를 가지는 Composable은 재사용성이 낮고 테스트가 어려울 수 있습니다.**
+
+**상태를 가지지 않는(Stateless) Composable을 만들기 위해 상태를 끌어올릴 수 있습니다.**
+
+```kotlin
+// Stateful Composable
+@Composable
+fun StatefulCounter() {
+    var count by remember { mutableStateOf(0) }
+    StatelessCounter(count, { count++ })
+}
+```
+
+**State hoisting 이점**
+
+- **단일 진실 원칙 (Single Source of Truth)**: 중복 없이 한 곳에서 상태 관리 가능
+- **공유 가능 (Shareable)**: 상태를 여러 Composable에서 공유 가능
+- **가로채기 가능 (Interceptable)**: 상태를 변경하기 전 이벤트를 수정 가능
+- **디커플링 (Decoupled)**: 상태 저장 위치를 자유롭게 설정 가능 (예: ViewModel 활용)
+
+**관련 파일** :
+[Stateless 한 카운터](app/src/main/java/com/example/learningtest/compose/state/LiquidStatelessCounter.kt) , [Stateful 한 카운터](app/src/main/java/com/example/learningtest/compose/state/WaterStatefulCounter.kt)
+
+---
+
+## **목록(List) 관리**
+
+**목록을 관리할 때, `mutableListOf()` 대신 `mutableStateListOf()`를 사용해야 합니다.**
+
+```kotlin
+val list = remember { mutableStateListOf<WellnessTask>().apply { addAll(getWellnessTasks()) } }
+```
+
+**목록 상태 복원:** `rememberSaveable`을 사용하여 목록의 상태를 유지할 수 있습니다.
+
+```kotlin
+val list = rememberSaveable { mutableStateListOf<WellnessTask>() }
+```
+
+**관련 파일**:
+[WellnessTask.kt](app/src/main/java/com/example/learningtest/compose/state/WellnessTask.kt),[WellnessTasksListV2.kt](app/src/main/java/com/example/learningtest/compose/state/WellnessTasksListV2.kt)
+
+---
+
+## **ViewModel에서 상태 관리하기**
+
+ViewModel은 **UI 상태를 제공하고, 비즈니스 로직과의 연결을 관리** 합니다.
+
+**ViewModel을 활용하면:**
+
+- UI 상태를 앱의 다른 계층과 연결 가능
+- 구성 변경에도 상태 유지 가능
+- Composition 외부에서 상태 관리 가능
+
+```kotlin
+@HiltViewModel
+class WellnessViewModel @Inject constructor() : ViewModel() {
+    private val _tasks = MutableLiveData<List<WellnessTask>>()
+    val tasks: LiveData<List<WellnessTask>> get() = _tasks
+}
+```
+
+**관련 파일**:
+[WellnessViewModel.kt](app/src/main/java/com/example/learningtest/compose/state/WellnessViewModel.kt)
+
+---
+
+## **상태 변경 감지**
+
+**MutableList의 특정 속성이 변경될 때도 Compose가 이를 감지할 수 있도록 해야 합니다.**
+
+**잘못된 코드** (Compose가 변경을 감지하지 못함)
+
+```kotlin
+data class WellnessTask(
+    val id: Int,
+    val label: String,
+    var checked: Boolean = false,
+)
+```
+
+**올바른 코드** (Compose가 변경을 감지할 수 있도록 `MutableState` 사용)
+
+```kotlin
+data class WellnessTask(
+    val id: Int,
+    val label: String,
+    val checked: MutableState<Boolean> = mutableStateOf(false)
+)
+```
+
+**관련 파일**:
+[WellnessTask.kt](app/src/main/java/com/example/learningtest/compose/state/WellnessTask.kt)
+
+---
+
+**정리**
+
+- `remember`를 사용하여 상태를 유지
+- `rememberSaveable`을 사용하여 구성 변경 후에도 상태 유지
+- 상태를 끌어올려(State Hoisting) 재사용성을 높이고 유지보수를 쉽게 만듦
+- `ViewModel`을 활용하여 UI 상태를 관리
+- `mutableStateListOf()`를 사용하여 리스트의 변경을 감지
+
+**더 알아보기**:
+[Jetpack Compose 상태 관리 문서](https://developer.android.com/codelabs/jetpack-compose-state#11)
+
+
+
+</details>
+
 </details>
 
 <details>
