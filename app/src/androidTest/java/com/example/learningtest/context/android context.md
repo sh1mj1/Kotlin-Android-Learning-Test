@@ -27,7 +27,7 @@ The main features are:
 `ContextWrapper` and `ContextImpl` extends `Context` class. and ContextWrapper has a reference to
 `ContextImpl`.    
 `Activity`, `Service`, `Application` are concrete implementation of `ContextWrapper`.  
-![img.png](img.png)  
+![img.png](context-hierarchy-diagram.png)  
 this diagram shows the relationship between `Context`, `ContextWrapper`, and `ContextImpl`.
 
 ## You can use multiple ways to use Context

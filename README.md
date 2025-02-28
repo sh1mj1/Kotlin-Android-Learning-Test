@@ -386,6 +386,142 @@ UI를 표시하지 않는 Activity는 앱 내에서 “트래픽 컨트롤러”
 
 </details>
 
+<details>
+
+  <summary><span style="font-size: 1.5em; font-weight: bold;">📌 context </span></summary>
+
+## Android Context
+
+Android 앱을 개발할 때 Context 클래스는 항상 만나게 됩니다.  
+Context는 안드로이드 개발에서 매우 중요한 개념 이며,  
+Context 없이는 Activity 시작, Broadcast 송출, 서비스 실행 등을 수행할 수 없습니다.
+
+따라서 Context의 개념을 이해하면 안드로이드 컴포넌트(Activity, Service, Broadcast Receiver, Content Provider)의 동작 원리를
+이해하는 데 도움이 됩니다.  
+각 컴포넌트는 Context를 통해 시스템 서비스 및 앱 리소스에 접근 할 수 있습니다.
+
+### Android Context란?
+
+Context는 현재 애플리케이션의 상태 정보를 제공하는 인터페이스 입니다.  
+즉, 앱 환경 및 시스템 리소스에 접근할 수 있도록 해주는 역할 을 합니다.
+
+* Context가 제공하는 주요 기능
+    * 리소스 접근: getResources(), getString(), getDrawable() 등
+    * 시스템 서비스 접근: getSystemService()
+    * Intent 실행: startActivity(), startService()
+    * 레이아웃 인플레이션: LayoutInflater 를 사용하여 XML을 View로 변환
+
+### Context와 그 하위 클래스
+
+Context 는 추상 클래스 로 존재하며,
+이를 확장하는 `ContextWrapper` 와 `ContextImpl` 클래스가 있습니다.
+
+* ContextWrapper 는 ContextImpl 인스턴스를 참조하며,
+* Activity, Service, Application 클래스는 ContextWrapper 의 구체적인 구현체 입니다.
+
+![context-hierarchy-diagram.png](app/src/androidTest/java/com/example/learningtest/context/context-hierarchy-diagram.png)
+
+위 다이어그램은 Context, ContextWrapper, ContextImpl 의 관계를 나타냅니다.
+
+### Context를 얻는 다양한 방법
+
+#### Activity에서 Context를 얻는 방법
+
+1. 현재 액티비티(Context) 사용 `this`
+2. Base Context 얻기 (Activity 내부에서) `getBaseContext()`
+3. Application Context 얻기 `getApplicationContext()`
+
+이처럼 여러 방식으로 Context를 얻을 수 있으며, 상황에 맞는 적절한 Context를 선택해야 합니다.
+
+#### Application Context VS Activity Context
+
+|           | Application Context | Activity Context                   |
+|-----------|---------------------|------------------------------------|
+| 생명주기      | 앱 전체에 묶여있음          | 특정 액티비티에 묶여있음                      |
+| 사용 범위     | 글로벌(앱 전체에서 사용 가능)   | 특정 Activity에서만 사용 가능               |
+| UI 관련 작업  | 적합하지 않음             | 적합함                                |
+| 메모리 누수 위험 | 낮음                  | 높음 (잘못 사용하면 메모리 누수 발생 가능)          |
+| 사용 예제     | 싱글톤 객체 (Database 등) | `Dialog`, `Snackbar`, 애니메이션 및 뷰 관리 |
+
+* Application Context를 Activity Context 대신 사용하면 문제 발생 가능!
+* Application Context에서는 정상 동작
+* `Toast.makeText(getApplicationContext(), "Hello!", Toast.LENGTH_SHORT).show()`
+* Application Context에서는 예외 발생 👇
+
+```kotlin
+AlertDialog.Builder(getApplicationContext())
+    .setTitle("Title")
+    .setMessage("Message")
+    .show() // 예외 발생!
+```
+
+즉, UI 관련 작업에서는 Activity Context를 사용해야 합니다!
+
+### Context 오용 사례 및 주의점
+
+1. Activity Context를 잘못 관리하여 메모리 누수 발생
+   Activity Context를 정적(static) 변수나 싱글톤(Singleton)에서 참조하지 말 것.
+   이렇게 하면 Activity가 가비지 컬렉션(garbage collection)되지 못하게 되어 메모리 누수가 발생할 수 있음.
+
+   문제 코드 (메모리 누수 발생 가능)
+
+   ```kotlin
+   object Singleton {
+       var context: Context? = null
+   }
+   Singleton.context = this // Memory leak!
+   ```
+
+   해결책: 대신에 Application Context 사용:
+
+   ```kotlin
+   Singleton.context = applicationContext
+   ```
+
+2. Application Context 를 UI 작업에 사용하는 경우 👎
+   Application Context는 UI 요소(Dialog, View 등)를 직접 조작할 수 없습니다.
+
+   ```kotlin
+   val view = LayoutInflater.from(applicationContext).inflate(R.layout.activity_main, null)
+   ```
+
+   💡 해결 방법:
+
+   // ✅ Activity의 Context 사용 -> UI 속성 유지
+   ```kotlin
+   val view = LayoutInflater.from(this).inflate(R.layout.activity_main, null)
+   ```
+
+3. Context를 직접 인스턴스화하려는 경우
+   Context는 시스템이 관리하는 클래스이므로 직접 인스턴스화할 수 없음
+   ```kotlin
+    // ❌ Context를 직접 생성할 수 없음
+    val myContext = Context()
+   ```
+   💡 해결 방법:
+   Activity, Service, Application 등의 Context를 활용해야 함
+
+### 학습 테스트
+
+[ContextBasicTest.kt](app/src/test/java/com/example/learningtest/context/ContextBasicTest.kt)
+
+### 결론
+
+Context를 올바르게 이해하고 사용해야 안정적이고 효율적인 Android 앱을 개발할 수 있음
+
+* Context의 생명주기와 역할을 이해해야 함
+* 앱 전체에서 사용할 작업은 Application Context를 활용
+* UI 관련 작업은 Activity Context를 활용
+* 메모리 누수 방지를 위해 Static 변수에 Activity Context 저장 금지
+
+Context를 적절히 사용하면 앱이 더욱 견고하고 유지보수하기 쉬워집니다!
+
+참고 자료
+• ContextBasicTest.kt
+• Android 공식 문서: Context
+• 책: 안드로이드 프로그래밍 Next Step - 노재춘
+
+</details>
 
 </details>
 
