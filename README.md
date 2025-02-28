@@ -339,3 +339,52 @@ Kotlin에서는 기본적으로 nested(중첩) 클래스이므로, 외부 클래
 </details>
 
 </details>
+
+<details>
+
+  <summary><span style="font-size: 2.0em; font-weight: bold;">📌 Android </span></summary>
+
+<details>
+
+  <summary><span style="font-size: 1.5em; font-weight: bold;">📌 Activity </span></summary>
+
+## Activity
+
+### Activity란 무엇인가? (간단 설명)
+
+Activity는 기본적으로 앱의 한 화면을 나타내는 구성 요소 입니다.  
+사용자가 화면을 보고, 터치하고, 상호작용하는 공간 이며, 현재 중요한 정보를 표시하는 역할을 합니다.
+
+또한, 앱이 일시 정지(Paused)되거나 중단(Stopped)되었을 때 상태를 저장 및 복원 할 수 있도록 관리합니다.  
+Activity를 사용하면 앱 간 데이터를 공유하거나, 특정 화면으로 이동하는 것이 더 쉬워집니다.
+
+### 왜 Activity를 사용해야 하는가?
+
+일반적인 프로그래밍에서는 main() 함수 를 호출해 프로그램이 시작되지만,  
+Android에서는 시스템이 Activity의 생명주기에 맞춰 특정 콜백 메서드 를 실행하여 앱을 실행합니다.
+
+즉, Activity는 사용자가 앱을 실행할 때 자동으로 Android 시스템에 의해 관리되며,  
+생명주기 내에서 적절한 이벤트 처리 를 할 수 있도록 도와줍니다.
+
+### UI를 표시하지 않는 Activity (setContentView 없이)
+
+Activity는 반드시 UI를 가질 필요가 없습니다.  
+UI를 표시하지 않는 Activity는 앱 내에서 “트래픽 컨트롤러”(Front Controller) 역할을 할 수 있습니다.
+
+예를 들어, 데이터 또는 Intent를 받아서 다른 Activity나 Fragment로 즉시 전달하는 역할 을 수행할 수 있습니다.
+
+### UI 없는 Activity를 사용할 때의 이점?
+
+* 네비게이션을 단순화할 수 있음
+* 코드를 더 깔끔하게 유지할 수 있음
+* 사용자의 흐름(로그인 여부, 튜토리얼 완료 여부 등)을 하나의 Activity에서 관리 가능
+* 예: 사용자가 앱을 실행했을 때,
+    * 로그인 여부 확인 후 → 로그인 화면 또는 메인 화면으로 이동
+    * 첫 방문자인 경우 → 튜토리얼 화면으로 이동
+
+이처럼 UI 없이도 앱의 흐름을 제어하는 역할 을 할 수 있습니다.
+
+</details>
+
+
+</details>
