@@ -280,4 +280,62 @@ class StubActivity : ComponentActivity() {
 
 </details>
 
+<details>
+
+  <summary><span style="font-size: 1.5em; font-weight: bold;">📌 Nested vs inner </span></summary>
+
+## 중첩(Nested) 클래스와 내부(Inner) 클래스 (기본적으로 Nested)
+
+Kotlin에서는 클래스 안에 다른 클래스를 선언할 수 있습니다.
+
+### nested 클래스 (중첩 클래스) in Kotlin
+
+nested 클래스는 inner 키워드 없이 다른 클래스 내부에 선언된 클래스입니다.  
+기본적으로 정적(static) 클래스 로 간주되며, 외부 클래스의 멤버에 접근할 수 없습니다.
+
+* 언제 사용해야 할까?
+    * 외부 클래스의 멤버에 접근할 필요가 없고, 단순히 관련된 클래스를 그룹화하고 싶을 때 사용
+
+### inner 클래스 (내부 클래스) in Kotlin
+
+inner 클래스는 inner 키워드가 붙은 중첩 클래스입니다.  
+외부 클래스의 인스턴스를 참조할 수 있으며, 외부 클래스의 멤버에도 접근할 수 있습니다.
+
+* 언제 사용해야 할까?
+    * 외부 클래스의 멤버를 접근해야 할 경우
+
+### Java에서는?
+
+Java에서는 기본적으로 내부 클래스(inner class)가 기본 설정 입니다.  
+즉, Java에서 클래스 내부에 클래스를 선언하면, 기본적으로 외부 클래스의 멤버에 접근 가능 합니다.
+
+만약 외부 클래스와 독립적인 정적 클래스 로 만들고 싶다면, static 키워드를 붙여야 합니다.
+
+📌 즉,
+
+* Kotlin에서는 nested(중첩) 클래스가 기본적으로 static
+* Java에서는 inner(내부) 클래스가 기본이며, static을 명시적으로 붙여야 중첩 클래스가 됨
+
+![nested vs inner.png](app/src/test/java/com/example/learningtest/nestedAndInner/nested%20vs%20inner.png)
+
+### Android 개발에서의 inner 클래스 예제
+
+* [안드로이드 Inner 클래스 예제](app/src/test/java/com/example/learningtest/nestedAndInner/InnerClassAndroidExample.kt)
+    * 내부 클래스가 외부 클래스의 속성 및 함수를 조작할 필요가 있을 때
+    * 대표적인 예: 바운드 서비스(Bound Service)
+    * Binder 클래스가 서비스의 메서드와 데이터를 참조해야 할 때 내부 클래스로 사용됨
+* 안드로이드 브로드캐스트 리시버 (BroadcastReceiver)
+    * 특정 동작을 감지하고 외부 클래스의 데이터를 조작 해야 할 때 inner 클래스를 사용 가능
+
+### Android 개발에서의 nested 클래스 예제
+
+* AndroidNestedClassStubTest.kt
+    * 관련 있는 클래스들을 논리적으로 그룹화 하지만, 외부 클래스의 인스턴스를 필요로 하지 않는 경우
+    * 대표적인 예: UI 상태 모델링 (sealed class 기반 상태 관리), 이벤트 클래스, ViewModel이나 Activity 내에서 헬퍼(Helper) 역할을 하는
+      유틸리티 객체
+
+Kotlin에서는 기본적으로 nested(중첩) 클래스이므로, 외부 클래스의 멤버를 참조해야 한다면 inner 키워드를 명시적으로 붙여야 합니다!
+
+</details>
+
 </details>
