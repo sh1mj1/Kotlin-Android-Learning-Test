@@ -523,6 +523,230 @@ Context를 적절히 사용하면 앱이 더욱 견고하고 유지보수하기 
 
 </details>
 
+<details>
+
+  <summary><span style="font-size: 1.5em; font-weight: bold;">📌 basic compose codelab </span></summary>
+
+# **Compose 기본 Codelab 학습**
+
+```kotlin
+class BasicComposeActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            LearningTestTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background,
+                ) {
+                    Greeting("Android")
+                }
+            }
+        }
+    }
+}
+```
+
+`setContent`을 사용하여 레이아웃을 정의하지만, 기존 View 시스템에서 `setContentView`를 사용하여 XML을 적용하는 것과 달리,
+**Composable 함수**를 직접 호출하여 UI를 구성합니다.
+
+`LearningTestTheme`은 Composable 함수의 스타일을 정의하는 역할을
+합니다. [Theme.kt](app/src/main/java/com/example/learningtest/ui/theme/Theme.kt)
+
+학습
+테스트: [GreetingV1KtTest.kt](app/src/androidTest/java/com/example/learningtest/compose/basic/codelab/GreetingV1KtTest.kt)
+
+---
+
+## **Surface**
+
+`Surface`를 사용하여 `Greeting`의 배경 색상을 변경할 수 있습니다.
+`Surface`는 `color` 속성을 가지므로 `MaterialTheme.colorScheme.primary`를 사용할 수 있습니다.
+
+`Surface` 내부에 있는 컴포넌트들은 해당 배경색 위에 그려집니다.
+[GreetingV2.kt](app/src/main/java/com/example/learningtest/compose/basic/codelab/GreetingV2.kt):
+`GreetingV2`는 `Surface`를 사용합니다.
+
+**텍스트 색상을 확인해 보세요.**
+
+- 명시적으로 텍스트 색상을 지정하지 않았지만, 흰색으로 나타납니다.
+- `Surface`가 `primary` 색상을 배경으로 설정하면, 그 위에 그려지는 텍스트는 자동으로 `onPrimary` 색상을 사용합니다.
+
+이러한 기능은 `Material` 디자인이 **의견(opinionated) 있는 디자인 시스템**이기 때문입니다.
+즉, **일반적인 UI 패턴을 미리 고려하여 기본적인 설정을 제공**합니다.
+
+Material 컴포넌트는 `androidx.compose.foundation` 위에 구축되었으며,
+더 많은 유연성이 필요하면 해당 요소들을 직접 사용할 수도 있습니다.
+
+학습
+테스트: [GreetingsV2KtTest.kt](app/src/androidTest/java/com/example/learningtest/compose/basic/codelab/GreetingsV2KtTest.kt)
+
+---
+
+## **Modifier**
+
+Compose UI 요소(`Surface`, `Text` 등)는 **선택적 Modifier 매개변수**를 가질 수 있습니다.  
+`Modifier`는 UI 요소의 **레이아웃, 크기, 동작을 정의하는 역할**을 합니다.
+
+예를 들어, `padding` Modifier를 사용하면 요소 주변에 여백을 추가할 수 있습니다.
+
+```kotlin
+Modifier.padding(24.dp)
+```
+
+여러 Modifier를 체이닝하여 사용할 수도 있습니다.
+
+[GreetingV3.kt](app/src/main/java/com/example/learningtest/compose/basic/codelab/GreetingV3.kt):
+`GreetingV3`는 `Modifier.padding()`과 `Surface`를 사용합니다.
+
+**Modifier의 주요 역할**
+
+- `Composable`의 크기, 레이아웃, 동작 및 외형 변경
+- 접근성 정보 추가
+- 사용자 입력 처리
+- 클릭 가능, 스크롤 가능, 드래그 가능 등의 고수준 상호작용 추가
+
+---
+
+## **Composable 재사용하기**
+
+UI를 구성할 때 **작고 재사용 가능한 Composable을 만들어야 유지보수가 쉬워집니다.**  
+각 컴포넌트는 **화면의 일부만 담당하며 독립적으로 수정할 수 있어야 합니다.**
+
+**베스트 프랙티스**
+
+- `Modifier` 매개변수를 기본값 `Modifier`로 설정하고,
+- 해당 `Modifier`를 첫 번째 Composable에 전달하는 것이 좋습니다.
+
+이렇게 하면, **Composable을 호출하는 쪽에서 원하는 동작을 추가로 지정할 수 있습니다.**
+
+`MyApp` Composable을 만들어 `Greeting`을 포함하세요.  
+[BasicComposeActivity.kt](app/src/main/java/com/example/learningtest/compose/basic/codelab/BasicComposeActivity.kt), [하단에 GreetingV3Preview 함수](app/src/main/java/com/example/learningtest/compose/basic/codelab/GreetingV3.kt)
+는 `MyApp`을 재사용합니다.
+
+---
+
+## **Column과 Row**
+
+Compose의 기본적인 레이아웃 요소는 `Column`, `Row`, `Box`입니다.
+![기본 레이아웃 요소](app/src/main/java/com/example/learningtest/compose/basic/codelab/Basic-standard-layout-elements-in-Compose.png)
+
+- `Column`: 요소들을 **수직으로 배치**
+- `Row`: 요소들을 **수평으로 배치**
+- `Box`: **겹쳐서 배치**
+
+[GreetingV4.kt](app/src/main/java/com/example/learningtest/compose/basic/codelab/GreetingV4.kt):
+`Column`을 사용합니다.
+
+```kotlin
+Column {
+    for (i in 1..5) {
+        Text("Item $i")
+    }
+}
+```
+
+**테스트**: `Row` 또는 `Column`의 하위 요소를 검사하려면 `Modifier.testTag("RowTag")`를 추가해야 합니다.
+
+학습
+테스트: [GreetingV4KtTest.kt](app/src/androidTest/java/com/example/learningtest/compose/basic/codelab/GreetingV4KtTest.kt)
+
+---
+
+## **ElevatedButton 추가하기**
+
+[GreetingV5.kt](app/src/main/java/com/example/learningtest/compose/basic/codelab/GreetingV5.kt)
+
+- `Column`을 포함하는 `Row`를 추가하고,
+- `Row` 내부에서 `Column`에 `Modifier.weight(1f)`를 적용
+- `ElevatedButton`은 weight 없이 추가
+
+```kotlin
+Row {
+    Column(modifier = Modifier.weight(1f)) {
+        Text("Hello")
+    }
+    ElevatedButton(onClick = { /* TODO */ }) {
+        Text("Show more")
+    }
+}
+```
+
+- `weight(1f)` 적용 시 효과:
+    - `Column`이 **Row의 남은 공간을 모두 차지**
+    - `ElevatedButton`은 필요한 공간만 차지
+
+**테스트**: `Row`와 `Column`이 합쳐질 수 있으므로, `Modifier.testTag("RowTag")`를 추가하여 테스트에 반영해야 합니다.
+
+학습
+테스트: [GreetingV5KtTest.kt](app/src/androidTest/java/com/example/learningtest/compose/basic/codelab/GreetingV5KtTest.kt)
+
+---
+
+## **Compose에서 상태(State) 관리**
+
+```kotlin
+var expanded: Boolean = false
+ElevatedButton(
+    onClick = { expanded = !expanded }
+) {
+    Text(if (expanded) "Show less" else "Show more")
+}
+```
+
+- 이 코드가 작동하지 않는 이유**
+    - `expanded` 값이 변경되어도 **Compose는 이를 상태 변화로 인식하지 않음**
+    - `Greeting`이 다시 호출될 때마다 `expanded`가 **항상 `false`로 초기화됨**
+
+- **해결 방법**
+    - `mutableStateOf`와 `remember`를 사용하여 상태를 추적
+
+```kotlin
+val expanded = remember { mutableStateOf(false) }
+```
+
+**rememberSaveable**을 사용하면 회전 등으로 인한 상태 초기화를 방지할 수 있습니다.
+
+학습
+테스트: [GreetingV6KtTest.kt](app/src/androidTest/java/com/example/learningtest/compose/basic/codelab/GreetingV6KtTest.kt)
+
+---
+
+## **Lazy List (리스트 최적화)**
+
+Compose는 **`LazyColumn`과 `LazyRow`를 제공**하여 RecyclerView처럼 대량 데이터를 효율적으로 렌더링할 수 있습니다.
+
+```kotlin
+LazyColumn {
+    items(1000) { index ->
+        Text("Item $index")
+    }
+}
+```
+
+**`LazyColumn`은 RecyclerView처럼 뷰를 재활용하지 않지만, Composable 생성을 최소화하여 성능을 최적화합니다.**
+
+---
+
+## **애니메이션 적용하기**
+
+Compose에서는 다양한 애니메이션 API를 제공합니다.  
+`spring`을 사용하면, 시간 기반 애니메이션이 아닌 물리 기반 애니메이션을 적용할 수 있습니다.
+
+**자세한 내용:** [Compose 애니메이션 문서](https://developer.android.com/codelabs/jetpack-compose-basics#5)
+
+---
+
+**정리**
+
+- `setContent`를 사용하여 Composable 기반 UI 생성
+- `Modifier`를 활용하여 레이아웃, 스타일 적용
+- `remember`, `rememberSaveable`을 사용하여 상태 관리
+- `LazyColumn`을 활용하여 성능 최적화
+- `spring`을 이용한 자연스러운 애니메이션 적용
+
+</details>
+
 </details>
 
 <details>
