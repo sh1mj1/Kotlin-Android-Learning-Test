@@ -1,22 +1,19 @@
-package com.example.learningtest.solid
+package com.example.learningtest.solid.srp
 
 class SRPViolated {
     class LottoSeller {
-        private fun soldLotto(money: Int): List<Lottery> {
-            // calculate lotteries count with money and price
+        fun soldLotto(money: Int): List<Lottery> {
             val count = money / LOTTO_PRICE
 
-            // generate lotteries with random numbers
             val lotteries =
                 (1..count)
                     .map { Lottery((lottoRange).shuffled().take(6).sorted()) }
 
-            // validate lotteries
             lotteries.forEach { validate(it) }
             return lotteries
         }
 
-        fun validate(lottery: Lottery) {
+        private fun validate(lottery: Lottery) {
             require(lottery.numbers.size == LOTTO_NUMBER_COUNT) { "Invalid lotto number count" }
             lottery.numbers.forEach {
                 require(it in MIN_LOTTO_NUMBER..MAX_LOTTO_NUMBER) { "Invalid lotto number" }

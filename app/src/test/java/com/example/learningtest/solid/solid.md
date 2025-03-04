@@ -33,9 +33,9 @@ flexible, and maintainable.
 It stands for **"A module should have only one responsibility"**.  
 Each module has **only one reason to change**.
 
-### Example of [SRP Violation](SRPViolated.kt)
+### Example of [SRP Violation](srp/SRPViolated.kt)
 
-In [this code](SRPViolated.kt) The `LottoSeller` sold lotteries with money.  
+In [this code](srp/SRPViolated.kt) The `LottoSeller` sold lotteries with money.  
 But actually it has too many responsibilities:
 
 * It calculates lotteries count with money and price
@@ -48,9 +48,9 @@ But Actually the strategy for generating lotto numbers is not the responsibility
 LottoSeller.  
 That is, the LottoSeller class has more than one reason to change.
 
-### Example of [SRP Adhered(Refactored)](SRPRefactored.kt)
+### Example of [SRP Adhered(Refactored)](srp/SRPRefactored.kt)
 
-Let's see this [this code](SRPRefactored.kt).  
+Let's see this [this code](srp/SRPRefactored.kt).  
 `LottoSeller` only calculates the price.  
 And it delegate the responsibility for generating Lotto to the `LotteryGenerateStrategy`
 Also, the validation for lotto numbers is `Lottery`'s responsibility.
