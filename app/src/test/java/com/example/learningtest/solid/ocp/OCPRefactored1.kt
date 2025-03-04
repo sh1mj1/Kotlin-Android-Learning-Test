@@ -1,32 +1,21 @@
 package com.example.learningtest.solid.ocp
 
-class OCPRefactored {
-    private class Customer {
+class OCPRefactored1 {
+    class Customer {
         fun buyLotto(
             money: Int,
             lottoSeller: LottoSeller,
         ): List<Lottery> = lottoSeller.soldLotto(money)
     }
 
-    private interface LottoSeller {
+    interface LottoSeller {
         fun soldLotto(money: Int): List<Lottery>
     }
 
-    private class DiscountedLottoSeller : LottoSeller {
+    class NormalLottoSeller : LottoSeller {
         override fun soldLotto(money: Int): List<Lottery> {
             val count = money / LOTTO_PRICE
-            return List(count) { LotteryGenerateStrategy().autoGenerate() }
-        }
-
-        companion object {
-            private const val LOTTO_PRICE = 500
-        }
-    }
-
-    private class NormalLottoSeller : LottoSeller {
-        override fun soldLotto(money: Int): List<Lottery> {
-            val count = money / LOTTO_PRICE
-            return List(count) { LotteryGenerateStrategy().autoGenerate() }
+            return List(count) { LotteryGenerateStrategy().lotto() }
         }
 
         companion object {
@@ -34,11 +23,26 @@ class OCPRefactored {
         }
     }
 
-    private data class Lottery(val numbers: List<Int>) {
+    class DisCountLottoSeller : LottoSeller {
+        override fun soldLotto(money: Int): List<Lottery> {
+            val count = money / DISCOUNT_LOTTO_PRICE
+            return List(count) { LotteryGenerateStrategy().lotto() }
+        }
+
+        companion object {
+            private const val DISCOUNT_LOTTO_PRICE = 500
+        }
+    }
+
+    data class Lottery(val numbers: List<Int>) {
         init {
             numbers.forEach {
-                require(numbers.size == NUMBER_COUNT) { "Invalid lotto number count" }
-                require(it in MIN_NUMBER..MAX_NUMBER) { "Invalid lotto number" }
+                require(numbers.size == NUMBER_COUNT) {
+                    "Invalid lotto number count"
+                }
+                require(it in MIN_NUMBER..MAX_NUMBER) {
+                    "Invalid lotto number"
+                }
             }
         }
 
@@ -51,8 +55,8 @@ class OCPRefactored {
         }
     }
 
-    private class LotteryGenerateStrategy {
-        fun autoGenerate(): Lottery =
+    class LotteryGenerateStrategy {
+        fun lotto(): Lottery =
             Lottery(
                 (Lottery.numberRange).shuffled().take(Lottery.NUMBER_COUNT).sorted(),
             )
