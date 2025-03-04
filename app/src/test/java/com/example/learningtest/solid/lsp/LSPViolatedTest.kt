@@ -1,4 +1,4 @@
-package com.example.learningtest.solid
+package com.example.learningtest.solid.lsp
 
 import io.kotest.assertions.AssertionFailedError
 import io.kotest.assertions.throwables.shouldThrow

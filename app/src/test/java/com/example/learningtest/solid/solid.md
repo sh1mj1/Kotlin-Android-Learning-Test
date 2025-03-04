@@ -99,16 +99,16 @@ without changing the existing code.
 It means that "Objects of a **superclass should be replaceable    
 with objects of a subclass(or implementation)** without affecting the correctness of the program."
 
-### Example of [LSP Violation](LSPViolated.kt)
+### Example of [LSP Violation](lsp/LSPViolated.kt)
 
 Let's suppose the `Lottery` class has a new requirement.  
 It has the rectangle in the `Lottery` class.  
 Some special `Lottery` has a `Square`, but some of them have a `Rectangle` which is not a `Square`.
 
-[Look at the Rectangle and Square class in LSPViolated.kt](LSPViolated.kt)
+[Look at the Rectangle and Square class in LSPViolated.kt](lsp/LSPViolated.kt)
 
 To adhere to the LSP, the `Square` class must be able to substitute the `Rectangle` class.  
-[But in this test code](LSPViolatedTest.kt), the `Square` class cannot substitute the `Rectangle`
+[But in this test code](lsp/LSPViolatedTest.kt), the `Square` class cannot substitute the `Rectangle`
 class.
 
 * Given the `Square` class is a subclass of the `Rectangle` class,
@@ -124,9 +124,9 @@ class is wrong.
 We have to consider the LSP not only `is-A` when we design the inheritance relationship.  
 This example shows that `is-A` is not always enough or right.
 
-### Example of [LSP Adhered(Refactored)](LSPRefactored.kt)
+### Example of [LSP Adhered(Refactored)](lsp/LSPRefactored.kt)
 
-We can refactor this code, [like this](LSPRefactored.kt).  
+We can refactor this code, [like this](lsp/LSPRefactored.kt).  
 In this code, the `Square` class is not a subclass of the `Rectangle` class.  
 I introduce the `Shape` interface, and the `Rectangle` and `Square` class implement the `Shape`
 interface.  

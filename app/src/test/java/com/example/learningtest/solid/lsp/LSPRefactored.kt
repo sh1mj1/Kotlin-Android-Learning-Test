@@ -1,4 +1,4 @@
-package com.example.learningtest.solid
+package com.example.learningtest.solid.lsp
 
 class LSPRefactored {
     private class Customer {
