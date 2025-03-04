@@ -1,4 +1,4 @@
-package com.example.learningtest.solid
+package com.example.learningtest.solid.isp
 
 import com.example.learningtest.util.captureOutput
 import io.kotest.core.spec.style.BehaviorSpec

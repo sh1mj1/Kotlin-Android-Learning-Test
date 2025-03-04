@@ -1,8 +1,8 @@
 package com.example.learningtest.solid.lsp
 
 import com.example.learningtest.solid.lsp.LSPRefactored1.Rectangle
-import com.example.learningtest.solid.lsp.LSPRefactored1.Square
 import com.example.learningtest.solid.lsp.LSPRefactored1.Shape
+import com.example.learningtest.solid.lsp.LSPRefactored1.Square
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 

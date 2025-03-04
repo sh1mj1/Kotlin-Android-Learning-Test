@@ -1,4 +1,4 @@
-package com.example.learningtest.solid
+package com.example.learningtest.solid.isp
 
 class ISPViolated {
     private class Customer {

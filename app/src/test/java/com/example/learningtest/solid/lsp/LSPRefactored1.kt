@@ -81,7 +81,6 @@ class LSPRefactored1 {
         override fun area() = side * side
     }
 
-
     class RandomSquareLottoGenerateStrategy {
         fun lotto(): Lottery =
             Lottery(
