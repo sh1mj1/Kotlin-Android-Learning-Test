@@ -74,10 +74,10 @@ private class Customer {
 }
 ```
 
-### Example of [OCP Violation](OCPViolated.kt)
+### Example of [OCP Violation](ocp/OCPViolated.kt)
 
 **What if there are two kinds of lotto sellers**?  
-We can do like [this](OCPViolated.kt).
+We can do like [this](ocp/OCPViolated.kt).
 
 One of the lotto seller is just same with the previous case,  
 but the new one(`DiscountedLottoSeller`) sold a lotto for 500 price.
@@ -85,13 +85,13 @@ but the new one(`DiscountedLottoSeller`) sold a lotto for 500 price.
 This case violates the OCP.  
 You should be able to add new functionality without altering existing code.
 
-### Example of [OCP Adhered(Refactored)](OCPRefactored.kt)
+### Example of [OCP Adhered(Refactored)](ocp/OCPRefactored.kt)
 
-We can simply keep the OCP **introducing interface** [like this](OCPRefactored.kt).
+We can simply keep the OCP **introducing interface** [like this](ocp/OCPRefactored.kt).
 
 In this example, new seller type(`DiscountedLottoSeller`) is added.  
-In [OCPViolated.kt](OCPViolated.kt), we changed the codes in the `Customer` class.  
-But In [OCPRefactored.kt](OCPRefactored.kt), we just added a new class and implemented the interface
+In [OCPViolated.kt](ocp/OCPViolated.kt), we changed the codes in the `Customer` class.  
+But In [OCPRefactored.kt](ocp/OCPRefactored.kt), we just added a new class and implemented the interface
 without changing the existing code.
 
 ## LSP(Liskov Substitution Principle)

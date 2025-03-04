@@ -1,36 +1,41 @@
-package com.example.learningtest.solid
+package com.example.learningtest.solid.ocp
 
-class OCPRefactored {
+class OCPViolated {
     private class Customer {
         fun buyLotto(
             money: Int,
             lottoSeller: LottoSeller,
-        ): List<Lottery> = lottoSeller.soldLotto(money)
+            lottoSellerType: LottoSellerType,
+        ): List<Lottery> {
+            when (lottoSellerType) {
+                LottoSellerType.NORMAL -> {
+                    return lottoSeller.soldLotto(money)
+                }
+                LottoSellerType.ILLEGAL -> {
+                    val count = money / ILLEGAL_LOTTO_PRICE
+                    return List(count) { LotteryGenerateStrategy().autoGenerate() }
+                }
+            }
+        }
+
+        companion object {
+            private const val ILLEGAL_LOTTO_PRICE = 500
+        }
     }
 
-    private interface LottoSeller {
-        fun soldLotto(money: Int): List<Lottery>
+    private enum class LottoSellerType {
+        NORMAL,
+        ILLEGAL,
     }
 
-    private class DiscountedLottoSeller : LottoSeller {
-        override fun soldLotto(money: Int): List<Lottery> {
+    private class LottoSeller {
+        fun soldLotto(money: Int): List<Lottery> {
             val count = money / LOTTO_PRICE
             return List(count) { LotteryGenerateStrategy().autoGenerate() }
         }
 
         companion object {
-            private const val LOTTO_PRICE = 500
-        }
-    }
-
-    private class NormalLottoSeller : LottoSeller {
-        override fun soldLotto(money: Int): List<Lottery> {
-            val count = money / LOTTO_PRICE
-            return List(count) { LotteryGenerateStrategy().autoGenerate() }
-        }
-
-        companion object {
-            private const val LOTTO_PRICE = 1000
+            const val LOTTO_PRICE = 1000
         }
     }
 

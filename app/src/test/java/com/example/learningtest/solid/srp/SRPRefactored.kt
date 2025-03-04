@@ -1,5 +1,6 @@
 package com.example.learningtest.solid.srp
 
+
 class SRPRefactored {
     class LottoSeller {
         fun soldLotto(money: Int): List<Lottery> {
