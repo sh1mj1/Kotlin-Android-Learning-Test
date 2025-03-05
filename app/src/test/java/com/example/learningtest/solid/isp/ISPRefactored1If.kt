@@ -1,6 +1,6 @@
 package com.example.learningtest.solid.isp
 
-class ISPRefactored1 {
+class ISPRefactored1If {
     class Customer {
         fun buyLotto(
             money: Int,
@@ -28,6 +28,7 @@ class ISPRefactored1 {
             when (this) {
                 is HumanLottoSeller -> chat()
                 is LottoVendingMachine -> reset()
+                is ChatbotLottoSeller -> chat() + "\n" + reset()
             }
     }
 
@@ -73,6 +74,24 @@ class ISPRefactored1 {
         override val lottoPrice: Int = LOTTO_PRICE
 
         override fun reset(): String = "Reset with noise"
+
+        companion object {
+            private const val LOTTO_PRICE = 1000
+        }
+    }
+
+    abstract class ChatbotLottoSeller : LottoSeller() {
+        abstract fun chat(): String
+
+        abstract fun reset(): String
+    }
+
+    class DefaultChatbotLottoSeller : ChatbotLottoSeller() {
+        override val lottoPrice: Int = LOTTO_PRICE
+
+        override fun chat(): String = "Hello! you can call me chatbot."
+
+        override fun reset(): String = "Resetting..."
 
         companion object {
             private const val LOTTO_PRICE = 1000
