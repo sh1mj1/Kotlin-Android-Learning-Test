@@ -1,11 +1,17 @@
-package com.example.learningtest.solid
+package com.example.learningtest.solid.dip
 
-class DIPRefactored {
+class DIPViolated {
     private class Customer {
         fun buyLotto(
             money: Int,
             lottoSeller: LottoSeller,
-        ): List<Lottery> = lottoSeller.soldLotto(money)
+        ): List<Lottery> {
+            when (lottoSeller) {
+                is HumanLottoSeller -> println(lottoSeller.chat())
+                is MachineLottoSeller -> println(lottoSeller.reset())
+            }
+            return lottoSeller.soldLotto(money)
+        }
     }
 
     private abstract class LottoSeller {
@@ -19,19 +25,13 @@ class DIPRefactored {
     }
 
     private abstract class HumanLottoSeller : LottoSeller() {
-        override fun soldLotto(money: Int): List<Lottery> {
-            if (restRequired) println(chat())
-            return List(money / lottoPrice) { LotteryGenerateStrategy().autoGenerate() }
-        }
+        override fun soldLotto(money: Int): List<Lottery> = List(money / lottoPrice) { LotteryGenerateStrategy().autoGenerate() }
 
         abstract fun chat(): String
     }
 
     private abstract class MachineLottoSeller : LottoSeller() {
-        override fun soldLotto(money: Int): List<Lottery> {
-            if (restRequired) reset()
-            return List(money / lottoPrice) { LotteryGenerateStrategy().autoGenerate() }
-        }
+        override fun soldLotto(money: Int): List<Lottery> = List(money / lottoPrice) { LotteryGenerateStrategy().autoGenerate() }
 
         abstract fun reset(): String
     }

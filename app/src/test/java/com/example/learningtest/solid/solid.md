@@ -169,9 +169,9 @@ THe principle states:
 * **Abstractions should not depend on details**.  
   Details (concrete implementations) should depend on abstractions.
 
-### Example of [DIP Violation](DIPViolated.kt)
+### Example of [DIP Violation](dip/DIPViolated.kt)
 
-Let's see this [code](DIPViolated.kt).  
+Let's see this [code](dip/DIPViolated.kt).  
 This code violates the DIP.
 
 Why This Violates DIP:
@@ -187,9 +187,9 @@ Why This Violates DIP:
     * The need to explicitly check the type (is `HumanLottoSeller`, is `MachineLottoSeller`) is a
       red flag for DIP violation.
 
-### Example of [DIP Adhered(Refactored)](DIPRefactored.kt)
+### Example of [DIP Adhered(Refactored)](dip/DIPRefactored.kt)
 
-Let's see the [refactored code](DIPRefactored.kt).  
+Let's see the [refactored code](dip/DIPRefactored.kt).  
 In changed code:
 
 * Customer now depends on LottoSeller (an abstraction).

@@ -1,24 +1,14 @@
-package com.example.learningtest.solid.isp
+package com.example.learningtest.solid.dip
 
-class ISPRefactored2 {
-    class Customer {
+class DIPRefactored {
+    private class Customer {
         fun buyLotto(
             money: Int,
             lottoSeller: LottoSeller,
-        ): List<Lottery> {
-            return lottoSeller.soldLotto(money)
-        }
+        ): List<Lottery> = lottoSeller.soldLotto(money)
     }
 
-    interface ChatCapable {
-        fun chat(): String
-    }
-
-    interface ResetCapable {
-        fun reset(): String
-    }
-
-    abstract class LottoSeller {
+    private abstract class LottoSeller {
         private var _restRequired: Boolean = true
         val restRequired: Boolean
             get() = _restRequired
@@ -28,39 +18,49 @@ class ISPRefactored2 {
         abstract fun soldLotto(money: Int): List<Lottery>
     }
 
-    class NormalLottoSeller : LottoSeller(), ChatCapable {
-        override val lottoPrice: Int = 1_000
+    private abstract class HumanLottoSeller : LottoSeller() {
+        override fun soldLotto(money: Int): List<Lottery> {
+            if (restRequired) println(chat())
+            return List(money / lottoPrice) { LotteryGenerateStrategy().autoGenerate() }
+        }
 
-        override fun soldLotto(money: Int): List<Lottery> = List(money / lottoPrice) { LotteryGenerateStrategy().autoGenerate() }
+        abstract fun chat(): String
+    }
+
+    private abstract class MachineLottoSeller : LottoSeller() {
+        override fun soldLotto(money: Int): List<Lottery> {
+            if (restRequired) reset()
+            return List(money / lottoPrice) { LotteryGenerateStrategy().autoGenerate() }
+        }
+
+        abstract fun reset(): String
+    }
+
+    private class NormalLottoSeller : HumanLottoSeller() {
+        override val lottoPrice: Int = 1_000
 
         override fun chat(): String = "Hello!"
     }
 
-    class DiscountedLottoSeller : LottoSeller(), ChatCapable {
+    private class DiscountedLottoSeller : HumanLottoSeller() {
         override val lottoPrice: Int = 500
-
-        override fun soldLotto(money: Int): List<Lottery> = List(money / lottoPrice) { LotteryGenerateStrategy().autoGenerate() }
 
         override fun chat(): String = "Good morning!"
     }
 
-    class NormalLottoVendingMachine : LottoSeller(), ResetCapable {
+    private class NormalLottoVendingMachine : MachineLottoSeller() {
         override val lottoPrice: Int = 1_000
-
-        override fun soldLotto(money: Int): List<Lottery> = List(money / lottoPrice) { LotteryGenerateStrategy().autoGenerate() }
 
         override fun reset(): String = "Reset quietly"
     }
 
-    class NoisyLottoVendingMachine : LottoSeller(), ResetCapable {
+    private class NoisyLottoVendingMachine : MachineLottoSeller() {
         override val lottoPrice: Int = 1_000
-
-        override fun soldLotto(money: Int): List<Lottery> = List(money / lottoPrice) { LotteryGenerateStrategy().autoGenerate() }
 
         override fun reset(): String = "Reset with noise"
     }
 
-    data class Lottery(val numbers: List<Int>, val shape: Shape = Square()) {
+    private data class Lottery(val numbers: List<Int>, val shape: Shape = Square()) {
         init {
             numbers.forEach {
                 require(numbers.size == NUMBER_COUNT) { "Invalid lotto number count" }
@@ -77,7 +77,7 @@ class ISPRefactored2 {
         }
     }
 
-    interface Shape {
+    private interface Shape {
         fun area(): Int
     }
 
