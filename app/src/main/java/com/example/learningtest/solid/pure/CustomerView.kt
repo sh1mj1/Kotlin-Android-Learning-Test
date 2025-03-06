@@ -6,45 +6,59 @@ package com.example.learningtest.solid.pure
 class CustomerView {
     fun selectedLottoSeller(): LottoSellerType {
         println("환영합니다! 로또 판매자를 선택해주세요." + "\n")
-        println(LottoSellerType.menu)
-        print("선택: ")
 
-        val lottoSellerChoice = readln().toIntOrNull()
-        requireNotNull(lottoSellerChoice) { "잘못된 입력입니다." }
-        require(lottoSellerChoice in 1..4) { "잘못된 입력입니다 1 ~ 4 에서 입력해주세요." }
+        retryInput {
+            println(LottoSellerType.menu)
+            print("선택: ")
+            val lottoSellerChoice = readln().toIntOrNull()
+            requireNotNull(lottoSellerChoice) { "잘못된 입력입니다." }
+            require(lottoSellerChoice in 1..4) { "잘못된 입력입니다 1 ~ 4 에서 입력해주세요." }
 
-        println()
+            println()
 
-        return LottoSellerType[lottoSellerChoice]
+            return LottoSellerType[lottoSellerChoice]
+        }
     }
 
     fun paidMoney(): Int {
-        print("구매할 금액을 입력하세요: ")
-        val money = readln().toIntOrNull()
-        requireNotNull(money) { "잘못된 입력입니다." }
-        require(money >= 1000) { "1000원 이상의 금액을 입력해주세요." }
+        retryInput {
+            print("구매할 금액을 입력하세요: ")
+            val money = readln().toIntOrNull()
+            requireNotNull(money) { "잘못된 입력입니다." }
 
-        println()
-        return money
+            println()
+            return money
+        }
     }
 
     fun lottoInputs(count: Int): List<LottoInput> =
         (1..count).map { index ->
-            lottoInput(index)
+            println("[$index 번째 로또]")
+            lottoStrategyInput()
         }
 
-    fun lottoStrategyInput(): LottoStrategy {
-        println("어떤 방식으로 로또를 구매하시겠습니까?")
-        println(LottoStrategy.menu())
-        print("선택: ")
+    fun lottoStrategyInput(): LottoInput =
+        retryInput {
+            println("어떤 방식으로 로또를 구매하시겠습니까?")
+            println(LottoStrategyMenu.displaying())
+            print("선택: ")
 
-        val input = readln().toIntOrNull()
-        requireNotNull(input) { "잘못된 입력입니다." }
-        require(input in 1..2) { "1 또는 2를 입력해주세요." }
+            val input = readln().toIntOrNull()
+            requireNotNull(input) { "잘못된 입력입니다." }
 
-        println()
-        return LottoStrategy[input]
-    }
+            println()
+
+            val lottoStrategyMenu =
+                when (input) {
+                    1 -> LottoStrategyMenu.AUTO
+                    2 -> LottoStrategyMenu.MANUAL
+                    else -> error("1 또는 2를 입력해주세요.")
+                }
+            return when (lottoStrategyMenu) {
+                LottoStrategyMenu.AUTO -> autoLottoInput()
+                LottoStrategyMenu.MANUAL -> manualLottoInput()
+            }
+        }
 
     fun displayLottoNumbers(lottoNumbers: List<Pair<String, String>>) {
         println("구매한 로또 번호:")
@@ -54,82 +68,99 @@ class CustomerView {
         println()
     }
 
-    fun showErrorMessage(message: String) {
-        println("오류: $message\n")
-    }
-
-    fun displayRestMessage(message: String) {
+    fun displayRest(message: String) {
         println("⚡ 잠깐만 기다려 주세요 ~  판매자 휴식 중: $message\n")
     }
 
-    private fun lottoInput(index: Int): LottoInput {
-        println("[$index 번째 로또]")
-        val lottoStrategy = lottoStrategyInput()
-        val lottoShape = lottoShapeInput()
-        val manualNumbers =
-            if (lottoStrategy == LottoStrategy.MANUAL) {
-                manualNumbersInput()
-            } else {
-                null
-            }
-        return LottoInput(lottoStrategy, lottoShape, manualNumbers)
+    fun displayError(message: String) {
+        println("⚠️ 에러: $message\n")
+    }
+
+    private fun autoLottoInput(): LottoInput {
+        retryInput {
+            val lottoShape = lottoShapeInput()
+            return AutoLottoInput(LottoStrategyMenu.AUTO, lottoShape)
+        }
+    }
+
+    private fun manualLottoInput(): LottoInput {
+        retryInput {
+            val lottoShape = lottoShapeInput()
+            val manualNumbers = manualNumbersInput()
+
+            return ManualLottoInput(LottoStrategyMenu.MANUAL, lottoShape, manualNumbers)
+        }
     }
 
     private fun lottoShapeInput(): LottoShapeInput {
-        println("로또 모양을 선택하세요:")
-        println(LottoShape.menu())
-        print("선택: ")
+        retryInput {
+            println("로또 모양을 선택하세요:")
+            println(LottoShape.menu())
+            print("선택: ")
 
-        val lottoShapeChoice = readln().toIntOrNull()
-        requireNotNull(lottoShapeChoice) { "잘못된 입력입니다." }
-        require(lottoShapeChoice in 1..2) { "1 또는 2를 입력해주세요." }
+            val lottoShapeChoice = readln().toIntOrNull()
+            requireNotNull(lottoShapeChoice) { "잘못된 입력입니다." }
+            require(lottoShapeChoice in 1..2) { "1 또는 2를 입력해주세요." }
 
-        val shapeType = LottoShape[lottoShapeChoice]
-        val dimensions =
-            when (shapeType) {
-                LottoShape.RECTANGLE -> {
-                    print("직사각형 가로와 세로 길이를 입력하세요 (공백으로 구분): ")
+            val shapeType = LottoShape[lottoShapeChoice]
+            val dimensions =
+                when (shapeType) {
+                    LottoShape.RECTANGLE -> {
+                        print("직사각형 가로와 세로 길이를 입력하세요 (공백으로 구분): ")
 
-                    val (width, height) =
-                        readln().split(" ").mapNotNull { it.toIntOrNull() }.also {
-                            require(it.size == 2) { "가로와 세로 두 개의 값을 입력해주세요." }
-                        }
-                    RectangleLength(listOf(width, height))
+                        val (width, height) =
+                            readln().split(" ").mapNotNull { it.toIntOrNull() }.also {
+                                require(it.size == 2) { "가로와 세로 두 개의 값을 입력해주세요." }
+                            }
+                        RectangleLength(listOf(width, height))
+                    }
+
+                    LottoShape.SQUARE -> {
+                        print("정사각형 한 변의 길이를 입력하세요: ")
+                        val asideLength =
+                            listOf(
+                                readln().toIntOrNull().also {
+                                    requireNotNull(it) { "숫자를 입력해야 합니다." }
+                                }!!,
+                            )
+
+                        SquareLength(asideLength)
+                    }
                 }
 
-                LottoShape.SQUARE -> {
-                    print("정사각형 한 변의 길이를 입력하세요: ")
-                    val asideLength =
-                        listOf(
-                            readln().toIntOrNull().also {
-                                requireNotNull(it) { "숫자를 입력해야 합니다." }
-                            }!!,
-                        )
-
-                    SquareLength(asideLength)
-                }
-            }
-
-        println()
-        return LottoShapeInput(shapeType, dimensions)
+            println()
+            return LottoShapeInput(shapeType, dimensions)
+        }
     }
 
     private fun manualNumbersInput(): List<Int> {
-        print("수동으로 선택할 6개의 숫자를 입력하세요 (공백으로 구분): ")
+        retryInput {
+            print("수동으로 선택할 6개의 숫자를 입력하세요 (공백으로 구분): ")
 
-        val input = readln().split(" ").mapNotNull { it.toIntOrNull() }
-        require(input.size == 6) { "6개의 숫자를 입력해주세요." }
+            val input = readln().split(" ").mapNotNull { it.toIntOrNull() }
+            require(input.size == 6) { "6개의 숫자를 입력해주세요." }
 
-        println()
-        return input
+            println()
+            return input
+        }
     }
 }
 
-data class LottoInput(
-    val strategy: LottoStrategy,
-    val shape: LottoShapeInput,
-    val manualNumbers: List<Int>?,
-)
+sealed class LottoInput {
+    abstract val strategy: LottoStrategyMenu
+    abstract val shape: LottoShapeInput
+}
+
+data class AutoLottoInput(
+    override val strategy: LottoStrategyMenu,
+    override val shape: LottoShapeInput,
+) : LottoInput()
+
+data class ManualLottoInput(
+    override val strategy: LottoStrategyMenu,
+    override val shape: LottoShapeInput,
+    val numbers: List<Int>,
+) : LottoInput()
 
 data class LottoShapeInput(
     val shape: LottoShape,
@@ -178,16 +209,28 @@ enum class LottoShape(val value: Int, val content: String) {
     private fun menuMessage(): String = "${this.value}. ${this.content}"
 }
 
-enum class LottoStrategy(val value: Int, val content: String) {
+enum class LottoStrategyMenu(val value: Int, val content: String) {
     AUTO(1, "자동 생성"),
     MANUAL(2, "수동 입력"),
     ;
 
     companion object {
-        operator fun get(value: Int): LottoStrategy = LottoStrategy.entries.first { it.value == value }
+        operator fun get(value: Int): LottoStrategyMenu = LottoStrategyMenu.entries.first { it.value == value }
 
-        fun menu(): String = LottoStrategy.entries.joinToString("\n") { it.menuMessage() } + "\n"
+        fun displaying(): String = LottoStrategyMenu.entries.joinToString("\n") { it.menuMessage() } + "\n"
     }
 
     private fun menuMessage(): String = "${this.value}. ${this.content}"
+}
+
+inline fun <T> retryInput(block: () -> T): T {
+    while (true) {
+        try {
+            return block()
+        } catch (e: IllegalArgumentException) {
+            println("\n ⚠️ 입력 오류: ${e.message}\n다시 입력해주세요. \n")
+        } catch (e: Exception) {
+            println("\n ⚠️ 알 수 없는 오류 발생: ${e.message}\n다시 입력해주세요.\n")
+        }
+    }
 }

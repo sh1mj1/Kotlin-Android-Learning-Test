@@ -12,6 +12,9 @@ data class Lottery(
             require(numbers.size == NUMBER_COUNT) {
                 "Invalid lotto number count"
             }
+            require(numbers.toSet().size == NUMBER_COUNT) {
+                "Duplicate lotto number"
+            }
             require(it in MIN_NUMBER..MAX_NUMBER) {
                 "Invalid lotto number"
             }

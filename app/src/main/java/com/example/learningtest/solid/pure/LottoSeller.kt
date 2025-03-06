@@ -11,15 +11,13 @@ abstract class LottoSeller() {
         get() = _restRequired
 
     fun lottoCount(money: Int): Int {
+        require(money >= lottoPrice) { "Pay an amount that is greater than or equal to the ticket price." }
         val count = money / lottoPrice
-        require(money % lottoPrice != 0) { "Please pay an amount that is exactly divisible by the ticket price." }
+        require(money % lottoPrice == 0) { "Pay an amount that is exactly divisible by the ticket price." }
         return count
     }
 
-    fun soldLotto(
-        count: Int,
-        lottoGenerateStrategies: List<LottoGenerateStrategy>,
-    ): List<Lottery> {
+    fun soldLotto(lottoGenerateStrategies: List<LottoGenerateStrategy>): List<Lottery> {
         return lottoGenerateStrategies.map(LottoGenerateStrategy::lotto)
     }
 
