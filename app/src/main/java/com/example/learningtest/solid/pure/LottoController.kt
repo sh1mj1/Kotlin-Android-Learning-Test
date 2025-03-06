@@ -21,22 +21,21 @@ class LottoController(private val view: CustomerView) {
             lottoCount
         } catch (e: IllegalArgumentException) {
             when (e.message) {
-                "Pay an amount that is greater than or equal to the ticket price." -> {
-                    view.displayError("금액을 ${lottoSeller.lottoPrice}원 이상 입력해주세요.")
-                }
+                "Too small money" -> view.displayError("금액을 ${lottoSeller.lottoPrice}원 이상 입력해주세요.")
 
-                "Pay an amount that is exactly divisible by the ticket price." -> {
+                "money is not exactly divisible by lotto price." ->
                     view.displayError("금액을 ${lottoSeller.lottoPrice}원 단위로 입력해주세요.")
-                }
             }
             lottoCount(lottoSeller)
         }
     }
 
     fun lottoGenerateStrategies(count: Int): List<LottoGenerateStrategy> {
-        val lottoInputs = view.lottoInputs(count)
-        return lottoInputs.map { lottoInput ->
-            lottoGenerateStrategy(lottoInput)
+        retryInput {
+            val lottoInputs = view.lottoInputs(count)
+            return lottoInputs.map { lottoInput ->
+                lottoGenerateStrategy(lottoInput)
+            }
         }
     }
 
@@ -45,7 +44,7 @@ class LottoController(private val view: CustomerView) {
         lottoSeller: LottoSeller,
         lottoGenerateStrategies: List<LottoGenerateStrategy>,
     ) {
-        require(count == lottoGenerateStrategies.size) { "the number of lottoes and strategies must be same" }
+        require(count == lottoGenerateStrategies.size) { "not same lotto and strategies count" }
 
         if (lottoSeller.restRequired) {
             view.displayRest(lottoSeller.onRest())
@@ -54,10 +53,16 @@ class LottoController(private val view: CustomerView) {
         val lottoNumbers =
             lottoSeller.soldLotto(lottoGenerateStrategies)
                 .map { lotto ->
-                    val shapeType = if (lotto.shape is Rectangle) "사각형" else "정사각형"
+
+                    val shape =
+                        when (lotto.shape) {
+                            is Rectangle -> LottoShape.RECTANGLE
+                            is Square -> LottoShape.SQUARE
+                        }
+
                     val numbers =
                         if (lotto.numbers.isEmpty()) "수동 입력 오류" else lotto.numbers.joinToString(", ")
-                    numbers to shapeType
+                    LottoOutput(shape = shape, numbers = numbers)
                 }
 
         view.displayLottoNumbers(lottoNumbers)
@@ -67,22 +72,22 @@ class LottoController(private val view: CustomerView) {
         val (shapeType, dimensions) = lottoInput.shape
 
         val shape =
-            when (shapeType) {
-                LottoShape.RECTANGLE -> Rectangle(dimensions.length[0], dimensions.length[1])
-                LottoShape.SQUARE -> Square(dimensions.length[0])
+            try {
+                when (shapeType) {
+                    LottoShape.RECTANGLE -> Rectangle(dimensions.length[0], dimensions.length[1])
+                    LottoShape.SQUARE -> Square(dimensions.length[0])
+                }
+            } catch (e: IllegalArgumentException) {
+                when (e.message) {
+                    "Invalid width or height" -> throw IllegalArgumentException("가로와 세로 길이는 1 이상이어야 합니다.")
+                    "Invalid side" -> throw IllegalArgumentException("한 변의 길이는 1 이상이어야 합니다.")
+                    else -> error("")
+                }
             }
 
         return when (lottoInput) {
             is AutoLottoInput -> RandomLottoGenerateStrategy(shape)
             is ManualLottoInput -> ManualLottoGenerateStrategy(lottoInput.numbers, shape)
         }
-
-//        return when (strategy) {
-//            LottoStrategyMenu.AUTO -> RandomLottoGenerateStrategy(shape)
-//            LottoStrategyMenu.MANUAL -> {
-//                requireNotNull(manualNumbers) { "수동 로또는 반드시 번호를 입력해야 합니다." }
-//                ManualLottoGenerateStrategy(manualNumbers, shape)
-//            }
-//        }
     }
 }

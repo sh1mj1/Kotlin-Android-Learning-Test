@@ -29,14 +29,14 @@ data class Lottery(
     }
 }
 
-interface Shape {
+sealed interface Shape {
     fun area(): Int
 }
 
 data class Rectangle(private var width: Int, private var height: Int) : Shape {
     init {
         require(width > 0 && height > 0) {
-            "Width and height must be greater than 0"
+            "Invalid width or height"
         }
     }
 
@@ -54,7 +54,7 @@ data class Rectangle(private var width: Int, private var height: Int) : Shape {
 data class Square(private var side: Int) : Shape {
     init {
         require(side > 0) {
-            "Side must be greater than 0"
+            "Invalid side"
         }
     }
 

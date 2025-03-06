@@ -37,33 +37,33 @@ class CustomerView {
             lottoStrategyInput()
         }
 
-    fun lottoStrategyInput(): LottoInput =
-        retryInput {
-            println("어떤 방식으로 로또를 구매하시겠습니까?")
-            println(LottoStrategyMenu.displaying())
-            print("선택: ")
+    fun lottoStrategyInput(): LottoInput {
+        val lottoStrategyMenu =
+            retryInput {
+                println("어떤 방식으로 로또를 구매하시겠습니까?")
+                println(LottoStrategyMenu.displaying())
+                print("선택: ")
 
-            val input = readln().toIntOrNull()
-            requireNotNull(input) { "잘못된 입력입니다." }
-
-            println()
-
-            val lottoStrategyMenu =
+                val input = readln().toIntOrNull()
+                requireNotNull(input) { "잘못된 입력입니다." }
                 when (input) {
                     1 -> LottoStrategyMenu.AUTO
                     2 -> LottoStrategyMenu.MANUAL
                     else -> error("1 또는 2를 입력해주세요.")
                 }
-            return when (lottoStrategyMenu) {
-                LottoStrategyMenu.AUTO -> autoLottoInput()
-                LottoStrategyMenu.MANUAL -> manualLottoInput()
             }
-        }
+        println()
 
-    fun displayLottoNumbers(lottoNumbers: List<Pair<String, String>>) {
+        return when (lottoStrategyMenu) {
+            LottoStrategyMenu.AUTO -> autoLottoInput()
+            LottoStrategyMenu.MANUAL -> manualLottoInput()
+        }
+    }
+
+    fun displayLottoNumbers(lottoes: List<LottoOutput> = listOf()) {
         println("구매한 로또 번호:")
-        lottoNumbers.forEachIndexed { index, (numbers, shape) ->
-            println("${index + 1}번째 로또 ($shape): $numbers")
+        lottoes.forEachIndexed { index, (shape, numbers) ->
+            println("${index + 1}번째 로또 (${shape.content}): $numbers")
         }
         println()
     }
@@ -93,17 +93,20 @@ class CustomerView {
     }
 
     private fun lottoShapeInput(): LottoShapeInput {
-        retryInput {
-            println("로또 모양을 선택하세요:")
-            println(LottoShape.menu())
-            print("선택: ")
+        val shapeType =
+            retryInput {
+                println("로또 모양을 선택하세요:")
+                println(LottoShape.menu())
+                print("선택: ")
 
-            val lottoShapeChoice = readln().toIntOrNull()
-            requireNotNull(lottoShapeChoice) { "잘못된 입력입니다." }
-            require(lottoShapeChoice in 1..2) { "1 또는 2를 입력해주세요." }
+                val lottoShapeChoice = readln().toIntOrNull()
+                requireNotNull(lottoShapeChoice) { "잘못된 입력입니다." }
+                require(lottoShapeChoice in 1..2) { "1 또는 2를 입력해주세요." }
+                LottoShape[lottoShapeChoice]
+            }
 
-            val shapeType = LottoShape[lottoShapeChoice]
-            val dimensions =
+        val dimensions =
+            retryInput {
                 when (shapeType) {
                     LottoShape.RECTANGLE -> {
                         print("직사각형 가로와 세로 길이를 입력하세요 (공백으로 구분): ")
@@ -119,18 +122,18 @@ class CustomerView {
                         print("정사각형 한 변의 길이를 입력하세요: ")
                         val asideLength =
                             listOf(
-                                readln().toIntOrNull().also {
+                                readln().toIntOrNull().let {
                                     requireNotNull(it) { "숫자를 입력해야 합니다." }
-                                }!!,
+                                    it
+                                },
                             )
-
                         SquareLength(asideLength)
                     }
                 }
+            }
 
-            println()
-            return LottoShapeInput(shapeType, dimensions)
-        }
+        println()
+        return LottoShapeInput(shapeType, dimensions)
     }
 
     private fun manualNumbersInput(): List<Int> {
@@ -165,6 +168,11 @@ data class ManualLottoInput(
 data class LottoShapeInput(
     val shape: LottoShape,
     val dimensions: ShapeLength,
+)
+
+data class LottoOutput(
+    val shape: LottoShape,
+    val numbers: String,
 )
 
 interface ShapeLength {

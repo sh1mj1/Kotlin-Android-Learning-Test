@@ -11,9 +11,9 @@ abstract class LottoSeller() {
         get() = _restRequired
 
     fun lottoCount(money: Int): Int {
-        require(money >= lottoPrice) { "Pay an amount that is greater than or equal to the ticket price." }
+        require(money >= lottoPrice) { "Too small money" }
         val count = money / lottoPrice
-        require(money % lottoPrice == 0) { "Pay an amount that is exactly divisible by the ticket price." }
+        require(money % lottoPrice == 0) { "money is not exactly divisible by lotto price." }
         return count
     }
 
