@@ -10,13 +10,6 @@ abstract class LottoSeller() {
     val restRequired: Boolean
         get() = _restRequired
 
-    fun lottoCount0(money: Int): Int {
-        require(money >= lottoPrice) { "Too small money" }
-        val count = money / lottoPrice
-        require(money % lottoPrice == 0) { "money is not exactly divisible by lotto price." }
-        return count
-    }
-
     fun lottoCount(money: Int): LottoSellerResult<Int> =
         when {
             money < lottoPrice -> LottoSellerResult.Failure.InsufficientFunds(lottoPrice)
