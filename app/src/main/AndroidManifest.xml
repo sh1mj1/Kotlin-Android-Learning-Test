@@ -31,6 +31,12 @@
             android:name=".solid.an.LottoMVPActivity"
             android:theme="@style/Theme.LearningTest"
             android:exported="true">
+        </activity>
+
+        <activity
+            android:name=".solid.an.LottoMVVMActivity"
+            android:theme="@style/Theme.LearningTest"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
