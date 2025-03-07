@@ -17,7 +17,7 @@ class LottoController(private val view: CustomerView) {
     fun lottoCount(lottoSeller: LottoSeller): Int {
         val paidMoney = view.paidMoney()
         return try {
-            val lottoCount = lottoSeller.lottoCount(paidMoney)
+            val lottoCount = lottoSeller.lottoCount0(paidMoney)
             lottoCount
         } catch (e: IllegalArgumentException) {
             when (e.message) {

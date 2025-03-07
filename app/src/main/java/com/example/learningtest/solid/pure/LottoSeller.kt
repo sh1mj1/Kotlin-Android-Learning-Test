@@ -10,18 +10,35 @@ abstract class LottoSeller() {
     val restRequired: Boolean
         get() = _restRequired
 
-    fun lottoCount(money: Int): Int {
+    fun lottoCount0(money: Int): Int {
         require(money >= lottoPrice) { "Too small money" }
         val count = money / lottoPrice
         require(money % lottoPrice == 0) { "money is not exactly divisible by lotto price." }
         return count
     }
 
+    fun lottoCount(money: Int): LottoSellerResult<Int> =
+        when {
+            money < lottoPrice -> LottoSellerResult.Failure.InsufficientFunds(lottoPrice)
+            money % lottoPrice != 0 -> LottoSellerResult.Failure.InvalidAmount(lottoPrice)
+            else -> LottoSellerResult.Success(money / lottoPrice)
+        }
+
     fun soldLotto(lottoGenerateStrategies: List<LottoGenerateStrategy>): List<Lottery> {
         return lottoGenerateStrategies.map(LottoGenerateStrategy::lotto)
     }
 
     fun onRest(): String = restActions.onRest()
+}
+
+sealed class LottoSellerResult<out T> {
+    data class Success<T>(val value: T) : LottoSellerResult<T>()
+
+    sealed class Failure : LottoSellerResult<Nothing>() {
+        data class InsufficientFunds(val requiredAmount: Int) : Failure()
+
+        data class InvalidAmount(val requiredUnit: Int) : Failure()
+    }
 }
 
 class NormalLottoSeller : LottoSeller() {
