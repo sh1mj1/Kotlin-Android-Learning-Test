@@ -4,18 +4,18 @@ sealed interface Shape {
     fun area(): Int
 }
 
-data class Rectangle(private var width: Int, private var height: Int) : Shape {
+data class Rectangle(var width: Int, var height: Int) : Shape {
     init {
         require(width > 0 && height > 0) { INVALID_SHAPE_SIZE }
     }
 
-    fun setWidth(width: Int) {
-        this.width = width
-    }
-
-    fun setHeight(height: Int) {
-        this.height = height
-    }
+//    fun setWidth(width: Int) {
+//        this.width = width
+//    }
+//
+//    fun setHeight(height: Int) {
+//        this.height = height
+//    }
 
     override fun area() = width * height
 
@@ -34,16 +34,16 @@ data class Rectangle(private var width: Int, private var height: Int) : Shape {
     }
 }
 
-data class Square(private var side: Int) : Shape {
+data class Square(var side: Int) : Shape {
     init {
         require(side > 0) {
             "Invalid side"
         }
     }
 
-    fun setSide(side: Int) {
-        this.side = side
-    }
+//    fun setSide(side: Int) {
+//        this.side = side
+//    }
 
     override fun area() = side * side
 

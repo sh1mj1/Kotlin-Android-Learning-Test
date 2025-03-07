@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- 로또 판매자 선택 -->
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="환영합니다! 로또 판매자를 선택해주세요."
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <RadioGroup
+        android:id="@+id/radioSellerGroup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/txtTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp">
+        <RadioButton android:id="@+id/radioNormalSeller" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="일반 로또 판매자 (1000원)" />
+        <RadioButton android:id="@+id/radioDiscountSeller" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="할인 로또 판매자 (500원)" />
+        <RadioButton android:id="@+id/radioVendingNormal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="일반 로또 자판기 (1000원)" />
+        <RadioButton android:id="@+id/radioVendingNoisy" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="시끄러운 로또 자판기 (1000원)" />
+    </RadioGroup>
+
+    <!-- 구매 금액 입력 -->
+    <EditText
+        android:id="@+id/inputMoney"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="구매할 금액을 입력하세요"
+        android:inputType="number"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/radioSellerGroup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp" />
+
+    <!-- 로또 모양 선택 -->
+    <RadioGroup
+        android:id="@+id/radioShapeGroup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/inputMoney"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp">
+        <RadioButton android:id="@+id/radioRectangle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="직사각형" />
+        <RadioButton android:id="@+id/radioSquare" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="정사각형" />
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/inputWidth"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="가로 길이를 입력하세요"
+        android:inputType="number"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/radioShapeGroup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/inputHeight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="세로 길이를 입력하세요"
+        android:inputType="number"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/inputWidth"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 구매 방법 선택 -->
+    <RadioGroup
+        android:id="@+id/radioLottoTypeGroup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/inputHeight"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp">
+        <RadioButton android:id="@+id/radioAuto" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="자동 생성" />
+        <RadioButton android:id="@+id/radioManual" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="수동 입력" />
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/inputManualNumbers"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="6개의 숫자를 쉼표로 구분하여 입력하세요"
+        android:inputType="text"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/radioLottoTypeGroup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 구매 버튼 -->
+    <Button
+        android:id="@+id/btnBuyLotto"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="로또 구매"
+        android:textSize="18sp"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/inputManualNumbers"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp" />
+
+    <!-- 구매 결과 출력 -->
+    <TextView
+        android:id="@+id/txtResult"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="구매한 로또 번호:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/btnBuyLotto"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
