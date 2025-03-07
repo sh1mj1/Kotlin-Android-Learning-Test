@@ -16,17 +16,22 @@ class LottoController(private val view: CustomerView) {
 
     fun lottoCount(lottoSeller: LottoSeller): Int {
         val paidMoney = view.paidMoney()
-        return try {
-            val lottoCount = lottoSeller.lottoCount0(paidMoney)
-            lottoCount
-        } catch (e: IllegalArgumentException) {
-            when (e.message) {
-                "Too small money" -> view.displayError("금액을 ${lottoSeller.lottoPrice}원 이상 입력해주세요.")
+        return when (val result = lottoSeller.lottoCount(paidMoney)) {
+            is LottoSellerResult.Success -> result.value
+            is LottoSellerResult.Failure -> {
+                when (result) {
+                    is LottoSellerResult.Failure.InsufficientFunds ->
+                        view.displayError(
+                            "금액을 ${lottoSeller.lottoPrice}원 이상 입력해주세요.",
+                        )
 
-                "money is not exactly divisible by lotto price." ->
-                    view.displayError("금액을 ${lottoSeller.lottoPrice}원 단위로 입력해주세요.")
+                    is LottoSellerResult.Failure.InvalidAmount ->
+                        view.displayError(
+                            "금액을 ${lottoSeller.lottoPrice}원 단위로 입력해주세요.",
+                        )
+                }
+                lottoCount(lottoSeller)
             }
-            lottoCount(lottoSeller)
         }
     }
 
@@ -71,23 +76,27 @@ class LottoController(private val view: CustomerView) {
     private fun lottoGenerateStrategy(lottoInput: LottoInput): LottoGenerateStrategy {
         val (shapeType, dimensions) = lottoInput.shape
 
-        val shape =
-            try {
-                when (shapeType) {
-                    LottoShape.RECTANGLE -> Rectangle(dimensions.length[0], dimensions.length[1])
-                    LottoShape.SQUARE -> Square(dimensions.length[0])
-                }
-            } catch (e: IllegalArgumentException) {
-                when (e.message) {
-                    "Invalid width or height" -> throw IllegalArgumentException("가로와 세로 길이는 1 이상이어야 합니다.")
-                    "Invalid side" -> throw IllegalArgumentException("한 변의 길이는 1 이상이어야 합니다.")
-                    else -> error("")
-                }
+        val shapeResult =
+            when (shapeType) {
+                LottoShape.RECTANGLE -> Rectangle.create(dimensions.length[0], dimensions.length[1])
+                LottoShape.SQUARE -> Square.create(dimensions.length[0])
             }
 
-        return when (lottoInput) {
-            is AutoLottoInput -> RandomLottoGenerateStrategy(shape)
-            is ManualLottoInput -> ManualLottoGenerateStrategy(lottoInput.numbers, shape)
+        return when (shapeResult) {
+            is ShapeResult.Success ->
+                when (lottoInput) {
+                    is AutoLottoInput -> RandomLottoGenerateStrategy(shapeResult.value)
+                    is ManualLottoInput ->
+                        ManualLottoGenerateStrategy(
+                            lottoInput.numbers,
+                            shapeResult.value,
+                        )
+                }
+
+            ShapeResult.Failure.InvalidShapeSize -> {
+                view.displayError("잘못된 도형 크기입니다.")
+                throw IllegalArgumentException("잘못된 도형 크기입니다.")
+            }
         }
     }
 }
