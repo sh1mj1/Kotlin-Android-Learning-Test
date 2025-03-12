@@ -1,45 +1,92 @@
-package com.example.learningtest.solid.isp
+package solid.isp
 
-class ISPViolated1 {
+import kotlin.collections.forEach
+import kotlin.collections.shuffled
+import kotlin.collections.sorted
+import kotlin.collections.take
+
+/**
+ * ISP is satisfied.
+ *
+ * Create separate classes for rest-related actions and compose them with the lotto seller.
+ */
+class ISPRefactored4 {
     class Customer {
         fun buyLotto(
             money: Int,
             lottoSeller: LottoSeller,
-        ): List<Lottery> = lottoSeller.soldLotto(money)
+        ): List<Lottery> {
+            if (lottoSeller.restRequired) println(lottoSeller.onRest())
+
+            return lottoSeller.soldLotto(money)
+        }
+    }
+
+    interface RestAction {
+        fun onRest(): String
+    }
+
+    interface ChatCapable : RestAction {
+        fun chat(): String
+    }
+
+    interface ResetCapable : RestAction {
+        fun reset(): String
+    }
+
+    interface ChatResetCapable : ChatCapable, ResetCapable
+
+    class MorningChat : ChatCapable {
+        override fun onRest(): String = chat()
+
+        override fun chat(): String = "Chatting -- Good morning!"
+    }
+
+    class HelloChat : ChatCapable {
+        override fun onRest(): String = chat()
+
+        override fun chat(): String = "Chatting -- Hello!"
+    }
+
+    class QuietReset : ResetCapable {
+        override fun onRest(): String = reset()
+
+        override fun reset(): String = "Resetting -- Quietly"
+    }
+
+    class NoisyReset : ResetCapable {
+        override fun onRest(): String = reset()
+
+        override fun reset(): String = "Resetting -- With noise"
+    }
+
+    class DefaultChatResetCapable : ChatResetCapable {
+        override fun chat(): String = "Chatting -- Hello, You can call me chatbot!"
+
+        override fun reset(): String = "Resetting -- Quietly"
+
+        override fun onRest(): String = chat() + '\n' + reset()
     }
 
     sealed class LottoSeller {
         abstract val lottoPrice: Int
+        abstract val restAction: RestAction
 
         private var _restRequired: Boolean = true
         val restRequired: Boolean
             get() = _restRequired
 
-        abstract fun chat(): String
-
-        abstract fun reset(): String
-
         fun soldLotto(money: Int): List<Lottery> {
-            if (restRequired) println(recoverMessage())
             val count = money / lottoPrice
             return List(count) { RandomSquareLottoGenerateStrategy().lotto() }
         }
 
-        private fun recoverMessage(): String =
-            when (this) {
-                is NormalLottoSeller -> chat()
-                is DisCountLottoSeller -> chat()
-                is NormalLottoVendingMachine -> reset()
-                is NoisyLottoVendingMachine -> reset()
-            }
+        fun onRest(): String = restAction.onRest()
     }
 
-    class NormalLottoSeller : LottoSeller() {
+    class NormalLottoSeller() : LottoSeller() {
         override val lottoPrice: Int = LOTTO_PRICE
-
-        override fun chat(): String = "Hello!"
-
-        override fun reset(): String = error("Human is not machine, can't not be reset")
+        override val restAction: RestAction = HelloChat()
 
         companion object {
             private const val LOTTO_PRICE = 1000
@@ -48,10 +95,7 @@ class ISPViolated1 {
 
     class DisCountLottoSeller : LottoSeller() {
         override val lottoPrice: Int = LOTTO_PRICE
-
-        override fun chat(): String = "Good morning!"
-
-        override fun reset(): String = error("Human is not machine, can't not be reset")
+        override val restAction: RestAction = MorningChat()
 
         companion object {
             private const val LOTTO_PRICE = 500
@@ -60,10 +104,7 @@ class ISPViolated1 {
 
     class NormalLottoVendingMachine : LottoSeller() {
         override val lottoPrice: Int = LOTTO_PRICE
-
-        override fun chat(): String = error("This is Machine, can't chat")
-
-        override fun reset(): String = "Reset quietly"
+        override val restAction: RestAction = QuietReset()
 
         companion object {
             private const val LOTTO_PRICE = 1000
@@ -72,10 +113,16 @@ class ISPViolated1 {
 
     class NoisyLottoVendingMachine : LottoSeller() {
         override val lottoPrice: Int = LOTTO_PRICE
+        override val restAction: RestAction = NoisyReset()
 
-        override fun chat(): String = error("This is Machine, can't chat")
+        companion object {
+            private const val LOTTO_PRICE = 1000
+        }
+    }
 
-        override fun reset(): String = "Reset with noise"
+    class ChatbotLottoVendingMachine : LottoSeller() {
+        override val lottoPrice: Int = LOTTO_PRICE
+        override val restAction: RestAction = DefaultChatResetCapable()
 
         companion object {
             private const val LOTTO_PRICE = 1000

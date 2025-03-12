@@ -1,0 +1,90 @@
+@startuml
+class Customer {
+    +buyLotto(money: Int, lottoSeller: LottoSeller): List<Lottery>
+}
+
+interface RestAction {
+    +onRest(): String
+}
+
+abstract class LottoSeller {
+    +lottoPrice: Int
+    +restAction: RestAction
+    +restRequired: Boolean
+    +soldLotto(money: Int): List<Lottery>
+    +onRest(): String
+}
+
+class NormalLottoSeller {
+    +lottoPrice: Int
+    +restAction: RestAction
+}
+
+
+class ChatbotLottoVendingMachine {
+    +lottoPrice: Int
+    +restAction: RestAction
+}
+
+LottoSeller <|-- NormalLottoSeller
+LottoSeller <|-- ChatbotLottoVendingMachine
+
+Customer --> LottoSeller : uses
+LottoSeller --> RestAction : has
+
+NormalLottoSeller --> RestAction : has
+ChatbotLottoVendingMachine --> RestAction : has
+
+interface RestAction {
+    +onRest(): String
+}
+
+interface ChatCapable extends RestAction {
+    +chat(): String
+}
+
+interface ResetCapable extends RestAction {
+    +reset(): String
+}
+
+interface ChatResetCapable extends ChatCapable, ResetCapable {
+}
+
+class MorningChat {
+    +onRest(): String
+    +chat(): String
+}
+
+class HelloChat {
+    +onRest(): String
+    +chat(): String
+}
+
+class QuietReset {
+    +onRest(): String
+    +reset(): String
+}
+
+class NoisyReset {
+    +onRest(): String
+    +reset(): String
+}
+
+class DefaultChatResetCapable {
+    +chat(): String
+    +reset(): String
+    +onRest(): String
+}
+
+RestAction <|-- ChatCapable
+RestAction <|-- ResetCapable
+ChatCapable <|-- ChatResetCapable
+ResetCapable <|-- ChatResetCapable
+
+ChatCapable <|-- MorningChat
+ChatCapable <|-- HelloChat
+ResetCapable <|-- QuietReset
+ResetCapable <|-- NoisyReset
+ChatResetCapable <|-- DefaultChatResetCapable
+
+@enduml

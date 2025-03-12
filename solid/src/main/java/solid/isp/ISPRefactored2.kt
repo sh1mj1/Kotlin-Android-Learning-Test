@@ -1,6 +1,17 @@
-package com.example.learningtest.solid.isp
+package solid.isp
 
-class ISPRefactored12 {
+import kotlin.collections.forEach
+import kotlin.collections.shuffled
+import kotlin.collections.sorted
+import kotlin.collections.take
+
+/**
+ * LSP is satisfied.
+ *
+ * Introduced the RestAction interface to separate rest-related actions from LottoSeller.
+ * However, ChatbotLottoSeller manually declares the chat and reset methods.
+ */
+class ISPRefactored2 {
     class Customer {
         fun buyLotto(
             money: Int,
@@ -39,6 +50,26 @@ class ISPRefactored12 {
         abstract fun reset(): String
 
         override fun onRest(): String = reset()
+    }
+
+    abstract class ChatbotLottoSeller : LottoSeller() {
+        abstract fun chat(): String
+
+        abstract fun reset(): String
+
+        override fun onRest(): String = chat() + '\n' + reset()
+    }
+
+    class DefaultChatbotSeller : ChatbotLottoSeller() {
+        override val lottoPrice: Int = LOTTO_PRICE
+
+        override fun chat(): String = "Chatting -- Hello, You can call me chatbot!"
+
+        override fun reset(): String = "Resetting -- Quietly"
+
+        companion object {
+            private const val LOTTO_PRICE = 1000
+        }
     }
 
     class NormalLottoSeller : HumanLottoSeller() {

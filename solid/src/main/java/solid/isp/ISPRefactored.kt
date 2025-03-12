@@ -1,4 +1,9 @@
-package com.example.learningtest.solid.isp
+package solid.isp
+
+import kotlin.collections.forEach
+import kotlin.collections.shuffled
+import kotlin.collections.sorted
+import kotlin.collections.take
 
 class ISPRefactored {
     class Customer {

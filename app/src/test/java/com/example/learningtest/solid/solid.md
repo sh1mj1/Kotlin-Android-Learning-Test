@@ -140,9 +140,9 @@ Now, the customers can buy lotteries from the human lotto sellers and lotto vend
 Human Lotto Sellers starts to chat.  
 Lotto Vending machines have a reset function.
 
-### Example of [ISP Violation](isp/ISPViolated.kt)
+### Example of [ISP Violation](../../../../../../../../solid/src/main/java/solid/isp/ISPViolated.kt)
 
-We can add the features like [this](isp/ISPViolated.kt).  
+We can add the features like [this](../../../../../../../../solid/src/main/java/solid/isp/ISPViolated.kt).  
 But the Human Lotto Sellers don't need the `reset` function.  
 And the vending machines can't chat.  
 But Human Lotto Sellers are forced to implement the `reset` function.  
@@ -151,14 +151,14 @@ Even though they don't need it!
 
 That is, the now codes violate the ISP.
 
-### Example of [ISP Adhered(Refactored)](isp/ISPRefactored.kt)
+### Example of [ISP Adhered(Refactored)](../../../../../../../../solid/src/main/java/solid/isp/ISPRefactored.kt)
 
 The refactored version resolves this by introducing two specialized abstractions:
 
 * `HumanLottoSeller` – for sellers with chat capabilities
 * `MachineLottoSeller` – for vending machines with reset capabilities.
 
-So, we can refactor like [this](isp/ISPRefactored.kt).
+So, we can refactor like [this](../../../../../../../../solid/src/main/java/solid/isp/ISPRefactored.kt).
 
 ## DIP(Dependency Inversion Principle)
 

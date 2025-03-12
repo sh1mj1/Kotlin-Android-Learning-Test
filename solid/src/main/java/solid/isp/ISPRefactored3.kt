@@ -1,18 +1,41 @@
-package com.example.learningtest.solid.isp
+package solid.isp
 
-class ISPRefactored1 {
+import kotlin.collections.forEach
+import kotlin.collections.shuffled
+import kotlin.collections.sorted
+import kotlin.collections.take
+
+/**
+ * ISP is satisfied.
+ *
+ * Separated chat and reset into distinct interfaces.
+ * And the lotto seller directly implements those interfaces.
+ */
+class ISPRefactored3 {
     class Customer {
         fun buyLotto(
             money: Int,
             lottoSeller: LottoSeller,
         ): List<Lottery> {
-            if (lottoSeller.restRequired) println(lottoSeller.recoverMessage())
+            if (lottoSeller.restRequired) println(lottoSeller.onRest())
 
             return lottoSeller.soldLotto(money)
         }
     }
 
-    sealed class LottoSeller {
+    sealed interface RestAction {
+        fun onRest(): String
+    }
+
+    interface ChatCapable : RestAction {
+        fun chat(): String
+    }
+
+    interface ResetCapable : RestAction {
+        fun reset(): String
+    }
+
+    sealed class LottoSeller : RestAction {
         abstract val lottoPrice: Int
 
         private var _restRequired: Boolean = true
@@ -23,56 +46,50 @@ class ISPRefactored1 {
             val count = money / lottoPrice
             return List(count) { RandomSquareLottoGenerateStrategy().lotto() }
         }
-
-        fun recoverMessage(): String =
-            when (this) {
-                is HumanLottoSeller -> chat()
-                is LottoVendingMachine -> reset()
-            }
     }
 
-    abstract class HumanLottoSeller : LottoSeller() {
-        abstract fun chat(): String
-    }
-
-    abstract class LottoVendingMachine : LottoSeller() {
-        abstract fun reset(): String
-    }
-
-    class NormalLottoSeller : HumanLottoSeller() {
+    class NormalLottoSeller : LottoSeller(), ChatCapable {
         override val lottoPrice: Int = LOTTO_PRICE
 
-        override fun chat(): String = "Hello!"
+        override fun onRest(): String = chat()
+
+        override fun chat(): String = "Chatting -- Hello!"
 
         companion object {
             private const val LOTTO_PRICE = 1000
         }
     }
 
-    class DisCountLottoSeller : HumanLottoSeller() {
+    class DisCountLottoSeller : LottoSeller(), ChatCapable {
         override val lottoPrice: Int = LOTTO_PRICE
 
-        override fun chat(): String = "Good morning!"
+        override fun onRest(): String = chat()
+
+        override fun chat(): String = "Chatting -- Good morning!"
 
         companion object {
             private const val LOTTO_PRICE = 500
         }
     }
 
-    class NormalLottoVendingMachine : LottoVendingMachine() {
+    class NormalLottoVendingMachine : LottoSeller(), ResetCapable {
         override val lottoPrice: Int = LOTTO_PRICE
 
-        override fun reset(): String = "Reset quietly"
+        override fun onRest(): String = reset()
+
+        override fun reset(): String = "Resetting -- Quietly"
 
         companion object {
             private const val LOTTO_PRICE = 1000
         }
     }
 
-    class NoisyLottoVendingMachine : LottoVendingMachine() {
+    class NoisyLottoVendingMachine : LottoSeller(), ResetCapable {
         override val lottoPrice: Int = LOTTO_PRICE
 
-        override fun reset(): String = "Reset with noise"
+        override fun onRest(): String = reset()
+
+        override fun reset(): String = "Resetting -- With noise"
 
         companion object {
             private const val LOTTO_PRICE = 1000

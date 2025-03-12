@@ -1,6 +1,16 @@
-package com.example.learningtest.solid.isp
+package solid.isp
 
-class ISPRefactored1If {
+import kotlin.collections.forEach
+import kotlin.collections.shuffled
+import kotlin.collections.sorted
+import kotlin.collections.take
+
+/**
+ * ISP is satisfied.
+ *
+ * If there is a new class: `ChatbotLottoSeller`, you can add new class.
+ */
+class ISPRefactored1 {
     class Customer {
         fun buyLotto(
             money: Int,

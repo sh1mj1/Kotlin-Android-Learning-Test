@@ -1,19 +1,19 @@
-package com.example.learningtest.solid.isp
+package isp
 
-import com.example.learningtest.solid.isp.ISPRefactored14.ChatbotLottoVendingMachine
-import com.example.learningtest.solid.isp.ISPRefactored14.DefaultChatResetCapable
-import com.example.learningtest.solid.isp.ISPRefactored14.DisCountLottoSeller
-import com.example.learningtest.solid.isp.ISPRefactored14.HelloChat
-import com.example.learningtest.solid.isp.ISPRefactored14.MorningChat
-import com.example.learningtest.solid.isp.ISPRefactored14.NoisyLottoVendingMachine
-import com.example.learningtest.solid.isp.ISPRefactored14.NoisyReset
-import com.example.learningtest.solid.isp.ISPRefactored14.NormalLottoSeller
-import com.example.learningtest.solid.isp.ISPRefactored14.NormalLottoVendingMachine
-import com.example.learningtest.solid.isp.ISPRefactored14.QuietReset
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
+import solid.isp.ISPRefactored4.ChatbotLottoVendingMachine
+import solid.isp.ISPRefactored4.DefaultChatResetCapable
+import solid.isp.ISPRefactored4.DisCountLottoSeller
+import solid.isp.ISPRefactored4.HelloChat
+import solid.isp.ISPRefactored4.MorningChat
+import solid.isp.ISPRefactored4.NoisyLottoVendingMachine
+import solid.isp.ISPRefactored4.NoisyReset
+import solid.isp.ISPRefactored4.NormalLottoSeller
+import solid.isp.ISPRefactored4.NormalLottoVendingMachine
+import solid.isp.ISPRefactored4.QuietReset
 
-class ISPRefactored14Test : BehaviorSpec({
+class ISPRefactored4Test : BehaviorSpec({
 
     Given("ChatCapable 인터페이스를 구현한 MorningChat") {
         val morningChat = MorningChat()

@@ -1,14 +1,14 @@
-package com.example.learningtest.solid.isp
+package isp
 
-import com.example.learningtest.solid.isp.ISPViolated1.DisCountLottoSeller
-import com.example.learningtest.solid.isp.ISPViolated1.NoisyLottoVendingMachine
-import com.example.learningtest.solid.isp.ISPViolated1.NormalLottoSeller
-import com.example.learningtest.solid.isp.ISPViolated1.NormalLottoVendingMachine
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
+import solid.isp.ISPViolated.DisCountLottoSeller
+import solid.isp.ISPViolated.NoisyLottoVendingMachine
+import solid.isp.ISPViolated.NormalLottoSeller
+import solid.isp.ISPViolated.NormalLottoVendingMachine
 
-class ISPViolated1Test : BehaviorSpec({
+class ISPViolatedTest : BehaviorSpec({
     Given("일반 로또 판매자 NormalLottoSeller") {
         val normalSeller = NormalLottoSeller()
 
