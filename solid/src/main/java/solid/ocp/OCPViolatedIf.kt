@@ -1,36 +1,49 @@
-package com.example.learningtest.solid.ocp
+package solid.ocp
 
-class OCPRefactored2 {
+import kotlin.collections.forEach
+import kotlin.collections.shuffled
+import kotlin.collections.sorted
+import kotlin.collections.take
+
+/**
+ * OCP is violated.
+ *
+ * If we add a new LottoSellerType, we need to modify the existing code.
+ */
+class OCPViolatedIf {
     class Customer {
         fun buyLotto(
             money: Int,
             lottoSeller: LottoSeller,
-        ): List<Lottery> = lottoSeller.soldLotto(money)
+            lottoSellerType: LottoSellerType,
+        ): List<Lottery> = lottoSeller.soldLotto(money, lottoSellerType)
     }
 
-    abstract class LottoSeller {
-        abstract val lottoPrice: Int
-
-        fun soldLotto(money: Int): List<Lottery> {
-            val count = money / lottoPrice
+    class LottoSeller {
+        fun soldLotto(
+            money: Int,
+            lottoSellerType: LottoSellerType,
+        ): List<Lottery> {
+            val count =
+                when (lottoSellerType) {
+                    LottoSellerType.NORMAL -> money / LOTTO_PRICE
+                    LottoSellerType.DISCOUNT -> money / DISCOUNT_LOTTO_PRICE
+                    LottoSellerType.PREMIUM -> money / PREMIUM_LOTTO_PRICE
+                }
             return List(count) { LotteryGenerateStrategy().lotto() }
         }
-    }
-
-    class NormalLottoSeller : LottoSeller() {
-        override val lottoPrice: Int = LOTTO_PRICE
 
         companion object {
             private const val LOTTO_PRICE = 1000
+            private const val DISCOUNT_LOTTO_PRICE = 500
+            private const val PREMIUM_LOTTO_PRICE = 2000
         }
     }
 
-    class DisCountLottoSeller : LottoSeller() {
-        override val lottoPrice: Int = LOTTO_PRICE
-
-        companion object {
-            private const val LOTTO_PRICE = 500
-        }
+    enum class LottoSellerType {
+        NORMAL,
+        DISCOUNT,
+        PREMIUM,
     }
 
     data class Lottery(val numbers: List<Int>) {

@@ -1,5 +1,17 @@
-package com.example.learningtest.solid.ocp
+package solid.ocp
 
+import kotlin.collections.forEach
+import kotlin.collections.shuffled
+import kotlin.collections.sorted
+import kotlin.collections.take
+import kotlin.collections.toSet
+
+/**
+ * Compared to OCPViolated1.kt, SRP (Single Responsibility Principle) has been improved,
+ *
+ * but OCP (Open-Closed Principle) is still violated.
+ *
+ */
 class OCPViolated2 {
     class Customer {
         fun buyLotto(
@@ -38,6 +50,9 @@ class OCPViolated2 {
             numbers.forEach {
                 require(numbers.size == NUMBER_COUNT) {
                     "Invalid lotto number count"
+                }
+                require(numbers.toSet().size == SRPRefactored.Lottery.Companion.NUMBER_COUNT) {
+                    "Duplicate lotto number"
                 }
                 require(it in MIN_NUMBER..MAX_NUMBER) {
                     "Invalid lotto number"

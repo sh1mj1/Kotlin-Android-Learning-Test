@@ -1,0 +1,40 @@
+@startuml
+
+class Customer {
+    +buyLotto(money: Int, lottoSeller: LottoSeller): List<Lottery>
+}
+
+abstract class LottoSeller {
+    +soldLotto(money: Int): List<Lottery>
+    #lottoPrice: Int
+}
+
+class NormalLottoSeller {
+    +lottoPrice: Int
+}
+
+class DisCountLottoSeller {
+    +lottoPrice: Int
+}
+
+class PremiumLottoSeller {
+    +lottoPrice: Int
+}
+
+class Lottery {
+    +numbers: List<Int>
+    +init - validate
+}
+
+class LotteryGenerateStrategy {
+    +lotto(): Lottery
+}
+
+Customer --> LottoSeller : uses
+LottoSeller <|-- NormalLottoSeller
+LottoSeller <|-- DisCountLottoSeller
+LottoSeller <|-- PremiumLottoSeller
+LottoSeller ..> LotteryGenerateStrategy : uses
+LottoSeller ..> Lottery : returns
+LotteryGenerateStrategy --> Lottery : creates
+@enduml

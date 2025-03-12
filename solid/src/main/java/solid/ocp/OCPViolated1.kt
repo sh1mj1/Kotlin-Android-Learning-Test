@@ -1,5 +1,15 @@
-package com.example.learningtest.solid.ocp
+package solid.ocp
 
+import kotlin.collections.forEach
+import kotlin.collections.shuffled
+import kotlin.collections.sorted
+import kotlin.collections.take
+
+/**
+ * New Requirement: Normal Lotto Seller and Discount Lotto Seller
+ *
+ * OCP is violated, and SRP is also violated.
+ */
 class OCPViolated1 {
     class Customer {
         fun buyLotto(

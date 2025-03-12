@@ -1,10 +1,10 @@
-package com.example.learningtest.solid.ocp
+package ocp
 
-import com.example.learningtest.solid.ocp.OCPRefactored2.Customer
-import com.example.learningtest.solid.ocp.OCPRefactored2.DisCountLottoSeller
-import com.example.learningtest.solid.ocp.OCPRefactored2.NormalLottoSeller
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldHaveSize
+import solid.ocp.OCPRefactored2.Customer
+import solid.ocp.OCPRefactored2.DisCountLottoSeller
+import solid.ocp.OCPRefactored2.NormalLottoSeller
 
 class OCPRefactored2Test : BehaviorSpec({
 

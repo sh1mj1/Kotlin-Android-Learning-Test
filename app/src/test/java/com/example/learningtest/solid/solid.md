@@ -33,9 +33,9 @@ flexible, and maintainable.
 It stands for **"A module should have only one responsibility"**.  
 Each module has **only one reason to change**.
 
-### Example of [SRP Violation](srp/SRPViolated.kt)
+### Example of [SRP Violation](../../../../../../../../solid/src/main/java/solid/srp/SRPViolated.kt)
 
-In [this code](srp/SRPViolated.kt) The `LottoSeller` sold lotteries with money.  
+In [this code](../../../../../../../../solid/src/main/java/solid/srp/SRPViolated.kt) The `LottoSeller` sold lotteries with money.  
 But actually it has too many responsibilities:
 
 * It calculates lotteries count with money and price
@@ -48,9 +48,9 @@ But Actually the strategy for generating lotto numbers is not the responsibility
 LottoSeller.  
 That is, the LottoSeller class has more than one reason to change.
 
-### Example of [SRP Adhered(Refactored)](srp/SRPRefactored.kt)
+### Example of [SRP Adhered(Refactored)](../../../../../../../../solid/src/main/java/solid/srp/SRPRefactored.kt)
 
-Let's see this [this code](srp/SRPRefactored.kt).  
+Let's see this [this code](../../../../../../../../solid/src/main/java/solid/srp/SRPRefactored.kt).  
 `LottoSeller` only calculates the price.  
 And it delegate the responsibility for generating Lotto to the `LotteryGenerateStrategy`
 Also, the validation for lotto numbers is `Lottery`'s responsibility.
@@ -74,10 +74,10 @@ private class Customer {
 }
 ```
 
-### Example of [OCP Violation](ocp/OCPViolated.kt)
+### Example of [OCP Violation](../../../../../../../../solid/src/main/java/solid/ocp/OCPViolated2.kt)
 
 **What if there are two kinds of lotto sellers**?  
-We can do like [this](ocp/OCPViolated.kt).
+We can do like [this](../../../../../../../../solid/src/main/java/solid/ocp/OCPViolated2.kt).
 
 One of the lotto seller is just same with the previous case,  
 but the new one(`DiscountedLottoSeller`) sold a lotto for 500 price.
@@ -85,13 +85,13 @@ but the new one(`DiscountedLottoSeller`) sold a lotto for 500 price.
 This case violates the OCP.  
 You should be able to add new functionality without altering existing code.
 
-### Example of [OCP Adhered(Refactored)](ocp/OCPRefactored.kt)
+### Example of [OCP Adhered(Refactored)](../../../../../../../../solid/src/main/java/solid/ocp/OCPViolated2.kt)
 
-We can simply keep the OCP **introducing interface** [like this](ocp/OCPRefactored.kt).
+We can simply keep the OCP **introducing interface** [like this](../../../../../../../../solid/src/main/java/solid/ocp/OCPRefactored2.kt).
 
 In this example, new seller type(`DiscountedLottoSeller`) is added.  
-In [OCPViolated.kt](ocp/OCPViolated.kt), we changed the codes in the `Customer` class.  
-But In [OCPRefactored.kt](ocp/OCPRefactored.kt), we just added a new class and implemented the interface
+In [OCPViolated2.kt](../../../../../../../../solid/src/main/java/solid/ocp/OCPViolated2.kt), we changed the codes in the `Customer` class.  
+But In [OCPRefactored2.kt](../../../../../../../../solid/src/main/java/solid/ocp/OCPRefactored2.kt), we just added a new class and implemented the interface
 without changing the existing code.
 
 ## LSP(Liskov Substitution Principle)
@@ -105,10 +105,10 @@ Let's suppose the `Lottery` class has a new requirement.
 It has the rectangle in the `Lottery` class.  
 Some special `Lottery` has a `Square`, but some of them have a `Rectangle` which is not a `Square`.
 
-[Look at the Rectangle and Square class in LSPViolated.kt](lsp/LSPViolated.kt)
+[Look at the Rectangle and Square class in LSPViolated.kt](../../../../../../../../solid/src/main/java/solid/lsp/LSPViolated.kt)
 
 To adhere to the LSP, the `Square` class must be able to substitute the `Rectangle` class.  
-[But in this test code](lsp/LSPViolatedTest.kt), the `Square` class cannot substitute the `Rectangle`
+[But this in this directory.kt](../../../../../../../../solid/src/test/kotlin/lsp/LSPViolatedTest.kt), the `Square` class cannot substitute the `Rectangle`
 class.
 
 * Given the `Square` class is a subclass of the `Rectangle` class,

@@ -1,5 +1,13 @@
-package com.example.learningtest.solid.ocp
+package solid.ocp
 
+import kotlin.collections.forEach
+import kotlin.collections.shuffled
+import kotlin.collections.sorted
+import kotlin.collections.take
+
+/**
+ * OCP is satisfied by interface
+ */
 class OCPRefactored1 {
     class Customer {
         fun buyLotto(
