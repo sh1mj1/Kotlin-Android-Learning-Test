@@ -1,6 +1,7 @@
-package com.example.learningtest.solid.srp
+package srp
 
-import com.example.learningtest.solid.srp.SRPRefactored.Lottery
+import SRPRefactored.Lottery
+import SRPRefactored.LottoSeller
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldHaveSize
@@ -30,6 +31,18 @@ class SRPRefactoredTest : BehaviorSpec({
             }
         }
 
+        When("로또 숫자에 중복이 있을 때") {
+            val duplicateNumbers = listOf(1, 2, 3, 4, 5, 5)
+
+            Then("로또 숫자가 중복되었다는 예외를 던진다") {
+                val exception =
+                    shouldThrow<IllegalArgumentException> {
+                        Lottery(duplicateNumbers)
+                    }
+                exception.message shouldBe "Duplicate lotto number"
+            }
+        }
+
         When("로또의 숫자의 개수가 적을 때") {
             val invalidNumbers = listOf(1, 2, 3, 4, 5)
 
@@ -44,11 +57,12 @@ class SRPRefactoredTest : BehaviorSpec({
     }
 
     Given("LottoSeller 클래스") {
-        val lottoSeller = SRPRefactored.LottoSeller()
+        val lottoSeller = LottoSeller()
 
         When("5000 원으로 로또를 구매하면") {
             val money = 5000
-            val lotteries = lottoSeller.soldLotto(money)
+            val lotteries =
+                lottoSeller.soldLotto(money)
 
             Then("5개의 로또가 생성된다") {
                 lotteries shouldHaveSize (money / 1000)
@@ -59,7 +73,8 @@ class SRPRefactoredTest : BehaviorSpec({
             val money = 500
 
             Then("빈 리스트가 반환된다") {
-                val lotteries = lottoSeller.soldLotto(money)
+                val lotteries =
+                    lottoSeller.soldLotto(money)
                 lotteries shouldBe emptyList()
             }
         }

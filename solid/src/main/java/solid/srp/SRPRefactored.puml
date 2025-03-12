@@ -1,0 +1,28 @@
+@startuml
+'left to right direction
+
+    class LottoSeller {
+        +soldLotto(money: Int): List<Lottery>
+        -LOTTO_PRICE: Int
+    }
+
+    class Lottery {
+        +numbers: List<Int>
+        +init - validate
+        +NUMBER_COUNT: Int
+        +MIN_NUMBER: Int
+        +MAX_NUMBER: Int
+        +numberRange: IntRange
+    }
+
+    class LotteryGenerateStrategy {
+        +lotto(): Lottery
+    }
+
+    LottoSeller ..> LotteryGenerateStrategy : uses
+    LottoSeller ..> Lottery : returns
+    LotteryGenerateStrategy ..> Lottery : creates
+
+    LotteryGenerateStrategy --> Lottery : generates
+
+@enduml

@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "LearningTest"
 include(":app")
+include(":solid")

@@ -1,5 +1,3 @@
-package com.example.learningtest.solid.srp
-
 class SRPRefactored {
     class LottoSeller {
         fun soldLotto(money: Int): List<Lottery> {
@@ -17,6 +15,9 @@ class SRPRefactored {
             numbers.forEach {
                 require(numbers.size == NUMBER_COUNT) {
                     "Invalid lotto number count"
+                }
+                require(numbers.toSet().size == NUMBER_COUNT) {
+                    "Duplicate lotto number"
                 }
                 require(it in MIN_NUMBER..MAX_NUMBER) {
                     "Invalid lotto number"

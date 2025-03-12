@@ -1,6 +1,6 @@
-package com.example.learningtest.solid.srp
+package srp
 
-import com.example.learningtest.solid.srp.SRPViolated.Lottery
+import SRPViolated.Lottery
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 
@@ -22,15 +22,22 @@ class SRPViolatedTest : BehaviorSpec({
             val invalidLottery = Lottery(listOf(1, 2, 3, 4, 5, 50))
 
             Then("유효하지 않은 로또 숫자 예외가 발생한다") {
-                TODO("validate 메서드가 priave 이다! ")
+                TODO("validate 메서드가 priave ... ")
             }
         }
 
+        When("로또 숫자에 중복이 있을 경우") {
+            val invalidLottery = Lottery(listOf(1, 2, 3, 4, 5, 5))
+
+            Then("유효하지 않은 로또 숫자 중복 예외가 발생한다") {
+                TODO("validate 메서드가 priave ... ")
+            }
+        }
         When("로또 숫자의 개수가 부족할 경우") {
             val invalidLottery = Lottery(listOf(1, 2, 3, 4, 5))
 
             Then("유효하지 않은 로또 숫자 개수 예외가 발생한다") {
-                TODO("validate 메서드가 priave 이다! ")
+                TODO("validate 메서드가 priave ... ")
             }
         }
     }
