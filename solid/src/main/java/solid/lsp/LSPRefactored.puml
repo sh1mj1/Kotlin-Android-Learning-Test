@@ -1,0 +1,38 @@
+@startuml
+
+interface Shape {
+    +area(): Int
+}
+
+class Rectangle {
+    -width: Int
+    -height: Int
+    +setWidth(width: Int)
+    +setHeight(height: Int)
+    +area(): Int
+}
+
+class Square {
+    -side: Int
+    +setSide(side: Int)
+    +area(): Int
+}
+
+class Lottery {
+    +numbers: List<Int>
+    +shape: Shape
+    +init - validate
+}
+
+class RandomSquareLottoGenerateStrategy {
+    +lotto(): Lottery
+}
+
+Shape <|-- Rectangle
+Shape <|-- Square
+
+
+RandomSquareLottoGenerateStrategy --> Lottery : creates
+Lottery --> Shape : contains
+
+@enduml

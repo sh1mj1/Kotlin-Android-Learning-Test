@@ -1,11 +1,11 @@
-package com.example.learningtest.solid.lsp
+package lsp
 
-import com.example.learningtest.solid.lsp.LSPViolated1.Rectangle
-import com.example.learningtest.solid.lsp.LSPViolated1.Square
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
+import solid.lsp.LSPViolated.Rectangle
+import solid.lsp.LSPViolated.Square
 
-class LSPViolated1Test : BehaviorSpec({
+class LSPViolatedTest : BehaviorSpec({
 
     Given("높이 4, 세로 5 의 직사각형(Rectangle)") {
         val rectangle: Rectangle = Rectangle(_height = 4, _width = 5)
@@ -25,7 +25,7 @@ class LSPViolated1Test : BehaviorSpec({
     }
 
     Given("한변의 길이가 5인 정사각형 정사각형(Square) 클래스가 주어졌을 때") {
-        val square: Rectangle = Square(5, 5)
+        val square: Rectangle = Square(5)
 
         Then("면적은 25 이다") {
             square.area() shouldBe 25

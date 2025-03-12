@@ -1,6 +1,6 @@
-package com.example.learningtest.solid.lsp
+package solid.lsp
 
-class LSPRefactored1 {
+class LSPRefactored {
     class Customer {
         fun buyLotto(
             money: Int,

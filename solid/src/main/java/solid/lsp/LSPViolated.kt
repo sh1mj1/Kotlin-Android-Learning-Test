@@ -1,6 +1,11 @@
-package com.example.learningtest.solid.lsp
+package solid.lsp
 
-class LSPViolated1 {
+/**
+ * new requirement: lotto has a shape (rectangle or square)
+ *
+ * LSP is violated because the subclass (Square) has a different behavior from the superclass (Rectangle)
+ */
+class LSPViolated {
     class Customer {
         fun buyLotto(
             money: Int,
@@ -35,13 +40,16 @@ class LSPViolated1 {
 
     data class Lottery(
         val numbers: List<Int>,
-        val rectangle: Rectangle = Square(3, 3),
+        val rectangle: Rectangle = Square(3),
     ) {
         init {
+            require(numbers.size == NUMBER_COUNT) {
+                "Invalid lotto number count"
+            }
+            require(numbers.toSet().size == NUMBER_COUNT) {
+                "Duplicate lotto number"
+            }
             numbers.forEach {
-                require(numbers.size == NUMBER_COUNT) {
-                    "Invalid lotto number count"
-                }
                 require(it in MIN_NUMBER..MAX_NUMBER) {
                     "Invalid lotto number"
                 }
@@ -78,9 +86,8 @@ class LSPViolated1 {
     }
 
     class Square(
-        height: Int,
-        width: Int,
-    ) : Rectangle(height, width) {
+        side: Int,
+    ) : Rectangle(side, side) {
         override fun changeHeight(height: Int) {
             setSide(height)
         }
@@ -99,7 +106,7 @@ class LSPViolated1 {
         fun lotto(): Lottery =
             Lottery(
                 numbers = (Lottery.numberRange).shuffled().take(Lottery.NUMBER_COUNT).sorted(),
-                Square(3, 3),
+                Square(3),
             )
     }
 }

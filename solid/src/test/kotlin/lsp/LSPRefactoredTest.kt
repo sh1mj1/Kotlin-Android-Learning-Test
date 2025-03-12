@@ -1,12 +1,12 @@
-package com.example.learningtest.solid.lsp
+package lsp
 
-import com.example.learningtest.solid.lsp.LSPRefactored1.Rectangle
-import com.example.learningtest.solid.lsp.LSPRefactored1.Shape
-import com.example.learningtest.solid.lsp.LSPRefactored1.Square
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
+import solid.lsp.LSPRefactored.Rectangle
+import solid.lsp.LSPRefactored.Shape
+import solid.lsp.LSPRefactored.Square
 
-class LSPRefactored1Test : BehaviorSpec({
+class LSPRefactoredTest : BehaviorSpec({
 
     Given("가로 4, 세로 5인 직사각형(Rectangle)") {
         val rectangle = Rectangle(4, 5)
