@@ -1,0 +1,45 @@
+@startuml
+
+' 스타일 설정: 글씨 크기 조정 및 클래스 상단/하단 이중 선 제거 '
+skinparam class {
+    BorderThickness 0
+    FontSize 14
+}
+
+' ViewModel 클래스 '
+class LottoViewModel {
+    - _lottoResult: MutableLiveData<String>
+    + lottoResult: LiveData<String>
+    - _errorMessage: MutableLiveData<String>
+    + errorMessage: LiveData<String>
+    ...
+    + buyLotto()
+    + setLottoResult(result: String)
+    + setErrorMessage(error: String)
+}
+
+' Activity (View 역할) '
+class LottoMVVMActivity {
+    - viewModel: LottoViewModel
+    - binding: ActivityMvvmLottoBinding
+    + onCreate(savedInstanceState: Bundle)
+    + observeViewModel()
+}
+
+' XML 레이아웃 '
+class activity_mvvm_lotto
+
+' 데이터 바인딩 클래스 '
+class ActivityMvvmLottoBinding {
+    + viewModel: LottoViewModel
+}
+
+' 관계 설정 '
+LottoMVVMActivity --> LottoViewModel : observes
+LottoMVVMActivity --> activity_mvvm_lotto : uses
+LottoMVVMActivity --> ActivityMvvmLottoBinding : binds
+
+LottoViewModel --> "MutableLiveData<String>" : manages
+LottoViewModel --> "LiveData<String>" : exposes
+
+@enduml

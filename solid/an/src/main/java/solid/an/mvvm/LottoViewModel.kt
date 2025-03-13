@@ -1,21 +1,21 @@
-package com.example.learningtest.solid.an
+package solid.an.mvvm
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.learningtest.R
-import com.example.learningtest.solid.pure.DisCountLottoSeller
-import com.example.learningtest.solid.pure.LottoSeller
-import com.example.learningtest.solid.pure.LottoSellerResult
-import com.example.learningtest.solid.pure.ManualLottoGenerateStrategy
-import com.example.learningtest.solid.pure.NoisyLottoVendingMachine
-import com.example.learningtest.solid.pure.NormalLottoSeller
-import com.example.learningtest.solid.pure.NormalLottoVendingMachine
-import com.example.learningtest.solid.pure.RandomLottoGenerateStrategy
-import com.example.learningtest.solid.pure.Rectangle
-import com.example.learningtest.solid.pure.Shape
-import com.example.learningtest.solid.pure.ShapeResult
-import com.example.learningtest.solid.pure.Square
+import lottery.pure.DisCountLottoSeller
+import lottery.pure.LottoSeller
+import lottery.pure.LottoSellerResult
+import lottery.pure.ManualLottoGenerateStrategy
+import lottery.pure.NoisyLottoVendingMachine
+import lottery.pure.NormalLottoSeller
+import lottery.pure.NormalLottoVendingMachine
+import lottery.pure.RandomLottoGenerateStrategy
+import lottery.pure.Rectangle
+import lottery.pure.Shape
+import lottery.pure.ShapeResult
+import lottery.pure.Square
+import solid.an.R
 
 class LottoViewModel : ViewModel() {
     val selectedSeller = MutableLiveData<LottoSeller?>()
@@ -87,8 +87,16 @@ class LottoViewModel : ViewModel() {
             val amount = money.value?.toIntOrNull() ?: error("구매할 금액을 입력해주세요.")
 
             when (val result = seller.lottoCount(amount)) {
-                is LottoSellerResult.Failure.InsufficientFunds -> error("금액이 부족합니다. 최소 ${result.requiredAmount}원 이상 입력하세요.")
-                is LottoSellerResult.Failure.InvalidAmount -> error("금액은 ${result.requiredUnit}원 단위로 입력해야 합니다.")
+                is LottoSellerResult.Failure.InsufficientFunds ->
+                    error(
+                        "금액이 부족합니다. 최소 ${result.requiredAmount}원 이상 입력하세요.",
+                    )
+
+                is LottoSellerResult.Failure.InvalidAmount ->
+                    error(
+                        "금액은 ${result.requiredUnit}원 단위로 입력해야 합니다.",
+                    )
+
                 is LottoSellerResult.Success -> {}
             }
 
@@ -97,8 +105,12 @@ class LottoViewModel : ViewModel() {
                     null -> error("로또 모양을 선택해주세요.")
                     else ->
                         when (height.value?.toIntOrNull()) {
-                            null -> Square.create(width.value!!.toInt())
-                            else -> Rectangle.create(width.value!!.toInt(), height.value!!.toInt())
+                            null -> Square.Companion.create(width.value!!.toInt())
+                            else ->
+                                Rectangle.Companion.create(
+                                    width.value!!.toInt(),
+                                    height.value!!.toInt(),
+                                )
                         }
                 }
 
@@ -117,32 +129,37 @@ class LottoViewModel : ViewModel() {
             }
 
             val count = amount / seller.lottoPrice
+
             val lottoNumbers =
+                manualNumbers.value.let {
+                    requireNotNull(it) { "수동 로또 번호를 입력해주세요." }
+                    val numbers = it.trim().split(",").map { it.trim().toInt() }
+                    require(numbers.size == 6) { "6개의 숫자를 입력해주세요." }
+                    numbers
+                }
+
+            val lottoes =
                 List(count) {
                     when (type) {
                         "AUTO" -> RandomLottoGenerateStrategy(selectedShape).lotto()
                         "MANUAL" ->
-                            ManualLottoGenerateStrategy(
-                                manualNumbers.value!!.split(",").map { it.trim().toInt() },
-                                selectedShape,
-                            ).lotto()
+                            ManualLottoGenerateStrategy(lottoNumbers, selectedShape).lotto()
 
                         else -> error("잘못된 로또 구매 방식입니다.")
                     }
                 }
 
             _result.value =
-                lottoNumbers.joinToString("\n") {
+                lottoes.joinToString("\n") {
                     "Numbers: ${it.numbers} " +
                         "(${
-                            if (selectedShape is Rectangle) {
-                                "가로: ${selectedShape.width}, 세로: ${selectedShape.height}"
-                            } else {
-                                "한 변의 길이: ${(selectedShape as Square).side}"
+                            when (selectedShape) {
+                                is Rectangle -> "가로: ${selectedShape.width}, 세로: ${selectedShape.height}"
+                                is Square -> "한 변의 길이: ${selectedShape.side}"
                             }
                         })"
                 }
-            _error.value = "" // 에러 초기화
+            _error.value = ""
             _showError.value = false
         }.onFailure {
             _error.value = "⚠️ 오류: ${it.message}"

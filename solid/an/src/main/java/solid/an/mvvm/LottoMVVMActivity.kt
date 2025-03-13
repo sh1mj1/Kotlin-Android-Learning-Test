@@ -1,9 +1,9 @@
-package com.example.learningtest.solid.an
+package solid.an.mvvm
 
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.example.learningtest.databinding.ActivityMvvmLottoBinding
+import solid.an.databinding.ActivityMvvmLottoBinding
 
 class LottoMVVMActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMvvmLottoBinding

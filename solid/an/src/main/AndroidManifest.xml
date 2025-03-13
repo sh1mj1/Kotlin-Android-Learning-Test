@@ -15,12 +15,20 @@
         <activity
             android:name="solid.an.mvp.LottoMVPActivity"
             android:exported="true"
+            android:theme="@style/Theme.LearningTest" />
+
+        <activity
+            android:name="solid.an.mvvm.LottoMVVMActivity"
+            android:exported="true"
             android:theme="@style/Theme.LearningTest">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
+
+
     </application>
 
 </manifest>

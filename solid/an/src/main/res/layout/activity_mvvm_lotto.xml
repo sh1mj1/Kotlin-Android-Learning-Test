@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.learningtest.solid.an.LottoViewModel" />
+            type="solid.an.mvvm.LottoViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

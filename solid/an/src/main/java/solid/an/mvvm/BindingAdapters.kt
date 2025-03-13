@@ -1,4 +1,4 @@
-package com.example.learningtest.solid.an
+package solid.an.mvvm
 
 import android.view.View
 import androidx.databinding.BindingAdapter
