@@ -12,14 +12,6 @@ data class Rectangle(var width: Int, var height: Int) : Shape {
         require(width > 0 && height > 0) { INVALID_SHAPE_SIZE }
     }
 
-//    fun setWidth(width: Int) {
-//        this.width = width
-//    }
-//
-//    fun setHeight(height: Int) {
-//        this.height = height
-//    }
-
     override fun area() = width * height
 
     companion object {
@@ -43,10 +35,6 @@ data class Square(var side: Int) : Shape {
             "Invalid side"
         }
     }
-
-//    fun setSide(side: Int) {
-//        this.side = side
-//    }
 
     override fun area() = side * side
 

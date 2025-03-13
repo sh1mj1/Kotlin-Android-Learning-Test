@@ -1,22 +1,31 @@
-package com.example.learningtest.solid.an
+package solid.an.mvc
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.learningtest.R
-import com.example.learningtest.solid.pure.DisCountLottoSeller
-import com.example.learningtest.solid.pure.LottoSeller
-import com.example.learningtest.solid.pure.ManualLottoGenerateStrategy
-import com.example.learningtest.solid.pure.NoisyLottoVendingMachine
-import com.example.learningtest.solid.pure.NormalLottoSeller
-import com.example.learningtest.solid.pure.NormalLottoVendingMachine
-import com.example.learningtest.solid.pure.RandomLottoGenerateStrategy
-import com.example.learningtest.solid.pure.Rectangle
-import com.example.learningtest.solid.pure.Shape
-import com.example.learningtest.solid.pure.Square
+import lottery.pure.DisCountLottoSeller
+import lottery.pure.LottoSeller
+import lottery.pure.ManualLottoGenerateStrategy
+import lottery.pure.NoisyLottoVendingMachine
+import lottery.pure.NormalLottoSeller
+import lottery.pure.NormalLottoVendingMachine
+import lottery.pure.RandomLottoGenerateStrategy
+import lottery.pure.Rectangle
+import lottery.pure.Shape
+import lottery.pure.Square
+import solid.an.R
+import kotlin.collections.joinToString
+import kotlin.collections.mapNotNull
+import kotlin.onFailure
+import kotlin.onSuccess
+import kotlin.runCatching
+import kotlin.text.split
+import kotlin.text.toIntOrNull
+import kotlin.text.trim
 
 class LottoMVCActivity : AppCompatActivity() {
     private lateinit var radioSellerGroup: RadioGroup
@@ -29,6 +38,7 @@ class LottoMVCActivity : AppCompatActivity() {
     private lateinit var btnBuyLotto: Button
     private lateinit var txtResult: TextView
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mvc_lotto)
@@ -57,7 +67,7 @@ class LottoMVCActivity : AppCompatActivity() {
         btnBuyLotto.setOnClickListener {
             runCatching { processLottoPurchase() }
                 .onSuccess { result -> txtResult.text = result }
-                .onFailure { error -> txtResult.text = "⚠️ 오류: ${error.message}" }
+                .onFailure { error -> txtResult.text = "⚠️ 오류: " + error.message }
         }
     }
 
@@ -127,12 +137,11 @@ class LottoMVCActivity : AppCompatActivity() {
             }
 
         return lottoNumbers.joinToString("\n") {
-            "Numbers: ${it.numbers} (" +
+            "Numbers: $lottoNumbers (" +
                 "${
-                    if (shape is Rectangle) {
-                        "가로: ${shape.width}, 세로: ${shape.height}"
-                    } else {
-                        "한 변의 길이: ${(shape as Square).side}"
+                    when (shape) {
+                        is Rectangle -> "가로: ${shape.width}, 세로: ${shape.height}"
+                        is Square -> "한 변의 길이: ${shape.side}"
                     }
                 })"
         }

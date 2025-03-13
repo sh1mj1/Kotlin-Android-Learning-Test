@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">LearningTest</string>
+    <string name="title_activity_main2">MainActivity2</string>
+    <string name="show_less">Show less</string>
+    <string name="show_more">Show more</string>
+
+    <string name="title_activity_basic_state">BasicStateActivity</string>
+
+    <string name="placeholder_search">Search</string>
+    <string name="fc2_nature_meditations">Nature meditations</string>
+    <string name="align_your_body_data_sample">sample data</string>
+    <string name="align_your_body">Align Your Body</string>
+    <string name="favorite_collections">Favorite Collections</string>
+    <string name="bottom_navigation_home">home</string>
+    <string name="bottom_navigation_profile">profile</string>
+    <string name="title_activity_soothe">SootheActivity</string>
+
+</resources>
