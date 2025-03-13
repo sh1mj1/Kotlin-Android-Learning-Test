@@ -1,20 +1,22 @@
 <!-- TOC -->
+
 * [SOLID](#solid)
-  * [SRP(Single Responsibility Principle)](#srpsingle-responsibility-principle)
-    * [Example of SRP Violation](#example-of-srp-violation)
-    * [Example of SRP Adhered(Refactored)](#example-of-srp-adhered--refactored-)
-  * [OCP(Open/Closed Principle)](#ocpopenclosed-principle)
-    * [Example of OCP Violation](#example-of-ocp-violation)
-    * [Example of OCP Adhered(Refactored)](#example-of-ocp-adhered--refactored-)
-  * [LSP(Liskov Substitution Principle)](#lspliskov-substitution-principle)
-    * [Example of LSP Violation](#example-of-lsp-violation)
-    * [Example of LSP Adhered(Refactored)](#example-of-lsp-adhered--refactored-)
-  * [ISP(Interface Segregation Principle)](#ispinterface-segregation-principle)
-    * [Example of ISP Violation](#example-of-isp-violation)
-    * [Example of ISP Adhered(Refactored)](#example-of-isp-adhered--refactored-)
-  * [DIP(Dependency Inversion Principle)](#dipdependency-inversion-principle)
-    * [Example of DIP Violation](#example-of-dip-violation)
-    * [Example of DIP Adhered(Refactored)](#example-of-dip-adhered--refactored-)
+    * [SRP(Single Responsibility Principle)](#srpsingle-responsibility-principle)
+        * [Example of SRP Violation](#example-of-srp-violation)
+        * [Example of SRP Adhered(Refactored)](#example-of-srp-adhered--refactored-)
+    * [OCP(Open/Closed Principle)](#ocpopenclosed-principle)
+        * [Example of OCP Violation](#example-of-ocp-violation)
+        * [Example of OCP Adhered(Refactored)](#example-of-ocp-adhered--refactored-)
+    * [LSP(Liskov Substitution Principle)](#lspliskov-substitution-principle)
+        * [Example of LSP Violation](#example-of-lsp-violation)
+        * [Example of LSP Adhered(Refactored)](#example-of-lsp-adhered--refactored-)
+    * [ISP(Interface Segregation Principle)](#ispinterface-segregation-principle)
+        * [Example of ISP Violation](#example-of-isp-violation)
+        * [Example of ISP Adhered(Refactored)](#example-of-isp-adhered--refactored-)
+    * [DIP(Dependency Inversion Principle)](#dipdependency-inversion-principle)
+        * [Example of DIP Violation](#example-of-dip-violation)
+        * [Example of DIP Adhered(Refactored)](#example-of-dip-adhered--refactored-)
+
 <!-- TOC -->
 
 # SOLID
@@ -35,7 +37,8 @@ Each module has **only one reason to change**.
 
 ### Example of [SRP Violation](../../../../../../../../solid/src/main/java/solid/srp/SRPViolated.kt)
 
-In [this code](../../../../../../../../solid/src/main/java/solid/srp/SRPViolated.kt) The `LottoSeller` sold lotteries with money.  
+In [this code](../../../../../../../../solid/src/main/java/solid/srp/SRPViolated.kt) The
+`LottoSeller` sold lotteries with money.  
 But actually it has too many responsibilities:
 
 * It calculates lotteries count with money and price
@@ -50,7 +53,8 @@ That is, the LottoSeller class has more than one reason to change.
 
 ### Example of [SRP Adhered(Refactored)](../../../../../../../../solid/src/main/java/solid/srp/SRPRefactored.kt)
 
-Let's see this [this code](../../../../../../../../solid/src/main/java/solid/srp/SRPRefactored.kt).  
+Let's see
+this [this code](../../../../../../../../solid/src/main/java/solid/srp/SRPRefactored.kt).  
 `LottoSeller` only calculates the price.  
 And it delegate the responsibility for generating Lotto to the `LotteryGenerateStrategy`
 Also, the validation for lotto numbers is `Lottery`'s responsibility.
@@ -87,11 +91,14 @@ You should be able to add new functionality without altering existing code.
 
 ### Example of [OCP Adhered(Refactored)](../../../../../../../../solid/src/main/java/solid/ocp/OCPViolated2.kt)
 
-We can simply keep the OCP **introducing interface** [like this](../../../../../../../../solid/src/main/java/solid/ocp/OCPRefactored2.kt).
+We can simply keep the OCP **introducing interface
+** [like this](../../../../../../../../solid/src/main/java/solid/ocp/OCPRefactored2.kt).
 
 In this example, new seller type(`DiscountedLottoSeller`) is added.  
-In [OCPViolated2.kt](../../../../../../../../solid/src/main/java/solid/ocp/OCPViolated2.kt), we changed the codes in the `Customer` class.  
-But In [OCPRefactored2.kt](../../../../../../../../solid/src/main/java/solid/ocp/OCPRefactored2.kt), we just added a new class and implemented the interface
+In [OCPViolated2.kt](../../../../../../../../solid/src/main/java/solid/ocp/OCPViolated2.kt), we
+changed the codes in the `Customer` class.  
+But In [OCPRefactored2.kt](../../../../../../../../solid/src/main/java/solid/ocp/OCPRefactored2.kt),
+we just added a new class and implemented the interface
 without changing the existing code.
 
 ## LSP(Liskov Substitution Principle)
@@ -108,7 +115,8 @@ Some special `Lottery` has a `Square`, but some of them have a `Rectangle` which
 [Look at the Rectangle and Square class in LSPViolated.kt](../../../../../../../../solid/src/main/java/solid/lsp/LSPViolated.kt)
 
 To adhere to the LSP, the `Square` class must be able to substitute the `Rectangle` class.  
-[But Let's see the last test function,](../../../../../../../../solid/src/test/kotlin/lsp/LSPViolatedTest.kt), the `Square` class cannot substitute the `Rectangle`
+[But Let's see the last test function,](../../../../../../../../solid/src/test/kotlin/lsp/LSPViolatedTest.kt),
+the `Square` class cannot substitute the `Rectangle`
 class.
 
 * Given the `Square` class is a subclass of the `Rectangle` class,
@@ -126,7 +134,8 @@ This example shows that `is-A` is not always enough or right.
 
 ### Example of [LSP Adhered(Refactored)](../../../../../../../../solid/src/main/java/solid/lsp/LSPRefactored.kt)
 
-We can refactor this code, [like this](../../../../../../../../solid/src/main/java/solid/lsp/LSPRefactored.kt).  
+We can refactor this
+code, [like this](../../../../../../../../solid/src/main/java/solid/lsp/LSPRefactored.kt).  
 In this code, the `Square` class is not a subclass of the `Rectangle` class.  
 I introduce the `Shape` interface, and the `Rectangle` and `Square` class implement the `Shape`
 interface.  
@@ -142,7 +151,8 @@ Lotto Vending machines have a reset function.
 
 ### Example of [ISP Violation](../../../../../../../../solid/src/main/java/solid/isp/ISPViolated.kt)
 
-We can add the features like [this](../../../../../../../../solid/src/main/java/solid/isp/ISPViolated.kt).  
+We can add the features
+like [this](../../../../../../../../solid/src/main/java/solid/isp/ISPViolated.kt).  
 But the Human Lotto Sellers don't need the `reset` function.  
 And the vending machines can't chat.  
 But Human Lotto Sellers are forced to implement the `reset` function.  
@@ -158,7 +168,8 @@ The refactored version resolves this by introducing two specialized abstractions
 * `HumanLottoSeller` – for sellers with chat capabilities
 * `MachineLottoSeller` – for vending machines with reset capabilities.
 
-So, we can refactor like [this](../../../../../../../../solid/src/main/java/solid/isp/ISPRefactored.kt).
+So, we can refactor
+like [this](../../../../../../../../solid/src/main/java/solid/isp/ISPRefactored.kt).
 
 ## DIP(Dependency Inversion Principle)
 
@@ -169,9 +180,9 @@ THe principle states:
 * **Abstractions should not depend on details**.  
   Details (concrete implementations) should depend on abstractions.
 
-### Example of [DIP Violation](dip/DIPViolated.kt)
+### Example of [DIP Violation](../../../../../../../../solid/src/main/java/solid/dip/DIPViolated.kt)
 
-Let's see this [code](dip/DIPViolated.kt).  
+Let's see this [code](../../../../../../../../solid/src/main/java/solid/dip/DIPViolated.kt).  
 This code violates the DIP.
 
 Why This Violates DIP:
@@ -187,9 +198,10 @@ Why This Violates DIP:
     * The need to explicitly check the type (is `HumanLottoSeller`, is `MachineLottoSeller`) is a
       red flag for DIP violation.
 
-### Example of [DIP Adhered(Refactored)](dip/DIPRefactored.kt)
+### Example of [DIP Adhered(Refactored)](../../../../../../../../solid/src/main/java/solid/dip/DIPRefactored2.kt)
 
-Let's see the [refactored code](dip/DIPRefactored.kt).  
+Let's see
+the [refactored code](../../../../../../../../solid/src/main/java/solid/dip/DIPRefactored2.kt).  
 In changed code:
 
 * Customer now depends on LottoSeller (an abstraction).

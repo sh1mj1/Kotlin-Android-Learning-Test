@@ -1,0 +1,66 @@
+@startuml
+
+' 스타일 설정: 글씨 크기 조정 및 클래스 상단/하단 이중 선 제거 '
+skinparam class {
+    BorderThickness 0
+    FontSize 16
+}
+
+' 인터페이스 '
+interface RestAction
+interface LottoGenerateStrategy
+interface Shape
+
+' RestAction 관련 구현 클래스 '
+class ChatCapable
+class ResetCapable
+class RestActions
+
+' LottoSeller 관련 구현 클래스 '
+abstract class LottoSeller
+class NormalLottoSeller
+class NoisyLottoVendingMachine
+
+' Lottery 관련 클래스 '
+class Lottery
+class Rectangle
+class Square
+
+' LottoGenerateStrategy 관련 클래스 '
+class ManualLottoGenerateStrategy
+class RandomLottoGenerateStrategy
+
+' Customer 클래스 추가 '
+class Customer
+
+' 관계 설정 '
+RestAction <|-- ChatCapable
+RestAction <|-- ResetCapable
+RestActions --> RestAction : contains
+
+LottoSeller <|-- NormalLottoSeller
+LottoSeller <|-- NoisyLottoVendingMachine
+LottoSeller --> RestActions : has
+
+' 각 LottoSeller 하위 클래스가 RestActions을 오버라이드하는 관계 표현 '
+NormalLottoSeller --> RestActions : has
+NoisyLottoVendingMachine --> RestActions : has
+
+Shape <|-- Rectangle
+Shape <|-- Square
+
+LottoGenerateStrategy <|-- ManualLottoGenerateStrategy
+LottoGenerateStrategy <|-- RandomLottoGenerateStrategy
+
+ManualLottoGenerateStrategy --> Lottery : creates
+RandomLottoGenerateStrategy --> Shape : contains
+ManualLottoGenerateStrategy --> Shape : contains
+RandomLottoGenerateStrategy --> Lottery : creates
+
+Lottery --> Shape : contains
+
+' Customer 관계 추가 '
+Customer --> LottoSeller : uses
+Customer --> LottoGenerateStrategy : provides
+
+@enduml

@@ -1,6 +1,14 @@
-package com.example.learningtest.solid.dip
+package solid.dip
 
-class DIPRefactored4 {
+import kotlin.collections.forEach
+import kotlin.collections.joinToString
+import kotlin.collections.map
+import kotlin.collections.toList
+
+/**
+ * "Don't inject where you don't need to inject."
+ */
+class DIPRefactored2 {
     class Customer {
         fun buyLotto(
             money: Int,
@@ -37,7 +45,7 @@ class DIPRefactored4 {
 
     abstract class LottoSeller {
         abstract val lottoPrice: Int
-        open val restActions: RestActions = RestActions()
+        abstract val restActions: RestActions
 
         private var _restRequired: Boolean = true
         val restRequired: Boolean
@@ -57,36 +65,56 @@ class DIPRefactored4 {
     }
 
     class NormalLottoSeller : LottoSeller() {
-        override val lottoPrice: Int = 1_000
+        override val lottoPrice: Int = LOTTO_PRICE
         override val restActions: RestActions =
             RestActions(ChatCapable(message = "Chatting -- Hello!"))
+
+        companion object {
+            private const val LOTTO_PRICE = 1_000
+        }
     }
 
     class DisCountLottoSeller : LottoSeller() {
-        override val lottoPrice: Int = 500
+        override val lottoPrice: Int = LOTTO_PRICE
         override val restActions: RestActions =
             RestActions(ChatCapable(message = "Chatting -- Good morning!"))
+
+        companion object {
+            private const val LOTTO_PRICE = 500
+        }
     }
 
     class NormalLottoVendingMachine : LottoSeller() {
-        override val lottoPrice: Int = 1_000
+        override val lottoPrice: Int = LOTTO_PRICE
         override val restActions: RestActions =
             RestActions(ResetCapable(message = "Resetting -- Quietly"))
+
+        companion object {
+            private const val LOTTO_PRICE = 1_000
+        }
     }
 
     class NoisyLottoVendingMachine : LottoSeller() {
-        override val lottoPrice: Int = 1_000
+        override val lottoPrice: Int = LOTTO_PRICE
         override val restActions: RestActions =
             RestActions(ResetCapable(message = "Resetting -- With noise"))
+
+        companion object {
+            private const val LOTTO_PRICE = 1_000
+        }
     }
 
     class ChatbotLottoSeller : LottoSeller() {
-        override val lottoPrice: Int = 1_000
+        override val lottoPrice: Int = LOTTO_PRICE
         override val restActions: RestActions =
             RestActions(
                 ChatCapable(message = "Chatting -- Hello, You can call me chatbot!"),
                 ResetCapable(message = "Resetting -- Quietly"),
             )
+
+        companion object {
+            private const val LOTTO_PRICE = 1_000
+        }
     }
 
     data class Lottery(val numbers: List<Int>, val shape: Shape) {

@@ -1,6 +1,19 @@
-package com.example.learningtest.solid.dip
+package solid.dip
 
-class DIPRefactored2 {
+import kotlin.collections.forEach
+import kotlin.collections.joinToString
+import kotlin.collections.map
+import kotlin.collections.shuffled
+import kotlin.collections.sorted
+import kotlin.collections.take
+import kotlin.collections.toList
+
+/**
+ * LottoSeller does not directly depend on LottoGenerateStrategy
+ *
+ * But unnecessary DI causes Dependency Hell problem.
+ */
+class DIPRefactored1 {
     class Customer {
         fun buyLotto(
             money: Int,
@@ -60,58 +73,29 @@ class DIPRefactored2 {
     }
 
     class NormalLottoSeller(
-        restActions: RestActions = RestActions(ChatCapable(message = "Chatting -- Hello!")),
-    ) : LottoSeller(restActions) {
-        override val lottoPrice: Int = LOTTO_PRICE
-
-        companion object {
-            private const val LOTTO_PRICE = 1000
-        }
-    }
+        override val lottoPrice: Int,
+        restActions: RestActions,
+    ) : LottoSeller(restActions)
 
     class DisCountLottoSeller(
-        restActions: RestActions = RestActions(ChatCapable(message = "Chatting -- Good morning!")),
-    ) : LottoSeller(restActions) {
-        override val lottoPrice: Int = LOTTO_PRICE
-
-        companion object {
-            private const val LOTTO_PRICE = 500
-        }
-    }
+        override val lottoPrice: Int,
+        restActions: RestActions,
+    ) : LottoSeller(restActions)
 
     class NormalLottoVendingMachine(
-        restActions: RestActions = RestActions(ResetCapable(message = "Resetting -- Quietly")),
-    ) : LottoSeller(restActions) {
-        override val lottoPrice: Int = LOTTO_PRICE
-
-        companion object {
-            private const val LOTTO_PRICE = 1000
-        }
-    }
+        override val lottoPrice: Int,
+        restActions: RestActions,
+    ) : LottoSeller(restActions)
 
     class NoisyLottoVendingMachine(
-        restActions: RestActions = RestActions(ResetCapable(message = "Resetting -- With noise")),
-    ) : LottoSeller(restActions) {
-        override val lottoPrice: Int = LOTTO_PRICE
-
-        companion object {
-            private const val LOTTO_PRICE = 1000
-        }
-    }
+        override val lottoPrice: Int,
+        restActions: RestActions,
+    ) : LottoSeller(restActions)
 
     class ChatbotLottoSeller(
-        restActions: RestActions =
-            RestActions(
-                ChatCapable(message = "Chatting -- Hello, You can call me chatbot!"),
-                ResetCapable(message = "Resetting -- Quietly"),
-            ),
-    ) : LottoSeller(restActions) {
-        override val lottoPrice: Int = LOTTO_PRICE
-
-        companion object {
-            private const val LOTTO_PRICE = 1000
-        }
-    }
+        override val lottoPrice: Int,
+        restActions: RestActions,
+    ) : LottoSeller(restActions)
 
     data class Lottery(
         val numbers: List<Int>,
@@ -142,11 +126,11 @@ class DIPRefactored2 {
     }
 
     data class Rectangle(private var width: Int, private var height: Int) : Shape {
-        fun setWidth(width: Int) {
+        fun changeWidth(width: Int) {
             this.width = width
         }
 
-        fun setHeight(height: Int) {
+        fun changeHeight(height: Int) {
             this.height = height
         }
 
@@ -154,7 +138,7 @@ class DIPRefactored2 {
     }
 
     data class Square(private var side: Int) : Shape {
-        fun setSide(side: Int) {
+        fun changeSide(side: Int) {
             this.side = side
         }
 

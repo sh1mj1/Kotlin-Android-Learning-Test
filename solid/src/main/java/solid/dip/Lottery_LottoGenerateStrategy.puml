@@ -1,0 +1,47 @@
+@startuml
+
+class Lottery {
+    +numbers: List<Int>
+    +shape: Shape
+}
+
+interface Shape {
+    +area(): Int
+}
+
+class Rectangle {
+    +width: Int
+    +height: Int
+    +area(): Int
+}
+
+class Square {
+    +side: Int
+    +area(): Int
+}
+
+interface LottoGenerateStrategy {
+    +lotto(): Lottery
+}
+
+class ManualLottoGenerateStrategy {
+    +numbers: List<Int>
+    +shape: Shape
+    +lotto(): Lottery
+}
+
+class RandomLottoGenerateStrategy {
+    +lotto(): Lottery
+}
+
+Shape <|-- Rectangle
+Shape <|-- Square
+
+LottoGenerateStrategy <|-- ManualLottoGenerateStrategy
+LottoGenerateStrategy <|-- RandomLottoGenerateStrategy
+
+ManualLottoGenerateStrategy --> Lottery : creates
+RandomLottoGenerateStrategy --> Lottery : creates
+Lottery --> Shape : contains
+
+@enduml
