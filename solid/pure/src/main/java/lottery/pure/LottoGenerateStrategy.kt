@@ -1,4 +1,8 @@
-package com.example.learningtest.solid.pure
+package lottery.pure
+
+import kotlin.collections.shuffled
+import kotlin.collections.sorted
+import kotlin.collections.take
 
 /**
  * Model - 로또 판매 시스템

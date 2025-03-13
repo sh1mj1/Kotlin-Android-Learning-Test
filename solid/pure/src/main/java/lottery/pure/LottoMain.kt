@@ -1,4 +1,6 @@
-package com.example.learningtest.solid.pure
+package lottery.pure
+
+import kotlin.run
 
 fun main() {
     val view = CustomerView()

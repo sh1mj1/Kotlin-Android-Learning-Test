@@ -1,4 +1,7 @@
-package com.example.learningtest.solid.pure
+package lottery.pure
+
+import kotlin.collections.joinToString
+import kotlin.collections.toList
 
 /**
  * Model - 로또 판매 시스템

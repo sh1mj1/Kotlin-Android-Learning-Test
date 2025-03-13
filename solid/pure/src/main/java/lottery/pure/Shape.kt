@@ -1,4 +1,7 @@
-package com.example.learningtest.solid.pure
+package lottery.pure
+
+import kotlin.fold
+import kotlin.runCatching
 
 sealed interface Shape {
     fun area(): Int

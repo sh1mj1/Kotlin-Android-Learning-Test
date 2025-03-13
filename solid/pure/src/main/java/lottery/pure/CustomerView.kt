@@ -1,4 +1,14 @@
-package com.example.learningtest.solid.pure
+package lottery.pure
+
+import kotlin.also
+import kotlin.collections.first
+import kotlin.collections.forEachIndexed
+import kotlin.collections.joinToString
+import kotlin.collections.map
+import kotlin.collections.mapNotNull
+import kotlin.let
+import kotlin.text.split
+import kotlin.text.toIntOrNull
 
 /**
  * View - 사용자 인터페이스

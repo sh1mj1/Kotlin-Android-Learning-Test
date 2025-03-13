@@ -1,4 +1,7 @@
-package com.example.learningtest.solid.pure
+package lottery.pure
+
+import kotlin.collections.joinToString
+import kotlin.collections.map
 
 /**
  * Controller - 흐름 제어

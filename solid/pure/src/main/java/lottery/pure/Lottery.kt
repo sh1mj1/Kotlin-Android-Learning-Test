@@ -1,4 +1,9 @@
-package com.example.learningtest.solid.pure
+package lottery.pure
+
+import kotlin.collections.forEach
+import kotlin.collections.toSet
+import kotlin.fold
+import kotlin.runCatching
 
 /**
  * Model - 로또 판매 시스템
