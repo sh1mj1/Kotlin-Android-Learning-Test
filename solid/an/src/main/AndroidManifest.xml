@@ -10,7 +10,12 @@
 
         <activity
             android:name="solid.an.mvc.LottoMVCActivity"
-            android:exported="true">
+            android:exported="true" />
+
+        <activity
+            android:name="solid.an.mvp.LottoMVPActivity"
+            android:exported="true"
+            android:theme="@style/Theme.LearningTest">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

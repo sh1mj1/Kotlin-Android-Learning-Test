@@ -2,7 +2,10 @@ package isp
 
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import solid.isp.ISPRefactored.*
+import solid.isp.ISPRefactored.DiscountedLottoSeller
+import solid.isp.ISPRefactored.NoisyLottoVendingMachine
+import solid.isp.ISPRefactored.NormalLottoSeller
+import solid.isp.ISPRefactored.NormalLottoVendingMachine
 
 class ISPRefactoredTest : BehaviorSpec({
     Given("Buy lotto with money 10,000") {

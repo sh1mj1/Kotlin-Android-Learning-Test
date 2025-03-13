@@ -20,12 +20,6 @@
 
         </activity>
 
-
-        <activity
-            android:name=".solid.an.LottoMVPActivity"
-            android:exported="true"
-            android:theme="@style/Theme.LearningTest"></activity>
-
         <activity
             android:name=".solid.an.LottoMVVMActivity"
             android:exported="true"
