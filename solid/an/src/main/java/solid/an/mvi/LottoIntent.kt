@@ -1,4 +1,4 @@
-package com.example.learningtest.solid.an.mvi
+package solid.an.mvi
 
 sealed class LottoIntent {
     data class SelectSeller(val sellerId: Int) : LottoIntent()

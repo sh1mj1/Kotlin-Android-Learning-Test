@@ -1,4 +1,4 @@
-package com.example.learningtest.solid.an.mvi
+package solid.an.mvi
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -25,6 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlin.collections.forEach
+import kotlin.text.isNotEmpty
+import kotlin.to
 
 @Composable
 fun LottoScreen(viewModel: LottoViewModel = viewModel()) {
@@ -32,7 +35,7 @@ fun LottoScreen(viewModel: LottoViewModel = viewModel()) {
 
     Column(
         modifier =
-            Modifier
+            Modifier.Companion
                 .fillMaxSize()
                 .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -40,24 +43,21 @@ fun LottoScreen(viewModel: LottoViewModel = viewModel()) {
         Text(
             text = "환영합니다! 로또 판매자를 선택해주세요.",
             fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Companion.Bold,
         )
 
         SellerSelection(state.selectedSellerId, onSellerSelected = {
             viewModel.handleIntent(LottoIntent.SelectSeller(it))
         })
 
-        // 구매 금액 입력
         MoneyInput(state.money, onMoneyChanged = {
             viewModel.handleIntent(LottoIntent.EnterMoney(it))
         })
 
-        // 로또 모양 선택
         ShapeSelection(state.showWidth, state.showHeight, onShapeSelected = {
             viewModel.handleIntent(LottoIntent.SelectShape(it))
         })
 
-        // 가로 / 세로 입력
         ShapeInputs(
             state.width,
             state.height,
@@ -67,32 +67,36 @@ fun LottoScreen(viewModel: LottoViewModel = viewModel()) {
             onHeightChanged = { viewModel.handleIntent(LottoIntent.EnterHeight(it)) },
         )
 
-        // 자동 / 수동 선택
         LottoTypeSelection(state.lottoType, onLottoTypeSelected = {
             viewModel.handleIntent(LottoIntent.SelectLottoType(it))
         })
 
-        // 수동 입력 필드
-        ManualNumbersInput(state.manualNumbers, state.showManualNumbers, onNumbersChanged = {
-            viewModel.handleIntent(LottoIntent.EnterManualNumbers(it))
-        })
+        ManualNumbersInput(
+            state.manualNumbers,
+            state.showManualNumbers,
+            onNumbersChanged = {
+                viewModel.handleIntent(LottoIntent.EnterManualNumbers(it))
+            },
+        )
 
-        // 구매 버튼
         BuyButton(onBuyClicked = {
             viewModel.handleIntent(LottoIntent.BuyLotto)
         })
 
-        // 결과 / 오류 메시지 출력
         if (state.result.isNotEmpty()) {
             Text(
                 state.result,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = 8.dp),
+                fontWeight = FontWeight.Companion.Bold,
+                modifier = Modifier.Companion.padding(top = 8.dp),
             )
         }
 
         if (state.error.isNotEmpty()) {
-            Text(state.error, color = Color.Red, modifier = Modifier.padding(top = 8.dp))
+            Text(
+                state.error,
+                color = Color.Companion.Red,
+                modifier = Modifier.Companion.padding(top = 8.dp),
+            )
         }
     }
 }
@@ -126,8 +130,8 @@ fun MoneyInput(
         value = money,
         onValueChange = onMoneyChanged,
         label = { Text("구매할 금액을 입력하세요") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        modifier = Modifier.fillMaxWidth(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Companion.Number),
+        modifier = Modifier.Companion.fillMaxWidth(),
     )
 }
 
@@ -169,8 +173,8 @@ fun ShapeInputs(
             value = width,
             onValueChange = onWidthChanged,
             label = { Text("가로 길이를 입력하세요") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Companion.Number),
+            modifier = Modifier.Companion.fillMaxWidth(),
         )
     }
     if (showHeight) {
@@ -178,8 +182,8 @@ fun ShapeInputs(
             value = height,
             onValueChange = onHeightChanged,
             label = { Text("세로 길이를 입력하세요") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Companion.Number),
+            modifier = Modifier.Companion.fillMaxWidth(),
         )
     }
 }
@@ -216,8 +220,8 @@ fun ManualNumbersInput(
             value = manualNumbers,
             onValueChange = onNumbersChanged,
             label = { Text("6개의 숫자를 쉼표로 구분하여 입력하세요") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Companion.Text),
+            modifier = Modifier.Companion.fillMaxWidth(),
         )
     }
 }
@@ -226,10 +230,16 @@ fun ManualNumbersInput(
 fun BuyButton(onBuyClicked: () -> Unit) {
     Button(
         onClick = onBuyClicked,
-        modifier = Modifier.fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF673AB7)),
+        modifier = Modifier.Companion.fillMaxWidth(),
+        colors =
+            buttonColors(
+                containerColor =
+                    Color(
+                        0xFF673AB7,
+                    ),
+            ),
     ) {
-        Text("로또 구매", fontSize = 18.sp, color = Color.White)
+        Text("로또 구매", fontSize = 18.sp, color = Color.Companion.White)
     }
 }
 
@@ -242,9 +252,9 @@ fun RadioButtonGroup(
     Column {
         options.forEach { (label, id) ->
             Row(
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.Companion.CenterVertically,
                 modifier =
-                    Modifier
+                    Modifier.Companion
                         .fillMaxWidth()
                         .clickable { onSelected(id) },
             ) {
@@ -252,7 +262,10 @@ fun RadioButtonGroup(
                     selected = selectedOption == id,
                     onClick = { onSelected(id) },
                 )
-                Text(text = label, modifier = Modifier.padding(start = 8.dp))
+                Text(
+                    text = label,
+                    modifier = Modifier.Companion.padding(start = 8.dp),
+                )
             }
         }
     }

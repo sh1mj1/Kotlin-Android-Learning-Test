@@ -1,10 +1,8 @@
-package com.example.learningtest.solid.an.mvi
-
-import com.example.learningtest.solid.pure.Shape
+package solid.an.mvi
 
 data class LottoState(
     val selectedSellerId: Int? = null,
-    val selectedShape: Shape? = null,
+    val selectedShape: lottery.pure.Shape? = null,
     val lottoType: String? = null,
     val manualNumbers: String = "",
     val money: String = "",

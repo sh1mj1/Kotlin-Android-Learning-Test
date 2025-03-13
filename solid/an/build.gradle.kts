@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
     id("org.jetbrains.kotlin.kapt")
 }
 
@@ -26,6 +27,7 @@ android {
     }
 
     buildFeatures {
+        compose = true
         dataBinding = true
     }
 
@@ -46,7 +48,14 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
     implementation(libs.androidx.activity.compose)
-    implementation(project(":solid:pure")) // 'pure' 모듈 사용
+    implementation(libs.androidx.ui)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    debugImplementation(libs.androidx.ui.tooling)
+
+    implementation(project(":solid:pure"))
 }
