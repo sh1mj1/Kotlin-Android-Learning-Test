@@ -1,0 +1,28 @@
+@startuml
+
+interface RestAction {
+    +onRest(): String
+}
+
+class ChatCapable {
+    +message: String
+    +onRest(): String
+    +chat(): String
+}
+
+class ResetCapable {
+    +message: String
+    +onRest(): String
+    +reset(): String
+}
+
+class RestActions {
+    +restActions: List<RestAction>
+    +onRest(): String
+}
+
+RestAction <|-- ChatCapable
+RestAction <|-- ResetCapable
+RestActions --> RestAction : contains
+
+@enduml

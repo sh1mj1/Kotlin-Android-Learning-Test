@@ -1,0 +1,49 @@
+@startuml
+class Customer {
+    +buyLotto(money: Int, lottoSeller: LottoSeller): List<Lottery>
+}
+
+abstract class LottoSeller {
+    -lottoPrice: Int
+    +soldLotto(money: Int): List<Lottery>
+}
+
+class NormalLottoSeller {
+    -LOTTO_PRICE: Int = 1000
+}
+
+class DisCountLottoSeller {
+    -LOTTO_PRICE: Int = 500
+}
+
+class Lottery {
+    -numbers: List<Int>
+    -rectangle: Rectangle
+}
+
+class Rectangle {
+    -_height: Int
+    -_width: Int
+    +changeHeight(height: Int)
+    +changeWidth(width: Int)
+    +area(): Int
+}
+
+class Square {
+    +changeHeight(height: Int)
+    +changeWidth(width: Int)
+    -setSide(side: Int)
+}
+
+class RandomSquareLottoGenerateStrategy {
+    +lotto(): Lottery
+}
+
+Customer --> LottoSeller
+LottoSeller <|-- NormalLottoSeller
+LottoSeller <|-- DisCountLottoSeller
+LottoSeller --> RandomSquareLottoGenerateStrategy
+RandomSquareLottoGenerateStrategy --> Lottery
+Lottery --> Rectangle
+Rectangle <|-- Square
+@enduml

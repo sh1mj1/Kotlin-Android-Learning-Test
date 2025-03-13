@@ -1,0 +1,60 @@
+@startuml
+
+class Customer {
+    +buyLotto(money: Int, lottoSeller: LottoSeller, lottoGenerateStrategies: List<LottoGenerateStrategy>): List<Lottery>
+}
+
+interface RestAction {
+    +onRest(): String
+}
+
+class RestActions {
+    +restActions: List<RestAction>
+    +onRest(): String
+}
+
+abstract class LottoSeller {
+    +lottoPrice: Int
+    +restActions: RestActions
+    +restRequired: Boolean
+    +soldLotto(money: Int, lottoGenerateStrategies: List<LottoGenerateStrategy>): List<Lottery>
+    +onRest(): String
+}
+
+class NormalLottoSeller {
+    +lottoPrice: Int
+    +restActions: RestActions
+}
+
+class DisCountLottoSeller {
+    +lottoPrice: Int
+    +restActions: RestActions
+}
+
+class NormalLottoVendingMachine {
+    +lottoPrice: Int
+    +restActions: RestActions
+}
+
+class NoisyLottoVendingMachine {
+    +lottoPrice: Int
+    +restActions: RestActions
+}
+
+class ChatbotLottoSeller {
+    +lottoPrice: Int
+    +restActions: RestActions
+}
+
+' 관계 설정 '
+LottoSeller <|-- NormalLottoSeller
+LottoSeller <|-- DisCountLottoSeller
+LottoSeller <|-- NormalLottoVendingMachine
+LottoSeller <|-- NoisyLottoVendingMachine
+LottoSeller <|-- ChatbotLottoSeller
+
+Customer --> LottoSeller : uses
+LottoSeller --> RestActions : has
+RestActions --> RestAction : contains
+
+@enduml

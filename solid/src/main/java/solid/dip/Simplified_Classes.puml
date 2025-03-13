@@ -1,0 +1,55 @@
+@startuml
+
+' 인터페이스 '
+interface RestAction
+interface ChatCapable
+interface ResetCapable
+interface LottoGenerateStrategy
+interface Shape
+
+' RestAction 관련 구현 클래스 '
+class ChatCapable
+class ResetCapable
+class RestActions
+
+' LottoSeller 관련 구현 클래스 '
+abstract class LottoSeller
+class NormalLottoSeller
+class DisCountLottoSeller
+class NormalLottoVendingMachine
+class NoisyLottoVendingMachine
+class ChatbotLottoSeller
+
+' Lottery 관련 클래스 '
+class Lottery
+class Rectangle
+class Square
+
+' LottoGenerateStrategy 관련 클래스 '
+class ManualLottoGenerateStrategy
+class RandomLottoGenerateStrategy
+
+' Customer 클래스 추가 '
+class Customer
+
+' 관계 설정 '
+RestAction <|-- ChatCapable
+RestAction <|-- ResetCapable
+
+LottoSeller <|-- NormalLottoSeller
+LottoSeller <|-- DisCountLottoSeller
+LottoSeller <|-- NormalLottoVendingMachine
+LottoSeller <|-- NoisyLottoVendingMachine
+LottoSeller <|-- ChatbotLottoSeller
+
+Shape <|-- Rectangle
+Shape <|-- Square
+
+LottoGenerateStrategy <|-- ManualLottoGenerateStrategy
+LottoGenerateStrategy <|-- RandomLottoGenerateStrategy
+
+' Customer 관계 추가 '
+Customer --> LottoSeller : uses
+Customer --> LottoGenerateStrategy : provides
+
+@enduml

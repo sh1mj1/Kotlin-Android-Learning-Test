@@ -1,0 +1,111 @@
+@startuml
+
+' Customer 클래스 '
+class Customer {
+    +buyLotto(money: Int, lottoSeller: LottoSeller, lottoGenerateStrategies: List<LottoGenerateStrategy>): List<Lottery>
+}
+
+' RestAction 관련 인터페이스 및 클래스 '
+interface RestAction {
+    +onRest(): String
+}
+
+class ChatCapable {
+    +message: String
+    +onRest(): String
+    +chat(): String
+}
+
+class ResetCapable {
+    +message: String
+    +onRest(): String
+    +reset(): String
+}
+
+class RestActions {
+    +restActions: List<RestAction>
+    +onRest(): String
+}
+
+' LottoSeller 추상 클래스 및 하위 클래스 '
+abstract class LottoSeller {
+    +lottoPrice: Int
+    +restActions: RestActions
+    +restRequired: Boolean
+    +soldLotto(money: Int, lottoGenerateStrategies: List<LottoGenerateStrategy>): List<Lottery>
+    +onRest(): String
+}
+
+class NormalLottoSeller {
+    +lottoPrice: Int
+    +restActions: RestActions
+}
+
+class ChatbotLottoSeller {
+    +lottoPrice: Int
+    +restActions: RestActions
+}
+
+' Lottery 관련 클래스 '
+class Lottery {
+    +numbers: List<Int>
+    +shape: Shape
+}
+
+interface Shape {
+    +area(): Int
+}
+
+class Rectangle {
+    +width: Int
+    +height: Int
+    +area(): Int
+}
+
+class Square {
+    +side: Int
+    +area(): Int
+}
+
+' LottoGenerateStrategy 및 구현체 '
+interface LottoGenerateStrategy {
+    +lotto(): Lottery
+}
+
+class ManualLottoGenerateStrategy {
+    +numbers: List<Int>
+    +shape: Shape
+    +lotto(): Lottery
+}
+
+class RandomLottoGenerateStrategy {
+    +lotto(): Lottery
+}
+
+' 관계 설정 '
+LottoSeller <|-- NormalLottoSeller
+LottoSeller <|-- ChatbotLottoSeller
+
+RestAction <|-- ChatCapable
+RestAction <|-- ResetCapable
+RestActions --> RestAction : contains
+
+Shape <|-- Rectangle
+Shape <|-- Square
+
+LottoGenerateStrategy <|-- ManualLottoGenerateStrategy
+LottoGenerateStrategy <|-- RandomLottoGenerateStrategy
+
+ManualLottoGenerateStrategy --> Lottery : creates
+RandomLottoGenerateStrategy --> Lottery : creates
+Lottery --> Shape : contains
+
+Customer --> LottoSeller : uses
+Customer --> LottoGenerateStrategy : provides
+LottoSeller --> RestActions : has
+
+NormalLottoSeller --> RestActions: has
+ChatbotLottoSeller --> RestActions: has
+
+
+@enduml

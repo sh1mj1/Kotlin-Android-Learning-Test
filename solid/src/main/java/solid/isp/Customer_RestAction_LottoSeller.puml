@@ -1,0 +1,38 @@
+@startuml
+class Customer {
+    +buyLotto(money: Int, lottoSeller: LottoSeller): List<Lottery>
+}
+
+interface RestAction {
+    +onRest(): String
+}
+
+abstract class LottoSeller {
+    +lottoPrice: Int
+    +restAction: RestAction
+    +restRequired: Boolean
+    +soldLotto(money: Int): List<Lottery>
+    +onRest(): String
+}
+
+class NormalLottoSeller {
+    +lottoPrice: Int
+    +restAction: RestAction
+}
+
+
+class ChatbotLottoVendingMachine {
+    +lottoPrice: Int
+    +restAction: RestAction
+}
+
+LottoSeller <|-- NormalLottoSeller
+LottoSeller <|-- ChatbotLottoVendingMachine
+
+Customer --> LottoSeller : uses
+LottoSeller --> RestAction : has
+
+NormalLottoSeller --> RestAction : has
+ChatbotLottoVendingMachine --> RestAction : has
+
+@enduml

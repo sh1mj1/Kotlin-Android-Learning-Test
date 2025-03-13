@@ -1,0 +1,32 @@
+@startuml
+
+' 스타일 설정: 글씨 크기 조정 및 클래스 상단/하단 이중 선 제거 '
+skinparam class {
+    BorderThickness 0
+    FontSize 14
+}
+
+' 클래스 계층 구조 '
+abstract class A {
+    +operation()
+}
+
+class B {
+    +operation()
+}
+
+' B는 A를 상속 '
+A <|-- B
+
+' 관계 설명 추가 '
+note right of A
+상위 클래스 (Super Class)
+end note
+
+note right of B
+하위 클래스 (Sub Class)
+A의 객체가 필요한 곳에서
+B의 객체도 정상적으로 동작해야 함
+end note
+
+@enduml

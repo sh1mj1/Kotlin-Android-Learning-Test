@@ -1,0 +1,59 @@
+@startuml
+
+class Customer {
+    +buyLotto(money: Int, lottoSeller: LottoSeller): List<Lottery>
+}
+
+class LottoSeller {
+    +soldLotto(money: Int): List<Lottery>
+    +restRequired: Boolean
+    -_restRequired: Boolean
+    +chat(): String
+    +reset(): String
+    -recoverMessage(): String
+}
+
+class NormalLottoSeller {
+    +lottoPrice: Int
+    +chat(): String
+    +reset(): String
+}
+
+class DisCountLottoSeller {
+    +lottoPrice: Int
+    +chat(): String
+    +reset(): String
+}
+
+class NormalLottoVendingMachine {
+    +lottoPrice: Int
+    +chat(): String
+    +reset(): String
+}
+
+class NoisyLottoVendingMachine {
+    +lottoPrice: Int
+    +chat(): String
+    +reset(): String
+}
+
+class Lottery {
+    +numbers: List<Int>
+    +init - validate
+}
+
+class RandomSquareLottoGenerateStrategy {
+    +lotto(): Lottery
+}
+
+LottoSeller <|-- NormalLottoSeller
+LottoSeller <|-- DisCountLottoSeller
+LottoSeller <|-- NormalLottoVendingMachine
+LottoSeller <|-- NoisyLottoVendingMachine
+
+Customer --> LottoSeller : uses
+LottoSeller --> Lottery : returns
+LottoSeller ..> RandomSquareLottoGenerateStrategy : uses
+RandomSquareLottoGenerateStrategy --> Lottery : creates
+
+@enduml

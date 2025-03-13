@@ -1,0 +1,52 @@
+@startuml
+
+' 스타일 설정: 글씨 크기 조정 및 클래스 상단/하단 이중 선 제거 '
+skinparam class {
+    BorderThickness 0
+    FontSize 14
+}
+
+' 인터페이스 (추상화) - 상단 배치 '
+interface Abstraction {
+    +operation()
+}
+
+' High-level 모듈 (비즈니스 로직) '
+class HighLevelModule {
+    +operation()
+}
+
+' Low-level 모듈 (구체적인 구현) '
+class LowLevelModuleA {
+    +operation()
+}
+
+class LowLevelModuleB {
+    +operation()
+}
+
+' 관계 설정 - Abstraction을 최상단에 위치 '
+Abstraction <|-- LowLevelModuleA
+Abstraction <|-- LowLevelModuleB
+HighLevelModule --> Abstraction : depends on
+
+' 관계 설명 추가 '
+note right of Abstraction
+추상화 (Abstraction)
+세부 구현에 의존하지 않음
+고수준 및 저수준 모듈이 이를 따름
+end note
+
+note left of HighLevelModule
+High-level module (고수준 모듈)
+저수준 모듈에 직접 의존하지 않고,
+추상화(Abstraction)에 의존해야 함
+end note
+
+note left of LowLevelModuleA
+Low-level module (저수준 모듈)
+구체적인 구현이며,
+추상화를 통해 동작해야 함
+end note
+
+@enduml

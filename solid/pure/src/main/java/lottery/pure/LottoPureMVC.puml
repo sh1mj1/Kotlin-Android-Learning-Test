@@ -1,0 +1,65 @@
+@startuml
+
+skinparam class {
+    BorderThickness 0
+    FontSize 14
+}
+
+class LottoView {
+    +displayLottoNumbers(numbers: List<String>)
+    +showErrorMessage(message: String)
+}
+
+package "Model" {
+
+interface Shape
+interface LottoGenerateStrategy
+
+    class Rectangle {
+        +width: Int
+        +height: Int
+    }
+    class Square {
+        +side: Int
+    }
+
+    abstract class LottoSeller {
+        +lottoPrice: Int
+    }
+    class NormalLottoSeller
+    class DisCountLottoSeller
+    class NormalLottoVendingMachine
+    class NoisyLottoVendingMachine
+
+    class ManualLottoGenerateStrategy {
+        +numbers: List<Int>
+    }
+    class RandomLottoGenerateStrategy
+}
+
+class LottoController {
+    +buyLotto(seller: LottoSeller, shape: Shape, money: Int, lottoType: String): String
+}
+
+
+Shape <|-- Rectangle
+Shape <|-- Square
+
+LottoGenerateStrategy <|-- ManualLottoGenerateStrategy
+LottoGenerateStrategy <|-- RandomLottoGenerateStrategy
+
+LottoSeller <|-- NormalLottoSeller
+LottoSeller <|-- DisCountLottoSeller
+LottoSeller <|-- NormalLottoVendingMachine
+LottoSeller <|-- NoisyLottoVendingMachine
+
+ManualLottoGenerateStrategy --> Shape : uses
+RandomLottoGenerateStrategy --> Shape : uses
+
+LottoController --> LottoSeller : manages
+LottoController --> LottoGenerateStrategy : manages
+LottoController --> Shape : manages
+
+LottoView <--> LottoController : interacts
+
+@enduml

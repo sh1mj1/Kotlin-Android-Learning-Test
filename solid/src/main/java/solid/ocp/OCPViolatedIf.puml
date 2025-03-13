@@ -1,0 +1,35 @@
+@startuml
+
+class Customer {
+    +buyLotto(money: Int, lottoSeller: LottoSeller, lottoSellerType: LottoSellerType): List<Lottery>
+}
+
+class LottoSeller {
+    +soldLotto(money: Int, lottoSellerType: LottoSellerType): List<Lottery>
+    -LOTTO_PRICE: Int
+    -DISCOUNT_LOTTO_PRICE: Int
+    -PREMIUM_LOTTO_PRICE: Int
+}
+
+enum LottoSellerType {
+    NORMAL
+    DISCOUNT
+    PREMIUM
+}
+
+class Lottery {
+    +numbers: List<Int>
+    +init - validate
+}
+
+class LotteryGenerateStrategy {
+    +lotto(): Lottery
+}
+
+Customer --> LottoSeller : uses
+Customer --> LottoSellerType : determines type
+Customer --> Lottery : returns
+LottoSeller ..> LotteryGenerateStrategy : uses
+LottoSeller ..> Lottery : returns
+LotteryGenerateStrategy --> Lottery : creates
+@enduml

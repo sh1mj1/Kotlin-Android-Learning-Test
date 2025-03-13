@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
+    id("org.jetbrains.kotlin.kapt")
 }
 
 android {
@@ -46,6 +47,7 @@ android {
     }
     buildFeatures {
         compose = true
+        dataBinding = true
     }
     testOptions {
         animationsDisabled = true

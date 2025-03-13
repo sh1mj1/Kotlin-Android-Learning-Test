@@ -1,0 +1,68 @@
+@startuml
+
+' 스타일 설정: 글씨 크기 조정 및 클래스 상단/하단 이중 선 제거 '
+skinparam class {
+    BorderThickness 0
+    FontSize 14
+}
+
+' 인터페이스 '
+interface Shape
+interface LottoGenerateStrategy
+
+' Shape 관련 클래스 '
+class Rectangle {
+    +width: Int
+    +height: Int
+}
+class Square {
+    +side: Int
+}
+
+' LottoSeller 관련 클래스 '
+abstract class LottoSeller {
+    +lottoPrice: Int
+}
+class NormalLottoSeller
+class DisCountLottoSeller
+class NormalLottoVendingMachine
+class NoisyLottoVendingMachine
+
+' LottoGenerateStrategy 관련 클래스 '
+class ManualLottoGenerateStrategy {
+    +numbers: List<Int>
+}
+class RandomLottoGenerateStrategy
+
+' LottoMVCActivity (컨트롤러 역할) '
+class LottoMVCActivity {
+    -some views: View
+    +onCreate(savedInstanceState: Bundle)
+    -processLottoPurchase(): String
+    -buyLotto(seller: LottoSeller, shape: Shape, money: Int, lottoType: String): String
+}
+
+' XML 레이아웃 '
+class activity_mvc_lotto
+
+' 관계 설정 '
+Shape <|-- Rectangle
+Shape <|-- Square
+
+LottoGenerateStrategy <|-- ManualLottoGenerateStrategy
+LottoGenerateStrategy <|-- RandomLottoGenerateStrategy
+
+LottoSeller <|-- NormalLottoSeller
+LottoSeller <|-- DisCountLottoSeller
+LottoSeller <|-- NormalLottoVendingMachine
+LottoSeller <|-- NoisyLottoVendingMachine
+
+ManualLottoGenerateStrategy --> Shape : uses
+RandomLottoGenerateStrategy --> Shape : uses
+
+LottoMVCActivity --> LottoSeller : manages
+LottoMVCActivity --> LottoGenerateStrategy : manages
+LottoMVCActivity --> Shape : manages
+LottoMVCActivity --> activity_mvc_lotto : uses
+
+@enduml

@@ -1,0 +1,58 @@
+@startuml
+
+' 스타일 설정: 글씨 크기 조정 및 클래스 상단/하단 이중 선 제거 '
+skinparam class {
+    BorderThickness 0
+    FontSize 14
+}
+
+' Intent 정의 '
+class LottoIntent {
+    +SelectSeller(sellerId: Int)
+    +SelectShape(shapeId: Int)
+    +SelectLottoType(typeId: Int)
+    +EnterMoney(amount: String)
+    +EnterWidth(width: String)
+    +EnterHeight(height: String)
+    +EnterManualNumbers(numbers: String)
+    +BuyLotto()
+}
+
+' ViewModel (MVI에서 State를 관리) '
+class LottoViewModel {
+    - state: LottoState
+    + processIntent(intent: LottoIntent)
+    + observeState(): Flow<LottoState>
+}
+
+' State (상태 관리) '
+class LottoState {
+    +selectedSeller: Int?
+    +selectedShape: Int?
+    +lottoType: Int?
+    +money: String
+    +width: String
+    +height: String
+    +manualNumbers: String
+    +isLoading: Boolean
+    +errorMessage: String?
+}
+
+' UI Screen '
+class LottoScreen {
+    - viewModel: LottoViewModel
+    + render(state: LottoState)
+    + sendIntent(intent: LottoIntent)
+}
+
+' 모델 클래스 '
+
+
+' 관계 설정 '
+LottoScreen --> LottoViewModel : sends Intent
+LottoViewModel --> LottoState : manages
+LottoViewModel --> LottoIntent : processes
+
+LottoViewModel --> Model : interacts
+
+@enduml

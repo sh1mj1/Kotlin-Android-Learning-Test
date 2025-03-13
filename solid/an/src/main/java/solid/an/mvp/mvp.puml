@@ -1,0 +1,65 @@
+@startuml
+
+' 스타일 설정: 글씨 크기 조정 및 클래스 상단/하단 이중 선 제거 '
+skinparam class {
+    BorderThickness 0
+    FontSize 14
+}
+
+' MVP 패턴 인터페이스 정의 '
+interface LottoContract.View {
+    +showResult(result: String)
+    +showError(error: String)
+    +setManualNumbersVisibility(visible: Boolean)
+    +setShapeInputsVisibility(showWidth: Boolean, showHeight: Boolean)
+    +widthInput(): String
+    +heightInput(): String
+    +moneyInput(): String
+    +manualNumbersInput(): String?
+}
+
+interface LottoContract.Presenter {
+    +updateSeller(sellerId: Int)
+    +updateShape(shapeId: Int)
+    +updateLottoType(typeId: Int)
+    +updateMoney()
+    +updateManualNumbers()
+    +buyLotto()
+}
+
+' Presenter 클래스 '
+class LottoPresenter {
+    -selectedSeller: LottoSeller
+    -selectedShape: Shape
+    -lottoType: String
+    -money: Int
+    -manualNumbers: List<Int>
+    +updateSeller(sellerId: Int)
+    +updateShape(shapeId: Int)
+    +updateLottoType(typeId: Int)
+    +updateMoney()
+    +updateManualNumbers()
+    +buyLotto()
+}
+
+' Activity (View 역할) '
+class LottoMVPActivity {
+    -presenter: LottoPresenter
+    +showResult(result: String)
+    +showError(error: String)
+    +setManualNumbersVisibility(visible: Boolean)
+    +setShapeInputsVisibility(showWidth: Boolean, showHeight: Boolean)
+    +WidthInput(): String
+    +HeightInput(): String
+    +MoneyInput(): String
+    +ManualNumbersInput(): String?
+}
+
+' 관계 설정 '
+LottoContract.View <|.. LottoMVPActivity
+LottoContract.Presenter <|.. LottoPresenter
+
+LottoPresenter --> LottoContract.View : manages
+LottoMVPActivity --> LottoPresenter : controls
+
+@enduml

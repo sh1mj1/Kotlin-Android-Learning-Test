@@ -1,20 +1,22 @@
 <!-- TOC -->
+
 * [SOLID](#solid)
-  * [SRP(Single Responsibility Principle)](#srpsingle-responsibility-principle)
-    * [Example of SRP Violation](#example-of-srp-violation)
-    * [Example of SRP Adhered(Refactored)](#example-of-srp-adhered--refactored-)
-  * [OCP(Open/Closed Principle)](#ocpopenclosed-principle)
-    * [Example of OCP Violation](#example-of-ocp-violation)
-    * [Example of OCP Adhered(Refactored)](#example-of-ocp-adhered--refactored-)
-  * [LSP(Liskov Substitution Principle)](#lspliskov-substitution-principle)
-    * [Example of LSP Violation](#example-of-lsp-violation)
-    * [Example of LSP Adhered(Refactored)](#example-of-lsp-adhered--refactored-)
-  * [ISP(Interface Segregation Principle)](#ispinterface-segregation-principle)
-    * [Example of ISP Violation](#example-of-isp-violation)
-    * [Example of ISP Adhered(Refactored)](#example-of-isp-adhered--refactored-)
-  * [DIP(Dependency Inversion Principle)](#dipdependency-inversion-principle)
-    * [Example of DIP Violation](#example-of-dip-violation)
-    * [Example of DIP Adhered(Refactored)](#example-of-dip-adhered--refactored-)
+    * [SRP(Single Responsibility Principle)](#srpsingle-responsibility-principle)
+        * [Example of SRP Violation](#example-of-srp-violation)
+        * [Example of SRP Adhered(Refactored)](#example-of-srp-adhered--refactored-)
+    * [OCP(Open/Closed Principle)](#ocpopenclosed-principle)
+        * [Example of OCP Violation](#example-of-ocp-violation)
+        * [Example of OCP Adhered(Refactored)](#example-of-ocp-adhered--refactored-)
+    * [LSP(Liskov Substitution Principle)](#lspliskov-substitution-principle)
+        * [Example of LSP Violation](#example-of-lsp-violation)
+        * [Example of LSP Adhered(Refactored)](#example-of-lsp-adhered--refactored-)
+    * [ISP(Interface Segregation Principle)](#ispinterface-segregation-principle)
+        * [Example of ISP Violation](#example-of-isp-violation)
+        * [Example of ISP Adhered(Refactored)](#example-of-isp-adhered--refactored-)
+    * [DIP(Dependency Inversion Principle)](#dipdependency-inversion-principle)
+        * [Example of DIP Violation](#example-of-dip-violation)
+        * [Example of DIP Adhered(Refactored)](#example-of-dip-adhered--refactored-)
+
 <!-- TOC -->
 
 # SOLID
@@ -33,9 +35,10 @@ flexible, and maintainable.
 It stands for **"A module should have only one responsibility"**.  
 Each module has **only one reason to change**.
 
-### Example of [SRP Violation](SRPViolated.kt)
+### Example of [SRP Violation](../../../../../../../../solid/src/main/java/solid/srp/SRPViolated.kt)
 
-In [this code](SRPViolated.kt) The `LottoSeller` sold lotteries with money.  
+In [this code](../../../../../../../../solid/src/main/java/solid/srp/SRPViolated.kt) The
+`LottoSeller` sold lotteries with money.  
 But actually it has too many responsibilities:
 
 * It calculates lotteries count with money and price
@@ -48,9 +51,10 @@ But Actually the strategy for generating lotto numbers is not the responsibility
 LottoSeller.  
 That is, the LottoSeller class has more than one reason to change.
 
-### Example of [SRP Adhered(Refactored)](SRPRefactored.kt)
+### Example of [SRP Adhered(Refactored)](../../../../../../../../solid/src/main/java/solid/srp/SRPRefactored.kt)
 
-Let's see this [this code](SRPRefactored.kt).  
+Let's see
+this [this code](../../../../../../../../solid/src/main/java/solid/srp/SRPRefactored.kt).  
 `LottoSeller` only calculates the price.  
 And it delegate the responsibility for generating Lotto to the `LotteryGenerateStrategy`
 Also, the validation for lotto numbers is `Lottery`'s responsibility.
@@ -74,10 +78,10 @@ private class Customer {
 }
 ```
 
-### Example of [OCP Violation](OCPViolated.kt)
+### Example of [OCP Violation](../../../../../../../../solid/src/main/java/solid/ocp/OCPViolated2.kt)
 
 **What if there are two kinds of lotto sellers**?  
-We can do like [this](OCPViolated.kt).
+We can do like [this](../../../../../../../../solid/src/main/java/solid/ocp/OCPViolated2.kt).
 
 One of the lotto seller is just same with the previous case,  
 but the new one(`DiscountedLottoSeller`) sold a lotto for 500 price.
@@ -85,13 +89,16 @@ but the new one(`DiscountedLottoSeller`) sold a lotto for 500 price.
 This case violates the OCP.  
 You should be able to add new functionality without altering existing code.
 
-### Example of [OCP Adhered(Refactored)](OCPRefactored.kt)
+### Example of [OCP Adhered(Refactored)](../../../../../../../../solid/src/main/java/solid/ocp/OCPViolated2.kt)
 
-We can simply keep the OCP **introducing interface** [like this](OCPRefactored.kt).
+We can simply keep the OCP **introducing interface
+** [like this](../../../../../../../../solid/src/main/java/solid/ocp/OCPRefactored2.kt).
 
 In this example, new seller type(`DiscountedLottoSeller`) is added.  
-In [OCPViolated.kt](OCPViolated.kt), we changed the codes in the `Customer` class.  
-But In [OCPRefactored.kt](OCPRefactored.kt), we just added a new class and implemented the interface
+In [OCPViolated2.kt](../../../../../../../../solid/src/main/java/solid/ocp/OCPViolated2.kt), we
+changed the codes in the `Customer` class.  
+But In [OCPRefactored2.kt](../../../../../../../../solid/src/main/java/solid/ocp/OCPRefactored2.kt),
+we just added a new class and implemented the interface
 without changing the existing code.
 
 ## LSP(Liskov Substitution Principle)
@@ -99,16 +106,17 @@ without changing the existing code.
 It means that "Objects of a **superclass should be replaceable    
 with objects of a subclass(or implementation)** without affecting the correctness of the program."
 
-### Example of [LSP Violation](LSPViolated.kt)
+### Example of [LSP Violation](../../../../../../../../solid/src/main/java/solid/lsp/LSPViolated.kt)
 
 Let's suppose the `Lottery` class has a new requirement.  
 It has the rectangle in the `Lottery` class.  
 Some special `Lottery` has a `Square`, but some of them have a `Rectangle` which is not a `Square`.
 
-[Look at the Rectangle and Square class in LSPViolated.kt](LSPViolated.kt)
+[Look at the Rectangle and Square class in LSPViolated.kt](../../../../../../../../solid/src/main/java/solid/lsp/LSPViolated.kt)
 
 To adhere to the LSP, the `Square` class must be able to substitute the `Rectangle` class.  
-[But in this test code](LSPViolatedTest.kt), the `Square` class cannot substitute the `Rectangle`
+[But Let's see the last test function,](../../../../../../../../solid/src/test/kotlin/lsp/LSPViolatedTest.kt),
+the `Square` class cannot substitute the `Rectangle`
 class.
 
 * Given the `Square` class is a subclass of the `Rectangle` class,
@@ -124,9 +132,10 @@ class is wrong.
 We have to consider the LSP not only `is-A` when we design the inheritance relationship.  
 This example shows that `is-A` is not always enough or right.
 
-### Example of [LSP Adhered(Refactored)](LSPRefactored.kt)
+### Example of [LSP Adhered(Refactored)](../../../../../../../../solid/src/main/java/solid/lsp/LSPRefactored.kt)
 
-We can refactor this code, [like this](LSPRefactored.kt).  
+We can refactor this
+code, [like this](../../../../../../../../solid/src/main/java/solid/lsp/LSPRefactored.kt).  
 In this code, the `Square` class is not a subclass of the `Rectangle` class.  
 I introduce the `Shape` interface, and the `Rectangle` and `Square` class implement the `Shape`
 interface.  
@@ -140,9 +149,10 @@ Now, the customers can buy lotteries from the human lotto sellers and lotto vend
 Human Lotto Sellers starts to chat.  
 Lotto Vending machines have a reset function.
 
-### Example of [ISP Violation](ISPViolated.kt)
+### Example of [ISP Violation](../../../../../../../../solid/src/main/java/solid/isp/ISPViolated.kt)
 
-We can add the features like [this](ISPViolated.kt).  
+We can add the features
+like [this](../../../../../../../../solid/src/main/java/solid/isp/ISPViolated.kt).  
 But the Human Lotto Sellers don't need the `reset` function.  
 And the vending machines can't chat.  
 But Human Lotto Sellers are forced to implement the `reset` function.  
@@ -151,14 +161,15 @@ Even though they don't need it!
 
 That is, the now codes violate the ISP.
 
-### Example of [ISP Adhered(Refactored)](ISPRefactored.kt)
+### Example of [ISP Adhered(Refactored)](../../../../../../../../solid/src/main/java/solid/isp/ISPRefactored.kt)
 
 The refactored version resolves this by introducing two specialized abstractions:
 
 * `HumanLottoSeller` – for sellers with chat capabilities
 * `MachineLottoSeller` – for vending machines with reset capabilities.
 
-So, we can refactor like [this](ISPRefactored.kt).
+So, we can refactor
+like [this](../../../../../../../../solid/src/main/java/solid/isp/ISPRefactored.kt).
 
 ## DIP(Dependency Inversion Principle)
 
@@ -169,9 +180,9 @@ THe principle states:
 * **Abstractions should not depend on details**.  
   Details (concrete implementations) should depend on abstractions.
 
-### Example of [DIP Violation](DIPViolated.kt)
+### Example of [DIP Violation](../../../../../../../../solid/src/main/java/solid/dip/DIPViolated.kt)
 
-Let's see this [code](DIPViolated.kt).  
+Let's see this [code](../../../../../../../../solid/src/main/java/solid/dip/DIPViolated.kt).  
 This code violates the DIP.
 
 Why This Violates DIP:
@@ -187,9 +198,10 @@ Why This Violates DIP:
     * The need to explicitly check the type (is `HumanLottoSeller`, is `MachineLottoSeller`) is a
       red flag for DIP violation.
 
-### Example of [DIP Adhered(Refactored)](DIPRefactored.kt)
+### Example of [DIP Adhered(Refactored)](../../../../../../../../solid/src/main/java/solid/dip/DIPRefactored2.kt)
 
-Let's see the [refactored code](DIPRefactored.kt).  
+Let's see
+the [refactored code](../../../../../../../../solid/src/main/java/solid/dip/DIPRefactored2.kt).  
 In changed code:
 
 * Customer now depends on LottoSeller (an abstraction).
