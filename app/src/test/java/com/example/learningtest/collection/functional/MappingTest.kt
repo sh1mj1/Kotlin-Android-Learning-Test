@@ -12,11 +12,12 @@ class MappingTest : FreeSpec({
 
         "mapIndexed - 인덱스를 함께 사용한 변환" {
             val names = listOf("a", "b", "c")
-            names.mapIndexed { index, name -> "$index: $name" } shouldBe listOf(
-                "0: a",
-                "1: b",
-                "2: c"
-            )
+            names.mapIndexed { index, name -> "$index: $name" } shouldBe
+                listOf(
+                    "0: a",
+                    "1: b",
+                    "2: c",
+                )
         }
 
         "mapNotNull - null 을 걸러내며 변환" {
@@ -28,12 +29,13 @@ class MappingTest : FreeSpec({
 
         "mapIndexedNotNull - 인덱스를 함께 사용하며 null 을 걸러내며 변환" {
             val tags = listOf("1", "a", "2", null)
-            val numberTags = tags
-                .mapIndexedNotNull { index, tag ->
-                    if (index == 0) return@mapIndexedNotNull null
+            val numberTags =
+                tags
+                    .mapIndexedNotNull { index, tag ->
+                        if (index == 0) return@mapIndexedNotNull null
 
-                    tag?.toIntOrNull()
-                }
+                        tag?.toIntOrNull()
+                    }
             numberTags shouldBe listOf(2)
         }
 
@@ -74,6 +76,15 @@ class MappingTest : FreeSpec({
             result shouldBe listOf(0 to 0, 2 to 2)
         }
 
+        "flatten - " {
+            val nested =
+                listOf(
+                    listOf(1, 2),
+                    listOf(3, 4),
+                )
+
+            nested.flatten() shouldBe listOf(1, 2, 3, 4)
+        }
 
         "flatMap - 각 요소를 여러 개로 펼친 후 평탄화" {
             val nested =
@@ -86,6 +97,48 @@ class MappingTest : FreeSpec({
             flattened shouldBe listOf(1, 2, 3, 4)
         }
 
+        "flatMapIndexed - " {
+            val nested =
+                listOf(
+                    listOf(1, 2),
+                    listOf(3, 4),
+                )
+
+            val flattened =
+                nested.flatMapIndexed { index, list ->
+                    println("index: $index , list: $list")
+                    list.map { value -> index * value }
+                }
+
+            flattened shouldBe listOf(0, 0, 3, 4)
+        }
+
+        "flatMapTo" {
+            val source =
+                listOf(
+                    listOf(1, 2),
+                    listOf(3, 4),
+                )
+            val destination = mutableListOf(0)
+            source.flatMapTo(destination) { it }
+
+            destination shouldBe listOf(0, 1, 2, 3, 4)
+        }
+
+        "flatMapIndexed - " {
+            val nested =
+                listOf(
+                    listOf(1, 2),
+                    listOf(3, 4),
+                )
+            val destination = mutableListOf(0, 1, 2)
+            nested.flatMapIndexedTo(destination) { index, list ->
+                list.map { value -> value * 2 }
+            }
+
+            destination shouldBe listOf(0, 1, 2, 2, 4, 6, 8)
+        }
+
         "associate - List 를 Map 으로 변환 (Key, Value 모두 수동 지정)" {
             val words = listOf("apple", "banana")
             val wordsWithLength = words.associate { word -> word to word.length }
@@ -96,14 +149,16 @@ class MappingTest : FreeSpec({
             data class User(val id: Int, val name: String)
 
             val users = listOf(User(1, "jimmy"), User(2, "tim"))
-            val usersByCode = users.associateBy { user ->
-                user.id * 32
-            }
+            val usersByCode =
+                users.associateBy { user ->
+                    user.id * 32
+                }
 
-            usersByCode shouldBe mapOf(
-                32 to User(1, "jimmy"),
-                64 to User(2, "tim"),
-            )
+            usersByCode shouldBe
+                mapOf(
+                    32 to User(1, "jimmy"),
+                    64 to User(2, "tim"),
+                )
         }
 
         "associateWith - value 만 지정하고 key 는 원본 사용" {
@@ -112,7 +167,6 @@ class MappingTest : FreeSpec({
 
             fruitsWithLength shouldBe mapOf("apple" to 5, "banana" to 6)
         }
-
     }
 })
 
