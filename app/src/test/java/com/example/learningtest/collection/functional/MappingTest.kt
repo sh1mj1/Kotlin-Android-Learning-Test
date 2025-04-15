@@ -4,7 +4,7 @@ import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 
 class MappingTest : FreeSpec({
-    "mapping -  원소 변환" - {
+    "리스트 컬렉션의 mapping -  원소 변환" - {
         "map - 각 원소를 변환" {
             val numbers = listOf(1, 2, 3)
             numbers.map { number -> number * 2 } shouldBe listOf(2, 4, 6)
@@ -36,6 +36,44 @@ class MappingTest : FreeSpec({
                 }
             numberTags shouldBe listOf(2)
         }
+
+        "mapTo - 결과를 미리 만든 리스트에 추가" {
+            val source = listOf(1, 2, 3)
+            val destination = mutableListOf(0, 0)
+            source.mapTo(destination) { it * it }
+
+            destination shouldBe listOf(0, 0, 1, 4, 9)
+        }
+
+        "mapIndexedTo -인덱스를 이용하고 결과를 미리 만든 리스트에 추가" {
+            val source = listOf(1, 2, 3)
+            val destination = mutableListOf<Pair<Int, Int>>()
+            source.mapIndexedTo(destination) { index, value ->
+                index to value
+            }
+
+            destination shouldBe listOf(0 to 1, 1 to 2, 2 to 3)
+        }
+
+        "mapNotNullTo - 결과를 미리 만든 리스트에 null 빼고 추가" {
+            val source = listOf(1, 2, null)
+            val destination = mutableListOf(0, 0)
+            source.mapNotNullTo(destination) { it?.times(it) }
+
+            destination shouldBe listOf(0, 0, 1, 4)
+        }
+
+        "mapIndexedNotNullTo - 인덱스를 이용하고 null 을 제거하며 리스트에 추가 " {
+            val source = listOf("0", "a", "2", "b")
+            val result = mutableListOf<Pair<Int, Int>>()
+
+            source.mapIndexedNotNullTo(result) { index, value ->
+                value.toIntOrNull()?.let { index to it }
+            }
+
+            result shouldBe listOf(0 to 0, 2 to 2)
+        }
+
 
         "flatMap - 각 요소를 여러 개로 펼친 후 평탄화" {
             val nested =
@@ -77,3 +115,46 @@ class MappingTest : FreeSpec({
 
     }
 })
+
+/*
+"mapIndexedNotNullTo - 인덱스를 이용하고 null 제거하며 리스트에 추가" {
+        val source = listOf("0", "a", "2", "b")
+        val result = mutableListOf<Pair<Int, Int>>()
+
+        source.mapIndexedNotNullTo(result) { index, value ->
+            value.toIntOrNull()?.let { index to it }
+        }
+
+        result shouldBe listOf(0 to 0, 2 to 2)
+    }
+
+    "associateTo - key, value 모두 지정하고 기존 Map에 추가" {
+        val source = listOf("apple", "banana")
+        val result = mutableMapOf<String, Int>()
+
+        source.associateTo(result) { it to it.length }
+
+        result shouldBe mapOf("apple" to 5, "banana" to 6)
+    }
+
+    "associateByTo - key만 지정하고 value는 원본 유지하며 기존 Map에 추가" {
+        data class User(val id: Int, val name: String)
+        val users = listOf(User(1, "A"), User(2, "B"))
+        val result = mutableMapOf<Int, User>()
+
+        users.associateByTo(result) { it.id }
+
+        result[1]?.name shouldBe "A"
+    }
+
+    "associateWithTo - key는 원본 그대로, value는 지정한 값으로 기존 Map에 추가" {
+        val keys = listOf("apple", "banana")
+        val result = mutableMapOf<String, Int>()
+
+        keys.associateWithTo(result) { it.length }
+
+        result shouldBe mapOf("apple" to 5, "banana" to 6)
+    }
+
+
+* */
