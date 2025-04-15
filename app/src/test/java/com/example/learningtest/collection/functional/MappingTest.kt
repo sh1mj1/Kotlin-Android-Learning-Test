@@ -76,6 +76,7 @@ class MappingTest : FreeSpec({
             result shouldBe listOf(0 to 0, 2 to 2)
         }
 
+        // TODO() flattening test 로 이동시키자.
         "flatten - " {
             val nested =
                 listOf(
@@ -145,6 +146,13 @@ class MappingTest : FreeSpec({
             wordsWithLength shouldBe mapOf("apple" to 5, "banana" to 6)
         }
 
+        "associateWith - value 만 지정하고 key 는 원본 사용" {
+            val fruits = listOf("apple", "banana")
+            val fruitsWithLength = fruits.associateWith { it.length }
+
+            fruitsWithLength shouldBe mapOf("apple" to 5, "banana" to 6)
+        }
+
         "associateBy - Key 만 지정하고 Value 는 원본 사용" {
             data class User(val id: Int, val name: String)
 
@@ -161,54 +169,48 @@ class MappingTest : FreeSpec({
                 )
         }
 
-        "associateWith - value 만 지정하고 key 는 원본 사용" {
+        "associateTo - key 만 지정하고 value 는 원본 유지하며 기존 Map에 추가" {
             val fruits = listOf("apple", "banana")
-            val fruitsWithLength = fruits.associateWith { it.length }
+            val fruitsWithLength = mutableMapOf<String, Int>("lemon" to 5)
 
-            fruitsWithLength shouldBe mapOf("apple" to 5, "banana" to 6)
+            fruits.associateTo(fruitsWithLength) { fruit ->
+                fruit to fruit.length
+            }
+
+            fruitsWithLength shouldBe mapOf("lemon" to 5, "apple" to 5, "banana" to 6)
+        }
+
+        "associateWithTo - value 만 지정하고 key 는 원본 유지하며 기본 map 에 추가" {
+            val fruits = listOf("apple", "banana")
+            val fruitsWithLength = mutableMapOf<String, Int>("lemon" to 5)
+
+            fruits.associateWithTo(fruitsWithLength) { fruit ->
+                fruit.length
+            }
+
+            fruitsWithLength shouldBe
+                mapOf(
+                    "lemon" to 5,
+                    "apple" to 5,
+                    "banana" to 6,
+                )
+        }
+
+        "associateByTo - key만 지정하고 value 는 원본 유지하며 기존 map 에 추가" {
+            data class User(val id: Int, val name: String)
+
+            val users = listOf(User(1, "A"), User(2, "B"))
+            val codeWithUsers = mutableMapOf(10 to User(3, "ABC"))
+
+            users.associateByTo(codeWithUsers) { user ->
+                user.id + 32
+            }
+            codeWithUsers shouldBe
+                mapOf(
+                    10 to User(3, "ABC"),
+                    33 to User(1, "A"),
+                    34 to User(2, "B"),
+                )
         }
     }
 })
-
-/*
-"mapIndexedNotNullTo - 인덱스를 이용하고 null 제거하며 리스트에 추가" {
-        val source = listOf("0", "a", "2", "b")
-        val result = mutableListOf<Pair<Int, Int>>()
-
-        source.mapIndexedNotNullTo(result) { index, value ->
-            value.toIntOrNull()?.let { index to it }
-        }
-
-        result shouldBe listOf(0 to 0, 2 to 2)
-    }
-
-    "associateTo - key, value 모두 지정하고 기존 Map에 추가" {
-        val source = listOf("apple", "banana")
-        val result = mutableMapOf<String, Int>()
-
-        source.associateTo(result) { it to it.length }
-
-        result shouldBe mapOf("apple" to 5, "banana" to 6)
-    }
-
-    "associateByTo - key만 지정하고 value는 원본 유지하며 기존 Map에 추가" {
-        data class User(val id: Int, val name: String)
-        val users = listOf(User(1, "A"), User(2, "B"))
-        val result = mutableMapOf<Int, User>()
-
-        users.associateByTo(result) { it.id }
-
-        result[1]?.name shouldBe "A"
-    }
-
-    "associateWithTo - key는 원본 그대로, value는 지정한 값으로 기존 Map에 추가" {
-        val keys = listOf("apple", "banana")
-        val result = mutableMapOf<String, Int>()
-
-        keys.associateWithTo(result) { it.length }
-
-        result shouldBe mapOf("apple" to 5, "banana" to 6)
-    }
-
-
-* */
