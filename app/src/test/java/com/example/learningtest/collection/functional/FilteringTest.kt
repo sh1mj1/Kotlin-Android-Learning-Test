@@ -95,4 +95,55 @@ class FilteringTest : FreeSpec({
             odd shouldBe listOf(1, 3, 5)
         }
     }
+
+    "Map Filter Api" - {
+        val map =
+            mapOf<String, Int>(
+                "a" to 1,
+                "b" to 2,
+                "c" to 3,
+                "d" to 4,
+            )
+
+        "filter - (key, value) 쌍으로 필터링" {
+            // requires a pair of parentheses around the key and value in the lambda block.
+            val result =
+                map.filter { (key, value) -> key in listOf<String>("a", "c") && value % 2 == 1 }
+
+            result shouldBe mapOf<String, Int>("a" to 1, "c" to 3)
+        }
+
+        "filterKeys - key 기준 필터링" {
+            val result = map.filterKeys { it > "b" }
+            result shouldBe mapOf<String, Int>("c" to 3, "d" to 4)
+        }
+
+        "filterValues - value 기준 필터링" {
+            val result = map.filterValues { it % 2 == 0 }
+            result shouldBe mapOf<String, Int>("b" to 2, "d" to 4)
+        }
+
+        "filterNot - 조건을 만족하지 않는 (key, value) 필터링" {
+            val result = map.filterNot { (_, value) -> value > 2 }
+            result shouldBe mapOf("a" to 1, "b" to 2)
+        }
+
+        "filterTo - 조건을 만족하는 항목을 다른 MutableMap에 추가" {
+            val source = mapOf("one" to 1, "two" to 2, "three" to 3)
+            val target = mutableMapOf<String, Int>()
+
+            source.filterTo(target) { (_, v) -> v % 2 == 1 }
+
+            target shouldBe mapOf("one" to 1, "three" to 3)
+        }
+
+        "filterNotTo - 조건을 만족하지 않는 항목을 target에 추가" {
+            val source = mapOf("a" to 1, "b" to 2, "c" to 3)
+            val result = mutableMapOf<String, Int>()
+
+            source.filterNotTo(result) { (_, v) -> v > 1 }
+
+            result shouldBe mapOf("a" to 1)
+        }
+    }
 })
