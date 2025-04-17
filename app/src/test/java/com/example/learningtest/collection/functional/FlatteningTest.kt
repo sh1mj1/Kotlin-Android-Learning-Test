@@ -7,7 +7,7 @@ import kotlin.collections.flatten
 class FlatteningTest : FreeSpec({
     "List 의 flattening" - {
         "flatten - 중첩된 리스트를 평탄화" {
-            val nested =
+            val nested: List<List<Int>> =
                 listOf(
                     listOf(1, 2),
                     listOf(3, 4),
@@ -43,24 +43,24 @@ class FlatteningTest : FreeSpec({
         }
 
         "flatMap - 각 요소를 여러 개로 펼친 후 평탄화" {
-            val nested =
+            val nested: List<List<Int>> =
                 listOf(
                     listOf(1, 2),
                     listOf(3, 4),
                 )
 
-            val flattened = nested.flatMap { it }
+            val flattened: List<Int> = nested.flatMap { it }
             flattened shouldBe listOf(1, 2, 3, 4)
         }
 
         "flatMapIndexed - 인덱스와 함께 각 요소를 여러 개로 펼친 후 평탄화" {
-            val nested =
+            val nested: List<List<Int>> =
                 listOf(
                     listOf(1, 2),
                     listOf(3, 4),
                 )
 
-            val flattened =
+            val flattened: List<Int> =
                 nested.flatMapIndexed { index, list ->
                     list.map { value -> index * value }
                 }
@@ -69,24 +69,24 @@ class FlatteningTest : FreeSpec({
         }
 
         "flatMapTo - 중첩된 리스트를 평탄화해서 기존 컬렉션에 추가" {
-            val source =
+            val source: List<List<Int>> =
                 listOf(
                     listOf(1, 2),
                     listOf(3, 4),
                 )
-            val destination = mutableListOf(0)
+            val destination: MutableList<Int> = mutableListOf(0)
             source.flatMapTo(destination) { it }
 
             destination shouldBe listOf(0, 1, 2, 3, 4)
         }
 
         "flatMapIndexed - 인덱스와 함께 각 요소를 여러 개로 펼친 후 평탄화해서 기존 컬렉션에 추가" {
-            val nested =
+            val nested: List<List<Int>> =
                 listOf(
                     listOf(1, 2),
                     listOf(3, 4),
                 )
-            val destination = mutableListOf(0, 1, 2)
+            val destination: MutableList<Int> = mutableListOf(0, 1, 2)
             nested.flatMapIndexedTo(destination) { index, list ->
                 list.map { value -> value * 2 }
             }
@@ -97,8 +97,8 @@ class FlatteningTest : FreeSpec({
 
     "Map 의 flattening" - {
         "flatMap - Map<K, List<V>> 구조를 평탄화" {
-            val map =
-                mapOf<String, List<Int>>(
+            val map: Map<String, List<Int>> =
+                mapOf(
                     "a" to listOf(1, 2),
                     "b" to listOf(3),
                 )
@@ -112,8 +112,8 @@ class FlatteningTest : FreeSpec({
         }
 
         "flatMap - 사실 flatMap 의 람다 파라미터의 리턴 타입이 Iterable 타입이기만 하면 된다." {
-            val map =
-                mapOf<String, Int>(
+            val map: Map<String, Int> =
+                mapOf(
                     "a" to 1,
                     "b" to 2,
                     "c" to 3,
@@ -128,13 +128,15 @@ class FlatteningTest : FreeSpec({
         }
 
         "toList - Map<K, V> 를 List<Pair<K, V>> 로 변환" {
-            val map =
-                mapOf<String, List<Int>>(
+            val map: Map<String, List<Int>> =
+                mapOf(
                     "a" to listOf(1, 2),
                     "b" to listOf(3),
                 )
 
-            map.toList() shouldBe
+            val toList: List<Pair<String, List<Int>>> = map.toList()
+
+            toList shouldBe
                 listOf<Pair<String, List<Int>>>(
                     "a" to listOf<Int>(1, 2),
                     "b" to listOf<Int>(3),
@@ -142,8 +144,8 @@ class FlatteningTest : FreeSpec({
         }
 
         "flatMapValues 메서드는 따로 없어서 Map<K, V>.values.flatten 사용" {
-            val map =
-                mapOf<String, List<Int>>(
+            val map: Map<String, List<Int>> =
+                mapOf(
                     "a" to listOf(1, 2),
                     "b" to listOf(3),
                 )
@@ -153,8 +155,8 @@ class FlatteningTest : FreeSpec({
         }
 
         "flatPairValues 메서드는 따로 없어서 아래처럼 재구성 필요" {
-            val map =
-                mapOf<String, List<Int>>(
+            val map: Map<String, List<Int>> =
+                mapOf(
                     "a" to listOf(1, 2),
                     "b" to listOf(3),
                 )
@@ -179,11 +181,11 @@ class FlatteningTest : FreeSpec({
         }
 
         "Map<String, String>.toList().flatten 은 단순 Key-Value Pair 리스트로 변환" {
-            val map = mapOf<String, String>()
+            val map: Map<String, String> = mapOf()
 
             val flatList: List<Pair<String, String>> = map.toList()
 
-            val flatMap =
+            val flatMap: List<Pair<String, Char>> =
                 map.flatMap { entry ->
                     entry.value.map { value -> entry.key to value }
                 }
