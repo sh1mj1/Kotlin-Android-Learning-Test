@@ -5,7 +5,7 @@ import io.kotest.matchers.shouldBe
 
 class FlatteningTest : FreeSpec({
     "List 의 flattening" - {
-        "flatten - " {
+        "flatten - 중첩된 리스트를 평탄화" {
             val nested =
                 listOf(
                     listOf(1, 2),
@@ -26,7 +26,7 @@ class FlatteningTest : FreeSpec({
             flattened shouldBe listOf(1, 2, 3, 4)
         }
 
-        "flatMapIndexed - " {
+        "flatMapIndexed - 인덱스와 함께 각 요소를 여러 개로 펼친 후 평탄화" {
             val nested =
                 listOf(
                     listOf(1, 2),
@@ -42,7 +42,7 @@ class FlatteningTest : FreeSpec({
             flattened shouldBe listOf(0, 0, 3, 4)
         }
 
-        "flatMapTo" {
+        "flatMapTo - 중첩된 리스트를 평탄화해서 기존 컬렉션에 추가" {
             val source =
                 listOf(
                     listOf(1, 2),
@@ -54,7 +54,7 @@ class FlatteningTest : FreeSpec({
             destination shouldBe listOf(0, 1, 2, 3, 4)
         }
 
-        "flatMapIndexed - " {
+        "flatMapIndexed - 인덱스와 함께 각 요소를 여러 개로 펼친 후 평탄화해서 기존 컬렉션에 추가" {
             val nested =
                 listOf(
                     listOf(1, 2),
