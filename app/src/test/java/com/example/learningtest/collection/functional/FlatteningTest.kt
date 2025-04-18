@@ -2,7 +2,6 @@ package com.example.learningtest.collection.functional
 
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
-import kotlin.collections.flatten
 
 class FlatteningTest : FreeSpec({
     "List 의 flattening" - {
@@ -180,17 +179,22 @@ class FlatteningTest : FreeSpec({
             result1 shouldBe result2
         }
 
-        "Map<String, String>.toList().flatten 은 단순 Key-Value Pair 리스트로 변환" {
-            val map: Map<String, String> = mapOf()
+        "Map<String, String>.toList(). 은 단순 List<Pair<Key, Value>> 리스트로 변환" {
+            val map: Map<String, String> =
+                mapOf(
+                    "a" to "1",
+                    "b" to "2",
+                    "c" to "3",
+                )
 
             val flatList: List<Pair<String, String>> = map.toList()
 
-            val flatMap: List<Pair<String, Char>> =
-                map.flatMap { entry ->
-                    entry.value.map { value -> entry.key to value }
-                }
-
-            flatList shouldBe flatMap
+            flatList shouldBe
+                listOf<Pair<String, String>>(
+                    "a" to "1",
+                    "b" to "2",
+                    "c" to "3",
+                )
         }
     }
 })
