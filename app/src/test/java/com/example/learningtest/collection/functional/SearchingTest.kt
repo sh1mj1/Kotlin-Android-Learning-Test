@@ -5,6 +5,8 @@ import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 
 class SearchingTest : FreeSpec({
+    data class User(val name: String?, val age: Int)
+
     "List Searching" - {
         "first - 조건을 만족하는 첫 요소 (없으면 예외 던짐)" {
             val numbers: List<Int> = listOf(1, 2, 3, 4)
@@ -40,13 +42,6 @@ class SearchingTest : FreeSpec({
             numbers.lastOrNull { it > 5 } shouldBe null
         }
 
-        "indexOf - 해당 값의 첫 위치 (없으면 -1)" {
-            val names: List<String> = listOf("jim", "pam", "jim")
-
-            names.indexOf("jim") shouldBe 0
-            names.indexOf("shim") shouldBe -1
-        }
-
         "all - 모든 요소가 조건을 만족하면 true" {
             val numbers: List<Int> = listOf(2, 4, 6)
 
@@ -68,75 +63,74 @@ class SearchingTest : FreeSpec({
             characters.none { it == 'a' } shouldBe false
         }
     }
-})
 
-/*
-@file:Suppress("TestFunctionName")
+    "indexOf - 해당 값의 첫 위치 (없으면 -1)" {
+        val names: List<String> = listOf("jim", "pam", "jim")
 
-import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.shouldBe
-import io.kotest.assertions.throwables.shouldThrow
-
-@DisplayName("고급 Searching API")
-class AdvancedSearchingTest : FreeSpec({
+        names.indexOf("jim") shouldBe 0
+        names.indexOf("shim") shouldBe -1
+    }
 
     "indexOfFirst - 조건을 만족하는 첫 인덱스 (없으면 -1)" {
-        val names = listOf("kim", "lee", "choi", "kim")
+        val names: List<String> = listOf("kim", "lee", "choi", "kim")
+
         names.indexOfFirst { it.startsWith("k") } shouldBe 0
         names.indexOfFirst { it == "park" } shouldBe -1
     }
 
-    "indexOfLast - 조건을 만족하는 마지막 인덱스 (없으면 -1)" {
-        val names = listOf("kim", "lee", "choi", "kim")
+    "indexOfLast - 조건을 만족하는 마지막 인덱스(없으면 -1)" {
+        val names: List<String> = listOf("kim", "lee", "choi", "kim")
+
         names.indexOfLast { it.startsWith("k") } shouldBe 3
         names.indexOfLast { it == "park" } shouldBe -1
     }
 
-    "firstNotNullOf - 변환 결과가 null 아닌 첫 값 (없으면 예외)" {
-        data class User(val name: String?, val age: Int)
-        val users = listOf(
-            User(null, 20),
-            User("a", 25),
-            User("b", 30),
-        )
+    "firstNotNullOf - 변환 결과가 null 이 아닌 첫 값(없으면 예외)" {
 
-        val name = users.firstNotNullOf { it.name }
-        name shouldBe "a"
+        val users1: List<User> =
+            listOf(
+                User(null, 20),
+                User("a", 25),
+                User("b", 30),
+            )
+        val firstName = users1.firstNotNullOf { it.name }
+        firstName shouldBe "a"
+
+        val users2: List<User> = listOf(User(null, 20), User(null, 25))
 
         shouldThrow<NoSuchElementException> {
-            listOf<User>().firstNotNullOf { it.name }
+            users2.firstNotNullOf { it.name }
         }
     }
 
-    "firstNotNullOfOrNull - 변환 결과가 null 아닌 첫 값 (없으면 null)" {
-        data class Item(val value: String?)
-        val items = listOf(
-            Item(null),
-            Item(null),
-            Item("found"),
-        )
+    "firstNotNullOfOrNull - 변환 결과가 null 이 아닌 첫 값(없으면 null)" {
+        val users1: List<User> =
+            listOf(
+                User(null, 20),
+                User(null, 25),
+                User("Lilly", 30),
+            )
 
-        val result = items.firstNotNullOfOrNull { it.value }
-        result shouldBe "found"
+        val firstName: String? = users1.firstNotNullOfOrNull { it.name }
+        firstName shouldBe "Lilly"
 
-        val result2 = items.take(2).firstNotNullOfOrNull { it.value }
-        result2 shouldBe null
+        val users2: List<User> =
+            listOf(
+                User(null, 20),
+                User(null, 25),
+            )
+
+        users2.firstNotNullOfOrNull { it.name } shouldBe null
     }
 
-    // 보너스: lastNotNullOf 없음 → 대체 방법
-    "lastNotNullOfOrNull - 직접 구현 예시 (mapNotNull + lastOrNull)" {
-        data class Log(val content: String?)
-        val logs = listOf(
-            Log(null),
-            Log("warn"),
-            Log("info"),
-            Log(null),
-        )
+    "lastNotNullOf & lastNotNullOfOrNull 메서드는 없음 - 직접 구현 예시(mapNotNull 활용)" {
+        val users: List<User> =
+            listOf(
+                User(null, 30),
+                User(null, 25),
+            )
 
-        val last = logs.mapNotNull { it.content }.lastOrNull()
-        last shouldBe "info"
+        val lastName: String? = users.mapNotNull { it.name }.lastOrNull()
+        lastName shouldBe null
     }
-
 })
-
-* */
