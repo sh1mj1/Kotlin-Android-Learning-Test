@@ -71,18 +71,40 @@ class SearchingTest : FreeSpec({
         names.indexOf("shim") shouldBe -1
     }
 
-    "indexOfFirst - 조건을 만족하는 첫 인덱스 (없으면 -1)" {
+    "lastIndexOf - 해당 값의 마지막 위치 (없으면 -1)" {
+        val names: List<String> = listOf("jim", "pam", "jim")
+
+        names.lastIndexOf("jim") shouldBe 2
+        names.lastIndexOf("shim") shouldBe -1
+    }
+
+    "indexOfFirst - 조건을 만족하는 원소 중 첫 인덱스 (없으면 -1)" {
         val names: List<String> = listOf("kim", "lee", "choi", "kim")
 
         names.indexOfFirst { it.startsWith("k") } shouldBe 0
         names.indexOfFirst { it == "park" } shouldBe -1
     }
 
-    "indexOfLast - 조건을 만족하는 마지막 인덱스(없으면 -1)" {
+    "indexOfLast - 조건을 만족하는 원소 중 마지막 인덱스(없으면 -1)" {
         val names: List<String> = listOf("kim", "lee", "choi", "kim")
 
         names.indexOfLast { it.startsWith("k") } shouldBe 3
         names.indexOfLast { it == "park" } shouldBe -1
+    }
+
+    "조건을 만족하는 원소가 없으면 -1 인덱스를 리턴하는 게 아닌 null 리턴하도록" {
+        val names: List<String> = listOf("kim", "lee", "choi", "kim")
+
+        names
+            .indexOf("park")
+            .takeIf { it != -1 } shouldBe null
+        names
+            .indexOfFirst { it.startsWith("p") }
+            .takeIf { it != -1 } shouldBe null
+
+        names
+            .indexOfLast { it.startsWith("p") }
+            .takeIf { it != -1 } shouldBe null
     }
 
     "firstNotNullOf - 변환 결과가 null 이 아닌 첫 값(없으면 예외)" {
