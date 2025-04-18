@@ -32,9 +32,11 @@ class MappingTest : FreeSpec({
             val numberTags: List<Int> =
                 tags
                     .mapIndexedNotNull { index, tag ->
-                        if (index == 0) return@mapIndexedNotNull null
-
-                        tag?.toIntOrNull()
+                        if (index == 0) {
+                            null
+                        } else {
+                            tag?.toIntOrNull()
+                        }
                     }
             numberTags shouldBe listOf(2)
         }
