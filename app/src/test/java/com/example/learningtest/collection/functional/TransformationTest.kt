@@ -117,4 +117,41 @@ class TransformationTest : FreeSpec({
             numbers shouldBe listOf(1, 2, 3)
         }
     }
+
+    "Set Transformation" - {
+        val set: Set<Int> = setOf(1, 2, 3, 4)
+
+        "zip - 두 Set을 Pair로 묶기" {
+            val set1: Set<String> = setOf("a", "b", "c")
+            val set2: Set<Int> = setOf(1, 2, 3, 4)
+
+            set1.zip(set2) shouldBe listOf("a" to 1, "b" to 2, "c" to 3)
+        }
+
+        "zipWithNext - 인접한 요소끼리 Pair로 묶기" {
+            set.zipWithNext() shouldBe listOf(1 to 2, 2 to 3, 3 to 4)
+        }
+
+        "windowed - 슬라이딩 윈도우를 만들고 각 윈도우에 대한 리스트 반환" {
+            set.windowed(2) shouldBe listOf(listOf(1, 2), listOf(2, 3), listOf(3, 4))
+        }
+
+        "chunked - 컬렉션을 지정된 크기의 덩어리로 나누기" {
+            set.chunked(3) shouldBe listOf(listOf(1, 2, 3), listOf(4))
+        }
+
+        "partition - 조건을 만족하는 요소와 만족하지 않는 요소로 분리" {
+            val sets: Set<Int> = setOf(1, 2, 3, 4, 5, 6)
+            val (even: List<Int>, odd: List<Int>) = sets.partition { it % 2 == 0 }
+            even shouldBe listOf(2, 4, 6)
+            odd shouldBe listOf(1, 3, 5)
+        }
+
+        "unzip - Pair를 요소로 갖는 Set을 두 개의 Set로 분리" {
+            val sets: Set<Pair<Int, Int>> = setOf(1 to 2, 3 to 4, 5 to 6)
+            val (set1: List<Int>, set2: List<Int>) = sets.unzip()
+            set1 shouldBe listOf(1, 3, 5)
+            set2 shouldBe listOf(2, 4, 6)
+        }
+    }
 })
