@@ -25,7 +25,7 @@ class AggregationTest : FreeSpec({
             numbers.sum() shouldBe 15
         }
 
-        "sumOf - " {
+        "sumOf - 컬렉션의 특정 속성을 기준으로 숫자 요소 합계" {
             val users: List<User> =
                 listOf(
                     User("Alice", 30),
@@ -145,12 +145,12 @@ class AggregationTest : FreeSpec({
         "runningFold - 초기값과 함께 각 단계의 누적 결과를 포함하는 리스트 반환 (빈 리스트도 가능)" { // New test case
             val numbers: List<Int> = listOf(1, 2, 3, 4)
 
-            val runningNumbersFolded = numbers.runningFold(10) { acc, number -> acc + number }
+            val runningNumbersFolded: List<Int> = numbers.runningFold(10) { acc, number -> acc + number }
             runningNumbersFolded shouldBe listOf(10, 11, 13, 16, 20)
 
             val words: List<String> = listOf("a", "b", "c")
 
-            val runningWordsFolded = words.runningFold("Start: ") { acc, word -> acc + word }
+            val runningWordsFolded: List<String> = words.runningFold("Start: ") { acc, word -> acc + word }
             runningWordsFolded shouldBe listOf("Start: a", "Start: ab", "Start: abc")
         }
     }
