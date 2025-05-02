@@ -7,6 +7,7 @@ import io.kotest.matchers.collections.shouldBeSortedDescending
 import io.kotest.matchers.collections.shouldBeSortedDescendingBy
 import io.kotest.matchers.collections.shouldBeSortedWith
 import io.kotest.matchers.shouldBe
+import java.util.SortedMap
 
 class SortingTest : FreeSpec({
     "List Sorting" - {
@@ -360,6 +361,34 @@ class SortingTest : FreeSpec({
 
                 original shouldBe listOf<Int>(2, 3, 1)
             }
+        }
+    }
+
+    "Map Sorting" - {
+        "toSortedMap - 키를 기준으로 오름차순 정렬하여 SortedMap 생성" {
+            val map: Map<String, Int> = mapOf("c" to 3, "a" to 1, "b" to 2)
+            val sortedMap: SortedMap<String, Int> = map.toSortedMap()
+
+            sortedMap shouldBe mapOf<String, Int>("a" to 1, "b" to 2, "c" to 3)
+        }
+
+        "sortedBy - Map의 값을 기준으로 오름차순 정렬하여 List<Map.Entry<K, V>> 생성" {
+            val map: Map<String, Int> = mapOf("c" to 3, "a" to 1, "b" to 2)
+
+            val sortedList: List<Map.Entry<String, Int>> =
+                map.entries.sortedBy(Map.Entry<String, Int>::value)
+
+            sortedList.map(Map.Entry<String, Int>::value) shouldBe listOf<Int>(1, 2, 3)
+            sortedList.map(Map.Entry<String, Int>::key) shouldBe listOf<String>("a", "b", "c")
+        }
+
+        "sortedWith - Map의 키를 기준으로 내림차순 정렬하여 List<Map.Entry<K, V>> 생성" {
+            val map: Map<String, Int> = mapOf("c" to 3, "a" to 1, "b" to 2)
+            val sortedList: List<Map.Entry<String, Int>> =
+                map.entries.sortedWith(compareByDescending { it.key })
+
+            sortedList.map(Map.Entry<String, Int>::key) shouldBe listOf<String>("c", "b", "a")
+            sortedList.map(Map.Entry<String, Int>::value) shouldBe listOf<Int>(3, 2, 1)
         }
     }
 })
