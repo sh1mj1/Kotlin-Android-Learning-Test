@@ -84,7 +84,7 @@ class AggregationTest : FreeSpec({
             emptyList<User>().maxOfOrNull(User::age) shouldBe null
         }
 
-        "maxOfOrNull - 특정 속성 기준으로 컬렉션에서 가장 작은 요소 (없으면 null)" {
+        "minOfOrNull - 특정 속성 기준으로 컬렉션에서 가장 작은 요소 (없으면 null)" {
             val users: List<User> =
                 listOf(
                     User("Alice", 30),
@@ -145,13 +145,15 @@ class AggregationTest : FreeSpec({
         "runningFold - 초기값과 함께 각 단계의 누적 결과를 포함하는 리스트 반환 (빈 리스트도 가능)" { // New test case
             val numbers: List<Int> = listOf(1, 2, 3, 4)
 
-            val runningNumbersFolded: List<Int> = numbers.runningFold(10) { acc, number -> acc + number }
+            val runningNumbersFolded: List<Int> =
+                numbers.runningFold(10) { acc, number -> acc + number }
             runningNumbersFolded shouldBe listOf(10, 11, 13, 16, 20)
 
             val words: List<String> = listOf("a", "b", "c")
 
-            val runningWordsFolded: List<String> = words.runningFold("Start: ") { acc, word -> acc + word }
-            runningWordsFolded shouldBe listOf("Start: a", "Start: ab", "Start: abc")
+            val runningWordsFolded: List<String> =
+                words.runningFold("Start: ") { acc, word -> acc + word }
+            runningWordsFolded shouldBe listOf("Start: ", "Start: a", "Start: ab", "Start: abc")
         }
     }
 
