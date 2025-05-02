@@ -72,7 +72,7 @@ class SortingTest : FreeSpec({
                         User("Cathy", 22),
                         User("Bob", 28),
                     )
-                val sortedByAge1: List<User> = users.sortedWith(compareBy<User> { it.age })
+                val sortedByAge1: List<User> = users.sortedWith(compareBy(User::age))
                 val sortedByAge2: List<User> =
                     users.sortedWith { user1, user2 ->
                         user1.age.compareTo(user2.age)
@@ -98,7 +98,7 @@ class SortingTest : FreeSpec({
                 sortedByAge3.shouldBeSortedWith(compareBy<User> { it.age })
             }
 
-            "sortedWith - 이름이 같을 경우 입력 순서 유지 (Stable Sort)" {
+            "sortedWith - 나이로 정렬하되 다른 필드가 모두 같을 경우 입력 순서 유지 (Stable Sort)" {
                 val users: List<User> =
                     listOf(
                         User("Alice", 30),
@@ -179,11 +179,118 @@ class SortingTest : FreeSpec({
 
                 val sorted1: List<User> =
                     users.sortedWith(compareBy<User> { it.name }.thenBy { it.age })
-                val sorted2: List<User> = users.sortedWith(compareBy(User::name).thenBy(User::age))
-                val sorted3: List<User> =
+                val sorted2: List<User> =
                     users.sortedWith { user1, user2 ->
-                        user1.name.compareTo(user2.name)
+                        val nameComparison = user1.name.compareTo(user2.name)
+                        if (nameComparison != 0) {
+                            return@sortedWith nameComparison
+                        }
+                        return@sortedWith user1.age.compareTo(user2.age)
                     }
+
+                val expected: List<User> =
+                    listOf(
+                        User("Alice", 28),
+                        User("Alice", 30),
+                        User("Cathy", 22),
+                    )
+
+                sorted1 shouldBe expected
+                sorted2 shouldBe expected
+            }
+
+            "sortedWith - 이름으로 오름차순 정렬, 이름이 같다면 나이로 내림차순 정렬" {
+                val users: List<User> =
+                    listOf(
+                        User("Alice", 30),
+                        User("Cathy", 22),
+                        User("Alice", 28),
+                    )
+
+                val sorted1: List<User> =
+                    users.sortedWith(compareBy<User> { it.name }.thenByDescending { it.age })
+                val sorted2: List<User> =
+                    users.sortedWith { user1, user2 ->
+                        val nameComparison = user1.name.compareTo(user2.name)
+                        if (nameComparison != 0) {
+                            return@sortedWith nameComparison
+                        }
+                        return@sortedWith user2.age.compareTo(user1.age)
+                    }
+
+                val expected: List<User> =
+                    listOf(
+                        User("Alice", 30),
+                        User("Alice", 28),
+                        User("Cathy", 22),
+                    )
+
+                sorted1 shouldBe expected
+                sorted2 shouldBe expected
+            }
+
+            "naturalOrder() - Comparable 인터페이스를 구현하는 타입의 자연스러운 오름차순 순서에 따라 정렬하는 Comparator" {
+                data class User(
+                    val name: String,
+                    val age: Int,
+                ) : Comparable<User> {
+                    override fun compareTo(other: User): Int =
+                        compareBy(User::name)
+                            .thenBy(User::age)
+                            .compare(this, other)
+                }
+
+                val users: List<User> =
+                    listOf(
+                        User("Alice", 30),
+                        User("Cathy", 22),
+                        User("Alice", 28),
+                    )
+
+                // sortedWith(naturalOrder()) ==  sorted()
+                val sorted1 = users.sortedWith(naturalOrder())
+                val sorted2 = users.sorted()
+
+                val expected: List<User> =
+                    listOf(
+                        User("Alice", 28),
+                        User("Alice", 30),
+                        User("Cathy", 22),
+                    )
+                sorted1 shouldBe expected
+                sorted2 shouldBe expected
+            }
+
+            "reversedOrder() - Comparable 인터페이스를 구현하는 타입의 자연스러운 순서의 역순에 따라 정렬하는 Comparator" {
+                data class User(
+                    val name: String,
+                    val age: Int,
+                ) : Comparable<User> {
+                    override fun compareTo(other: User): Int =
+                        compareBy(User::name)
+                            .thenBy(User::age)
+                            .compare(this, other)
+                }
+
+                val users: List<User> =
+                    listOf(
+                        User("Alice", 30),
+                        User("Cathy", 22),
+                        User("Alice", 28),
+                    )
+
+                // sortedWith(reversedOrder()) ==  sortedDescending()
+                val sorted1 = users.sortedWith(reverseOrder())
+                val sorted2 = users.sortedDescending()
+
+                val expected: List<User> =
+                    listOf(
+                        User("Cathy", 22),
+                        User("Alice", 30),
+                        User("Alice", 28),
+                    )
+                sorted1 shouldBe expected
+                sorted2 shouldBe expected
             }
         }
 
