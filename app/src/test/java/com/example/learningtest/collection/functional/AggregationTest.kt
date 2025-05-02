@@ -138,20 +138,20 @@ class AggregationTest : FreeSpec({
         "runningReduce - 각 단계의 누적 결과를 포함하는 리스트 반환 (빈 컬렉션에는 사용 불가)" { // New test case
             val numbers: List<Int> = listOf(1, 2, 3, 4)
 
-            val runningSum = numbers.runningReduce { acc, number -> acc + number }
+            val runningSum: List<Int> = numbers.runningReduce { acc, number -> acc + number }
             runningSum shouldBe listOf<Int>(1, 3, 6, 10) // 1, 1 + 2, 1 + 2 + 3, 1 + 2 + 3 + 4
         }
 
         "runningFold - 초기값과 함께 각 단계의 누적 결과를 포함하는 리스트 반환 (빈 리스트도 가능)" { // New test case
             val numbers: List<Int> = listOf(1, 2, 3, 4)
 
-            val runningFolded = numbers.runningFold(10) { acc, number -> acc + number }
-            runningFolded shouldBe listOf(10, 11, 13, 16, 20)
+            val runningNumbersFolded = numbers.runningFold(10) { acc, number -> acc + number }
+            runningNumbersFolded shouldBe listOf(10, 11, 13, 16, 20)
 
             val words: List<String> = listOf("a", "b", "c")
 
-            val runningFolded2 = words.runningFold("Start: ") { acc, word -> acc + word }
-            runningFolded2 shouldBe listOf("Start: a", "Start: ab", "Start: abc")
+            val runningWordsFolded = words.runningFold("Start: ") { acc, word -> acc + word }
+            runningWordsFolded shouldBe listOf("Start: a", "Start: ab", "Start: abc")
         }
     }
 
