@@ -154,4 +154,29 @@ class TransformationTest : FreeSpec({
             set2 shouldBe listOf(2, 4, 6)
         }
     }
+
+    "Map Transformation" - {
+        val map: Map<String, Int> = mapOf("a" to 1, "b" to 2, "c" to 3)
+
+        "mapKeys - Key에 변환 함수 적용하여 새로운 Map 생성" {
+            val transformedKeysMap = map.mapKeys { (key, _) -> key.uppercase() }
+            transformedKeysMap shouldBe mapOf("A" to 1, "B" to 2, "C" to 3)
+        }
+
+        "mapValues - Value에 변환 함수 적용하여 새로운 Map 생성" {
+            val transformedValuesMap = map.mapValues { (_, value) -> value * 10 }
+            transformedValuesMap shouldBe mapOf("a" to 10, "b" to 20, "c" to 30)
+        }
+
+        "entries, keys, values - Map의 구성 요소를 Collection으로 변환" {
+            map.entries shouldBe
+                    setOf(
+                        mapOf("a" to 1).entries.first(),
+                        mapOf("b" to 2).entries.first(),
+                        mapOf("c" to 3).entries.first(),
+                    )
+            map.keys shouldBe setOf("a", "b", "c")
+            map.values shouldBe listOf(1, 2, 3)
+        }
+    }
 })
