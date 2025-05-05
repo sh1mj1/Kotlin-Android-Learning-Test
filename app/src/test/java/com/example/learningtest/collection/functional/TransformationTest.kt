@@ -170,11 +170,11 @@ class TransformationTest : FreeSpec({
 
         "entries, keys, values - Map의 구성 요소를 Collection으로 변환" {
             map.entries shouldBe
-                    setOf(
-                        mapOf("a" to 1).entries.first(),
-                        mapOf("b" to 2).entries.first(),
-                        mapOf("c" to 3).entries.first(),
-                    )
+                setOf(
+                    mapOf("a" to 1).entries.first(),
+                    mapOf("b" to 2).entries.first(),
+                    mapOf("c" to 3).entries.first(),
+                )
             map.keys shouldBe setOf("a", "b", "c")
             map.values shouldBe listOf(1, 2, 3)
         }
