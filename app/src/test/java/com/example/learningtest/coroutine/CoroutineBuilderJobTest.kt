@@ -7,7 +7,9 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.comparables.shouldBeLessThan
+import io.kotest.matchers.longs.shouldBeGreaterThanOrEqual
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
@@ -183,8 +185,8 @@ class CoroutineBuilderJobTest : FreeSpec({
 
         "CoroutineScope.isActive 를 사용하여 취소 가능하게 만들기" {
             val startTime = System.currentTimeMillis()
-            shouldNotThrow<IllegalStateException> {
-                runBlocking {
+            runBlocking {
+                shouldNotThrow<IllegalStateException> {
                     val job =
                         launch(Dispatchers.Default) {
                             withTimeout(2.seconds) {
@@ -192,7 +194,6 @@ class CoroutineBuilderJobTest : FreeSpec({
                                     while (isActive) {
                                         val currentTime = System.currentTimeMillis()
                                         val elapsed = currentTime - startTime
-
                                         check(elapsed < 500)
                                     }
                                 }
@@ -226,4 +227,46 @@ class CoroutineBuilderJobTest : FreeSpec({
         logs shouldHaveSize (1)
         logs.first() shouldBe "취소 후 동작 실행"
     }
+
+    "즉시 시작되는 launch 코루틴은 launch 호출과 동시에 실행된다" {
+        val logs = mutableListOf<String>()
+
+        runBlocking {
+            val startTime = System.currentTimeMillis()
+
+            val immediateJob =
+                launch {
+                    logs.add(elapsedTimeMilli(startTime).toString())
+                } // == launch(start = CoroutineStart.DEFAULT) { ... }
+            delay(100)
+            immediateJob.join()
+        }
+
+        val time = logs.first().toLong()
+        time shouldBeLessThan 100L
+    }
+
+    "CoroutineStart.LAZY 를 사용하면 코루틴이 생성되어도 실행되지 않는다" {
+        val logs = mutableListOf<String>()
+
+        runBlocking {
+            val startTime = System.currentTimeMillis()
+
+            val lazyJob =
+                launch(start = CoroutineStart.LAZY) {
+                    logs.add(elapsedTimeMilli(startTime).toString())
+                }
+
+            delay(100)
+            logs.shouldBeEmpty()
+
+            lazyJob.start()
+            lazyJob.join()
+        }
+
+        val time = logs.first().toLong()
+        time shouldBeGreaterThanOrEqual 100L
+    }
 })
+
+fun elapsedTimeMilli(startTime: Long): Long = System.currentTimeMillis() - startTime
