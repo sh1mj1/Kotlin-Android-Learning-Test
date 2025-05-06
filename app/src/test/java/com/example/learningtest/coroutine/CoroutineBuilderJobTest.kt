@@ -5,9 +5,11 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.joinAll
@@ -200,5 +202,28 @@ class CoroutineBuilderJobTest : FreeSpec({
                 }
             }
         }
+    }
+
+    /*
+     * cancel 호출 직후 작업을 요청했을 때, job 이 바로 취소 완료되지 않는다.
+     * 취소 완료되지 않은 job 때문에 이후 작업이 먼저 실행될 수도 있다.
+     * TODO() cancel 호출 직후 작업을 요청했을 때, 취소 완료되지 않은 job 때문에 이후 작업이 먼저 실행되는 테스트 케이스
+     * */
+    "Job.cancelAndJoin()을 사용하면 취소 후 순차 처리를 보장할 수 있다" {
+        val logs = mutableListOf<String>()
+
+        runBlocking {
+            val job =
+                launch(Dispatchers.Default) {
+                    repeat(10) {
+                        delay(10)
+                        logs.add("작업 #$it")
+                    }
+                }
+            job.cancelAndJoin()
+            logs.add("취소 후 동작 실행")
+        }
+        logs shouldHaveSize (1)
+        logs.first() shouldBe "취소 후 동작 실행"
     }
 })
