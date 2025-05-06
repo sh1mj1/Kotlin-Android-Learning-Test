@@ -82,6 +82,7 @@ class BasicCoroutineTest : FreeSpec({
                         1 + 1 // do some operation
                     }
             }
+
             job.shouldBeInstanceOf<Job>()
         }
 
@@ -109,7 +110,7 @@ class BasicCoroutineTest : FreeSpec({
             }
         }
 
-        "async 는 Deferred 객체를 리턴하는 코루틴 빌더이다" {
+        "async 는 Job 의 하위 인터페이스인 Deferred 타입 객체를 리턴하는 코루틴 빌더이다" {
             var deferred: Deferred<String>? = null
 
             runBlocking {
@@ -118,7 +119,9 @@ class BasicCoroutineTest : FreeSpec({
                         (1 + 1).toString()
                     }
             }
+
             deferred.shouldBeInstanceOf<Deferred<String>>()
+            deferred.shouldBeInstanceOf<Job>()
         }
 
         "Deferred 는 await 함수로 코루틴이 종료될 때까지 기다리며  결과를 가져올 수 있다" {
