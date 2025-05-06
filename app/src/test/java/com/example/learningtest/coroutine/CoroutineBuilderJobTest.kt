@@ -128,9 +128,7 @@ class CoroutineBuilderJobTest : FreeSpec({
                 val job =
                     launch(Dispatchers.Default) {
                         while (true) {
-                            val currentTime = System.currentTimeMillis()
-                            val elapsed = currentTime - startTime
-                            check(elapsed < 500)
+                            check(elapsedTimeMilli(startTime) < 500L)
                         }
                     }
 
@@ -150,10 +148,7 @@ class CoroutineBuilderJobTest : FreeSpec({
                             withTimeout(2.seconds) {
                                 while (true) {
                                     delay(10)
-
-                                    val currentTime = System.currentTimeMillis()
-                                    val elapsed = currentTime - startTime
-                                    check(elapsed < 500)
+                                    check(elapsedTimeMilli(startTime) < 500L)
                                 }
                             }
                         }
@@ -171,10 +166,7 @@ class CoroutineBuilderJobTest : FreeSpec({
                             withTimeout(2.seconds) {
                                 while (true) {
                                     yield()
-
-                                    val currentTime = System.currentTimeMillis()
-                                    val elapsed = currentTime - startTime
-                                    check(elapsed < 500)
+                                    check(elapsedTimeMilli(startTime) < 500L)
                                 }
                             }
                         }
@@ -192,9 +184,7 @@ class CoroutineBuilderJobTest : FreeSpec({
                             withTimeout(2.seconds) {
                                 while (true) {
                                     while (isActive) {
-                                        val currentTime = System.currentTimeMillis()
-                                        val elapsed = currentTime - startTime
-                                        check(elapsed < 500)
+                                        check(elapsedTimeMilli(startTime) < 500L)
                                     }
                                 }
                             }
@@ -268,5 +258,3 @@ class CoroutineBuilderJobTest : FreeSpec({
         time shouldBeGreaterThanOrEqual 100L
     }
 })
-
-fun elapsedTimeMilli(startTime: Long): Long = System.currentTimeMillis() - startTime

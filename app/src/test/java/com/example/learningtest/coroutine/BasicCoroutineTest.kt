@@ -33,10 +33,8 @@ class BasicCoroutineTest : FreeSpec({
             runBlocking {
                 delay(1.seconds)
             }
-            val endTime = System.currentTimeMillis()
-            val elapsed = endTime - startTime
 
-            (elapsed >= 1.seconds.inWholeMilliseconds) shouldBe true
+            (elapsedTimeMilli(startTime) >= 1.seconds.inWholeMilliseconds) shouldBe true
         }
 
         "코루틴은 구조화를 제공해 코루틴 내부에서 새로운 코루틴을 실행할 수 있다." {
@@ -55,9 +53,8 @@ class BasicCoroutineTest : FreeSpec({
                 launch {
                     delay(1.seconds)
                 }
-                val elapsed = System.currentTimeMillis() - startTime
 
-                (elapsed < 1.seconds.inWholeMilliseconds) shouldBe true
+                (elapsedTimeMilli(startTime) < 1.seconds.inWholeMilliseconds) shouldBe true
             }
         }
 
@@ -69,8 +66,8 @@ class BasicCoroutineTest : FreeSpec({
                     delay(1.seconds)
                     "result"
                 }
-                val elapsed = System.currentTimeMillis() - startTime
-                (elapsed < 1.seconds.inWholeMilliseconds) shouldBe true
+
+                (elapsedTimeMilli(startTime) < 1.seconds.inWholeMilliseconds) shouldBe true
             }
         }
 
