@@ -1,14 +1,21 @@
 package com.example.learningtest.coroutine
 
+import io.kotest.assertions.throwables.shouldNotThrow
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.yield
+import kotlin.time.Duration.Companion.seconds
 
 class CoroutineBuilderJobTest : FreeSpec({
     "순차 실행이 필요한 작업을 launch 로 단순 병렬 실행하면 의도한 순서를 보장할 수 없다" {
@@ -49,11 +56,11 @@ class CoroutineBuilderJobTest : FreeSpec({
         }
 
         logs shouldBe
-                listOf(
-                    "토큰 업데이트 시작",
-                    "토큰 업데이트 완료",
-                    "네트워크 요청",
-                )
+            listOf(
+                "토큰 업데이트 시작",
+                "토큰 업데이트 완료",
+                "네트워크 요청",
+            )
     }
 
     "여러 Job 이 완료된 후 다음 작업을 실행하려면 joinAll 로 순서를 보장할 수 있다" {
@@ -80,10 +87,118 @@ class CoroutineBuilderJobTest : FreeSpec({
             }.join()
         }
 
-        (logs == listOf("이미지1 변환 완료", "이미지2 변환 완료", "이미지1,2 업로드") || logs == listOf(
-            "이미지2 변환 완료",
-            "이미지1 변환 완료",
-            "이미지1,2 업로드"
-        )) shouldBe true
+        (
+            logs == listOf("이미지1 변환 완료", "이미지2 변환 완료", "이미지1,2 업로드") || logs ==
+                listOf(
+                    "이미지2 변환 완료",
+                    "이미지1 변환 완료",
+                    "이미지1,2 업로드",
+                )
+        ) shouldBe true
+    }
+
+    "Job.cancel() 을 호출하면 코루틴이 중단된다" {
+        val logs = mutableListOf<String>()
+        val startTime = System.currentTimeMillis()
+
+        runBlocking {
+            val job =
+                launch(Dispatchers.Default) {
+                    repeat(10) { i ->
+                        delay(1000)
+                        logs.add("[$i] ${System.currentTimeMillis() - startTime}ms")
+                    }
+                }
+
+            delay(100)
+            job.cancel()
+        }
+
+        logs.shouldBeEmpty()
+    }
+
+    "양보 지점이 없는 무한 루프 코루틴은 cancel 되어도 종료되지 않는다" {
+        val startTime = System.currentTimeMillis()
+        shouldThrow<IllegalStateException> {
+            runBlocking {
+                val job =
+                    launch(Dispatchers.Default) {
+                        while (true) {
+                            val currentTime = System.currentTimeMillis()
+                            val elapsed = currentTime - startTime
+                            check(elapsed < 500)
+                        }
+                    }
+
+                delay(100)
+                job.cancel()
+            }
+        }
+    }
+
+    "delay, yield, CoroutineScope.isActive 를 사용하여 양보 지점 추가해서 취소 가능하게 만들 수 있다" - {
+        "delay 를 사용하여 취소 가능하게 만들기" {
+            val startTime = System.currentTimeMillis()
+            shouldNotThrow<IllegalStateException> {
+                runBlocking {
+                    val job =
+                        launch(Dispatchers.Default) {
+                            withTimeout(2.seconds) {
+                                while (true) {
+                                    delay(10)
+
+                                    val currentTime = System.currentTimeMillis()
+                                    val elapsed = currentTime - startTime
+                                    check(elapsed < 500)
+                                }
+                            }
+                        }
+                    job.cancel()
+                }
+            }
+        }
+
+        "yield 를 사용하여 취소 가능하게 만들기" {
+            val startTime = System.currentTimeMillis()
+            shouldNotThrow<IllegalStateException> {
+                runBlocking {
+                    val job =
+                        launch(Dispatchers.Default) {
+                            withTimeout(2.seconds) {
+                                while (true) {
+                                    yield()
+
+                                    val currentTime = System.currentTimeMillis()
+                                    val elapsed = currentTime - startTime
+                                    check(elapsed < 500)
+                                }
+                            }
+                        }
+                    job.cancel()
+                }
+            }
+        }
+
+        "CoroutineScope.isActive 를 사용하여 취소 가능하게 만들기" {
+            val startTime = System.currentTimeMillis()
+            shouldNotThrow<IllegalStateException> {
+                runBlocking {
+                    val job =
+                        launch(Dispatchers.Default) {
+                            withTimeout(2.seconds) {
+                                while (true) {
+                                    while (isActive) {
+                                        val currentTime = System.currentTimeMillis()
+                                        val elapsed = currentTime - startTime
+
+                                        check(elapsed < 500)
+                                    }
+                                }
+                            }
+                        }
+                    job.cancel()
+                }
+            }
+        }
     }
 })
