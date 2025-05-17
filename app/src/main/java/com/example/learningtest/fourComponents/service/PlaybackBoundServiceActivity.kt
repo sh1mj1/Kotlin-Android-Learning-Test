@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -31,12 +31,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 
 class PlaybackBoundServiceActivity : ComponentActivity() {
-    private var playbackService: PlaybackBoundService? = null
+    private lateinit var playbackService: PlaybackBoundService
     private var bound by mutableStateOf(false)
 
     val isPlaying = mutableStateOf(false)
-    val progress = mutableStateOf(0f)
-    val currentSecond = derivedStateOf { progress.value.toInt() }
+    val progress = mutableFloatStateOf(0f)
+    val currentSecond = derivedStateOf { progress.floatValue.toInt() }
 
     private val connection =
         object : ServiceConnection {
@@ -51,24 +51,22 @@ class PlaybackBoundServiceActivity : ComponentActivity() {
 
             override fun onServiceDisconnected(name: ComponentName?) {
                 bound = false
-                playbackService = null
             }
         }
 
     private fun observeServiceState() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    playbackService?.progress?.collect { value ->
-                        progress.value = value
-                        Log.d(TAG, "collected progress: $value")
-                    }
+                playbackService.progress.collect { value ->
+                    progress.floatValue = value
                 }
-                launch {
-                    playbackService?.isPlaying?.collect { playing ->
-                        isPlaying.value = playing
-                        Log.d(TAG, "collected isPlaying: $playing")
-                    }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                playbackService.isPlaying.collect { value ->
+                    isPlaying.value = value
                 }
             }
         }
@@ -98,10 +96,10 @@ class PlaybackBoundServiceActivity : ComponentActivity() {
                     PlaybackControlUI(
                         isBound = bound,
                         isPlaying = isPlaying.value,
-                        progress = progress.value,
+                        progress = progress.floatValue,
                         currentSecond = currentSecond.value,
-                        onPlay = { playbackService?.play() },
-                        onPause = { playbackService?.pause() },
+                        onPlay = { playbackService.play() },
+                        onPause = { playbackService.pause() },
                     )
                 }
             }
@@ -125,7 +123,6 @@ fun PlaybackControlUI(
                 .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Log.d(TAG, "progress: $progress")
         Text("서비스 연결 상태: ${if (isBound) "Connected" else "Disconnected"}")
         Text("재생 상태: ${if (isPlaying) "▶️ Playing" else "⏸️ Paused"}")
 
@@ -147,5 +144,3 @@ fun PlaybackControlUI(
         }
     }
 }
-
-private const val TAG = "PlaybackBoundServiceAct"

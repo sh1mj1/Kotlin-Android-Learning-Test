@@ -4,7 +4,6 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -36,7 +35,6 @@ class PlaybackBoundService : Service() {
         job =
             CoroutineScope(Dispatchers.Default).launch {
                 while (_progress.value < 60f && _isPlaying.value) {
-                    Log.d(TAG, "progress: ${_progress.value}")
                     delay(1000)
                     _progress.value += 1
                 }
@@ -54,5 +52,3 @@ class PlaybackBoundService : Service() {
         job?.cancel()
     }
 }
-
-private const val TAG = "PlaybackBoundService"
