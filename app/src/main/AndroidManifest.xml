@@ -45,6 +45,10 @@
             android:exported="true" />
 
         <activity
+            android:name=".fourComponents.service.PlaybackForegroundServiceActivity"
+            android:exported="true" />
+
+        <activity
             android:name=".MainActivity"
             android:exported="true" />
 
