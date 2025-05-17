@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -47,6 +51,10 @@
         <service
             android:name=".fourComponents.service.PlaybackBoundService"
             android:exported="false" />
+
+        <service
+            android:name=".fourComponents.service.PlaybackBoundService2"
+            android:foregroundServiceType="mediaPlayback" />
 
     </application>
 
