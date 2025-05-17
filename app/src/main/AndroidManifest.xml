@@ -37,6 +37,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".fourComponents.service.PlaybackBoundServiceActivity"
+            android:exported="true" />
+
+        <activity
             android:name=".MainActivity"
             android:exported="true" />
 
