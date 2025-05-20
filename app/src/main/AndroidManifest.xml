@@ -17,10 +17,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LearningTest"
         tools:targetApi="31">
+
         <activity
             android:name=".compose.basiclayout.SootheActivity"
             android:exported="true"
             android:label="@string/title_activity_soothe"
+            android:theme="@style/Theme.LearningTest">
+
+        </activity>
+
+        <activity
+            android:name=".fourComponents.service.MusicPlayerActivity"
+            android:exported="true"
+            android:label="@string/title_activity_music_player"
             android:theme="@style/Theme.LearningTest">
 
         </activity>
