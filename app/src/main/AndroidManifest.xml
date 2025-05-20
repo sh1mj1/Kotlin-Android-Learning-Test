@@ -29,6 +29,7 @@
             android:exported="true"
             android:label="@string/title_activity_basic_state"
             android:theme="@style/Theme.LearningTest" />
+
         <activity
             android:name=".compose.basic.codelab.BasicComposeActivity"
             android:exported="true"
@@ -40,12 +41,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".fourComponents.service.PlaybackBoundServiceActivity"
-            android:exported="true" />
 
         <activity
-            android:name=".fourComponents.service.PlaybackForegroundServiceActivity"
+            android:name=".fourComponents.service.PlaybackBoundServiceActivity"
             android:exported="true" />
 
         <activity
@@ -56,9 +54,8 @@
             android:name=".fourComponents.service.PlaybackBoundService"
             android:exported="false" />
 
-        <service
-            android:name=".fourComponents.service.PlaybackBoundService2"
-            android:foregroundServiceType="mediaPlayback" />
+
+
 
     </application>
 
