@@ -92,4 +92,7 @@ dependencies {
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.material3.window.size)
+
+    implementation("androidx.media3:media3-session:1.7.1")
+    implementation("androidx.media:media:1.7.0")
 }

@@ -8,6 +8,7 @@
 
     <application
         android:allowBackup="true"
+        android:name=".fourComponents.service.BaseApplication"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -54,8 +55,11 @@
             android:name=".fourComponents.service.PlaybackBoundService"
             android:exported="false" />
 
-
-
+        <service
+            android:name=".fourComponents.service.MusicPlayerService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
 
     </application>
 
