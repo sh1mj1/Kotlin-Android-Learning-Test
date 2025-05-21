@@ -18,12 +18,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class MusicPlayerActivity : ComponentActivity() {
+class ForegroundBoundMusicActivity : ComponentActivity() {
     private var isPlaying = MutableStateFlow(false)
     private val maxDuration = MutableStateFlow(0f)
     private val currentDuration = MutableStateFlow(0f)
     private val currentTrack = MutableStateFlow(Track())
-    private lateinit var service: MusicPlayerService
+    private lateinit var service: ForegroundBoundService
     private var isBound = false
 
     val connection =
@@ -32,7 +32,7 @@ class MusicPlayerActivity : ComponentActivity() {
                 p0: ComponentName?,
                 binder: IBinder?,
             ) {
-                service = (binder as MusicPlayerService.MusicBinder).service()
+                service = (binder as ForegroundBoundService.MusicBinder).service()
                 binder.setMusics(songs)
                 lifecycleScope.launch {
                     binder.isPlaying().collectLatest {
@@ -98,14 +98,14 @@ class MusicPlayerActivity : ComponentActivity() {
     }
 
     private fun stopUnbindService() {
-        val intent = Intent(this@MusicPlayerActivity, MusicPlayerService::class.java)
+        val intent = Intent(this@ForegroundBoundMusicActivity, ForegroundBoundService::class.java)
         stopService(intent)
         unbindService(connection)
     }
 
     private fun startBindService() {
         val intent =
-            Intent(this@MusicPlayerActivity, MusicPlayerService::class.java)
+            Intent(this@ForegroundBoundMusicActivity, ForegroundBoundService::class.java)
         startService(intent)
         bindService(intent, connection, BIND_AUTO_CREATE)
     }

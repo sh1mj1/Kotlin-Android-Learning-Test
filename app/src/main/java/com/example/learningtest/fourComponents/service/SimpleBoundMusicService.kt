@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class PlaybackBoundService : Service() {
+class SimpleBoundMusicService : Service() {
     private val binder = LocalBinder()
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> get() = _isPlaying
@@ -24,7 +24,7 @@ class PlaybackBoundService : Service() {
     private var job: Job? = null
 
     inner class LocalBinder : Binder() {
-        fun getService(): PlaybackBoundService = this@PlaybackBoundService
+        fun getService(): SimpleBoundMusicService = this@SimpleBoundMusicService
     }
 
     override fun onBind(intent: Intent?): IBinder = binder

@@ -26,7 +26,7 @@
         </activity>
 
         <activity
-            android:name=".fourComponents.service.MusicPlayerActivity"
+            android:name=".fourComponents.service.ForegroundBoundMusicActivity"
             android:exported="true"
             android:label="@string/title_activity_music_player"
             android:theme="@style/Theme.LearningTest">
@@ -52,7 +52,7 @@
         </activity>
 
         <activity
-            android:name=".fourComponents.service.PlaybackBoundServiceActivity"
+            android:name=".fourComponents.service.SimpleBoundMusicActivity"
             android:exported="true" />
 
         <activity
@@ -60,11 +60,11 @@
             android:exported="true" />
 
         <service
-            android:name=".fourComponents.service.PlaybackBoundService"
+            android:name=".fourComponents.service.SimpleBoundMusicService"
             android:exported="false" />
 
         <service
-            android:name=".fourComponents.service.MusicPlayerService"
+            android:name=".fourComponents.service.ForegroundBoundService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />

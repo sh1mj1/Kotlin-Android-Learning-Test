@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MusicPlayerService : Service() {
+class ForegroundBoundService : Service() {
     private val binder = MusicBinder()
     private val mediaPlayer = MediaPlayer()
     private lateinit var session: MediaSessionCompat
@@ -40,19 +40,19 @@ class MusicPlayerService : Service() {
     private val isPlaying = MutableStateFlow(false)
 
     inner class MusicBinder : Binder() {
-        fun service(): MusicPlayerService = this@MusicPlayerService
+        fun service(): ForegroundBoundService = this@ForegroundBoundService
 
         fun setMusics(list: List<Track>) {
-            this@MusicPlayerService.musicList = list.toMutableList()
+            this@ForegroundBoundService.musicList = list.toMutableList()
         }
 
-        fun currentDuration(): MutableStateFlow<Float> = this@MusicPlayerService.currentDestination
+        fun currentDuration(): MutableStateFlow<Float> = this@ForegroundBoundService.currentDestination
 
-        fun maxDuration(): MutableStateFlow<Float> = this@MusicPlayerService.maxDuration
+        fun maxDuration(): MutableStateFlow<Float> = this@ForegroundBoundService.maxDuration
 
-        fun isPlaying(): MutableStateFlow<Boolean> = this@MusicPlayerService.isPlaying
+        fun isPlaying(): MutableStateFlow<Boolean> = this@ForegroundBoundService.isPlaying
 
-        fun currentTrack(): MutableStateFlow<Track> = this@MusicPlayerService.currentTrack
+        fun currentTrack(): MutableStateFlow<Track> = this@ForegroundBoundService.currentTrack
     }
 
     override fun onCreate() {
@@ -122,7 +122,7 @@ class MusicPlayerService : Service() {
         currentTrack.update { track }
 
         with(mediaPlayer) {
-            setDataSource(this@MusicPlayerService, rawUri(track.id))
+            setDataSource(this@ForegroundBoundService, rawUri(track.id))
             prepareAsync()
             setOnPreparedListener {
                 start()
@@ -136,7 +136,7 @@ class MusicPlayerService : Service() {
 
     fun pendingIntent(intentAction: String): PendingIntent {
         val intent =
-            Intent(this, MusicPlayerService::class.java).apply {
+            Intent(this, ForegroundBoundService::class.java).apply {
                 action = intentAction
             }
         return PendingIntent.getService(

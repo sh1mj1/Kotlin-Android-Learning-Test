@@ -21,8 +21,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 
-class PlaybackBoundServiceActivity : ComponentActivity() {
-    private lateinit var playbackService: PlaybackBoundService
+class SimpleBoundMusicActivity : ComponentActivity() {
+    private lateinit var playbackService: SimpleBoundMusicService
     private var bound by mutableStateOf(false)
 
     private val isPlaying = mutableStateOf(false)
@@ -35,7 +35,7 @@ class PlaybackBoundServiceActivity : ComponentActivity() {
                 name: ComponentName?,
                 binder: IBinder?,
             ) {
-                playbackService = (binder as PlaybackBoundService.LocalBinder).getService()
+                playbackService = (binder as SimpleBoundMusicService.LocalBinder).getService()
                 bound = true
                 observeServiceState()
             }
@@ -65,7 +65,7 @@ class PlaybackBoundServiceActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        Intent(this, PlaybackBoundService::class.java).also {
+        Intent(this, SimpleBoundMusicService::class.java).also {
             bindService(it, connection, BIND_AUTO_CREATE)
         }
     }
