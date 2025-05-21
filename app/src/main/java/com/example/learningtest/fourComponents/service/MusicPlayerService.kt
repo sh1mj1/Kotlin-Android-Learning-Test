@@ -65,17 +65,11 @@ class MusicPlayerService : Service() {
     ): Int {
         intent?.let {
             when (intent.action) {
-                PREV -> {
-                    prev()
-                }
+                PREV -> prev()
 
-                NEXT -> {
-                    next()
-                }
+                NEXT -> next()
 
-                PLAY_PAUSE -> {
-                    playPause()
-                }
+                PLAY_PAUSE -> playPause()
 
                 else -> {
                     currentTrack.update { songs[0] }
@@ -110,7 +104,6 @@ class MusicPlayerService : Service() {
                     "play_pause",
                     playPausePendingIntent(),
                 )
-                .addAction(R.drawable.ic_play, "play_pause", playPausePendingIntent())
                 .addAction(R.drawable.ic_next, "next", nextPendingIntent())
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setLargeIcon(
@@ -225,7 +218,7 @@ class MusicPlayerService : Service() {
     fun nextPendingIntent(): PendingIntent {
         val intent =
             Intent(this, MusicPlayerService::class.java).apply {
-                action = PLAY_PAUSE
+                action = NEXT
             }
         return PendingIntent.getService(
             this,
