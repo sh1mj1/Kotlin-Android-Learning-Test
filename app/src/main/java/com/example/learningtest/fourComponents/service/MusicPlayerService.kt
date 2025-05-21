@@ -1,7 +1,7 @@
 package com.example.learningtest.fourComponents.service
 
 import android.Manifest.permission.POST_NOTIFICATIONS
-import android.annotation.SuppressLint
+import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
@@ -17,6 +17,7 @@ import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.media3.common.util.UnstableApi
 import com.example.learningtest.R
 import kotlinx.coroutines.CoroutineScope
@@ -28,14 +29,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MusicPlayerService : Service() {
-    val binder = MusicBinder()
-
-    private var mediaPlayer = MediaPlayer()
-
+    private val binder = MusicBinder()
+    private val mediaPlayer = MediaPlayer()
+    private lateinit var session: MediaSessionCompat
     private val currentTrack = MutableStateFlow(Track())
     private val maxDuration = MutableStateFlow(0f)
     private val currentDestination = MutableStateFlow(0f)
-    private val scope = CoroutineScope(Dispatchers.Main)
     private var job: Job? = null
     private var musicList = mutableListOf<Track>()
     private val isPlaying = MutableStateFlow(false)
@@ -56,6 +55,11 @@ class MusicPlayerService : Service() {
         fun currentTrack(): MutableStateFlow<Track> = this@MusicPlayerService.currentTrack
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        session = MediaSessionCompat(this, "music")
+    }
+
     override fun onBind(intent: Intent?): IBinder? = binder
 
     override fun onStartCommand(
@@ -66,77 +70,21 @@ class MusicPlayerService : Service() {
         intent?.let {
             when (intent.action) {
                 PREV -> prev()
-
                 NEXT -> next()
-
                 PLAY_PAUSE -> playPause()
-
-                else -> {
-                    currentTrack.update { songs[0] }
-                    play(currentTrack.value)
-                }
+                else -> play(songs[0])
             }
         }
 
         return START_STICKY
     }
 
-    @SuppressLint("RestrictedApi")
     @OptIn(UnstableApi::class)
     private fun sendNotification(track: Track) {
-        val session = MediaSessionCompat(this, "music")
-
         isPlaying.update { mediaPlayer.isPlaying }
 
-        val style =
-            androidx.media.app.NotificationCompat.MediaStyle()
-                .setShowActionsInCompactView(0, 1, 2)
-                .setMediaSession(session.sessionToken)
-
-        val notification =
-            NotificationCompat.Builder(this, CHANNEL_ID)
-                .setStyle(style)
-                .setContentTitle(track.name)
-                .setContentText(track.desc)
-                .addAction(R.drawable.ic_prev, "prev", prevPendingIntent())
-                .addAction(
-                    if (mediaPlayer.isPlaying) R.drawable.ic_pause else R.drawable.ic_play,
-                    "play_pause",
-                    playPausePendingIntent(),
-                )
-                .addAction(R.drawable.ic_next, "next", nextPendingIntent())
-                .setSmallIcon(R.drawable.ic_launcher_background)
-                .setLargeIcon(
-                    BitmapFactory.decodeResource(
-                        resources,
-                        R.drawable.ic_launcher_foreground,
-                    ),
-                )
-                .build()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    POST_NOTIFICATIONS,
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                startForeground(1, notification)
-            }
-        } else {
-            startForeground(1, notification)
-        }
-    }
-
-    fun play(track: Track) {
-        mediaPlayer.reset()
-        mediaPlayer = MediaPlayer()
-        mediaPlayer.setDataSource(this, rawUri(track.id))
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            mediaPlayer.start()
-            sendNotification(track)
-            updateDurations()
-        }
+        val notification = notification(track)
+        startForegroundWithPermissionCheck(notification)
     }
 
     fun playPause() {
@@ -149,76 +97,47 @@ class MusicPlayerService : Service() {
     }
 
     fun prev() {
-        job?.cancel()
-        mediaPlayer.reset()
-
-        mediaPlayer = MediaPlayer()
-
-        val index = musicList.indexOf(currentTrack.value)
-        val prevIndex = if (index < 0) musicList.size.minus(1) else index.minus(1)
-        val prevItem = musicList[prevIndex]
-
-        currentTrack.update { prevItem }
-
-        mediaPlayer.setDataSource(this, rawUri(currentTrack.value.id))
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            mediaPlayer.start()
-            sendNotification(currentTrack.value)
-            updateDurations()
-        }
+        val prevTrack: Track =
+            musicList.run {
+                indexOf(currentTrack.value)
+                    .let { if (it < 0) musicList.size - 1 else it - 1 }
+                    .let { musicList[it] }
+            }
+        play(prevTrack)
     }
 
     fun next() {
+        val nextTrack: Track =
+            musicList.run {
+                indexOf(currentTrack.value)
+                    .let { (it + 1) % size }
+                    .let { this[it] }
+            }
+        play(nextTrack)
+    }
+
+    private fun play(track: Track) {
         job?.cancel()
         mediaPlayer.reset()
+        currentTrack.update { track }
 
-        mediaPlayer = MediaPlayer()
-        val index = musicList.indexOf(currentTrack.value)
-        val nextIndex = index.plus(1).mod(musicList.size)
-        val nextItem = musicList.get(nextIndex)
-        currentTrack.update { nextItem }
-        mediaPlayer.setDataSource(this, rawUri(nextItem.id))
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            mediaPlayer.start()
-            sendNotification(currentTrack.value)
-            updateDurations()
+        with(mediaPlayer) {
+            setDataSource(this@MusicPlayerService, rawUri(track.id))
+            prepareAsync()
+            setOnPreparedListener {
+                start()
+                sendNotification(track)
+                updateDurations()
+            }
         }
     }
 
     private fun rawUri(id: Int): Uri = "android.resource://$packageName/$id".toUri()
 
-    fun prevPendingIntent(): PendingIntent {
+    fun pendingIntent(intentAction: String): PendingIntent {
         val intent =
             Intent(this, MusicPlayerService::class.java).apply {
-                action = PREV
-            }
-        return PendingIntent.getService(
-            this,
-            0,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-        )
-    }
-
-    fun playPausePendingIntent(): PendingIntent {
-        val intent =
-            Intent(this, MusicPlayerService::class.java).apply {
-                action = PLAY_PAUSE
-            }
-        return PendingIntent.getService(
-            this,
-            0,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-        )
-    }
-
-    fun nextPendingIntent(): PendingIntent {
-        val intent =
-            Intent(this, MusicPlayerService::class.java).apply {
-                action = NEXT
+                action = intentAction
             }
         return PendingIntent.getService(
             this,
@@ -230,7 +149,7 @@ class MusicPlayerService : Service() {
 
     fun updateDurations() {
         job =
-            scope.launch {
+            CoroutineScope(Dispatchers.Main).launch {
                 if (mediaPlayer.isPlaying.not()) return@launch
 
                 maxDuration.update { mediaPlayer.duration.toFloat() }
@@ -240,6 +159,49 @@ class MusicPlayerService : Service() {
                     delay(1000L)
                 }
             }
+    }
+
+    private fun notification(track: Track): Notification {
+        val style =
+            MediaStyle()
+                .setShowActionsInCompactView(0, 1, 2)
+                .setMediaSession(session.sessionToken)
+
+        val notification =
+            NotificationCompat.Builder(this, CHANNEL_ID)
+                .setStyle(style)
+                .setContentTitle(track.name)
+                .setContentText(track.desc)
+                .addAction(R.drawable.ic_prev, "prev", pendingIntent(PREV))
+                .addAction(
+                    if (mediaPlayer.isPlaying) R.drawable.ic_pause else R.drawable.ic_play,
+                    "play_pause",
+                    pendingIntent(PLAY_PAUSE),
+                )
+                .addAction(R.drawable.ic_next, "next", pendingIntent(NEXT))
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setLargeIcon(
+                    BitmapFactory.decodeResource(
+                        resources,
+                        R.drawable.ic_launcher_foreground,
+                    ),
+                )
+                .build()
+        return notification
+    }
+
+    private fun startForegroundWithPermissionCheck(notification: Notification) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    POST_NOTIFICATIONS,
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                startForeground(1, notification)
+            }
+        } else {
+            startForeground(1, notification)
+        }
     }
 
     companion object {

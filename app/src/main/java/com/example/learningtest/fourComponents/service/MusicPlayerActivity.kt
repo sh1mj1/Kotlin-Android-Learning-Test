@@ -23,8 +23,7 @@ class MusicPlayerActivity : ComponentActivity() {
     private val maxDuration = MutableStateFlow(0f)
     private val currentDuration = MutableStateFlow(0f)
     private val currentTrack = MutableStateFlow(Track())
-
-    private var service: MusicPlayerService? = null
+    private lateinit var service: MusicPlayerService
     private var isBound = false
 
     val connection =
@@ -53,11 +52,6 @@ class MusicPlayerActivity : ComponentActivity() {
                 }
 
                 lifecycleScope.launch {
-                    binder.isPlaying().collectLatest {
-                        isPlaying.value = it
-                    }
-                }
-                lifecycleScope.launch {
                     binder.currentTrack().collectLatest {
                         currentTrack.value = it
                     }
@@ -73,17 +67,9 @@ class MusicPlayerActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val channel =
-            NotificationChannel(
-                CHANNEL_ID,
-                CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT,
-            )
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
-
         enableEdgeToEdge()
+
+        createNotificationChannel()
 
         setContent {
             val track by currentTrack.collectAsState()
@@ -96,21 +82,43 @@ class MusicPlayerActivity : ComponentActivity() {
                 maxDuration = max,
                 currentDuration = current,
                 isPlaying = playing,
-                onStartService = {
-                    val intent = Intent(this@MusicPlayerActivity, MusicPlayerService::class.java)
-                    startService(intent)
-                    bindService(intent, connection, BIND_AUTO_CREATE)
+                onStartService = { if (!isBound) startBindService() },
+                onStopService = { if (isBound) stopUnbindService() },
+                onPrev = { if (isBound) service.prev() },
+                onPlayPause = {
+                    if (isBound) {
+                        service.playPause()
+                    } else {
+                        startBindService()
+                    }
                 },
-                onStopService = {
-                    val intent = Intent(this@MusicPlayerActivity, MusicPlayerService::class.java)
-                    stopService(intent)
-                    unbindService(connection)
-                },
-                onPrev = { service?.prev() },
-                onPlayPause = { service?.playPause() },
-                onNext = { service?.next() },
+                onNext = { if (isBound) service.next() },
             )
         }
+    }
+
+    private fun stopUnbindService() {
+        val intent = Intent(this@MusicPlayerActivity, MusicPlayerService::class.java)
+        stopService(intent)
+        unbindService(connection)
+    }
+
+    private fun startBindService() {
+        val intent =
+            Intent(this@MusicPlayerActivity, MusicPlayerService::class.java)
+        startService(intent)
+        bindService(intent, connection, BIND_AUTO_CREATE)
+    }
+
+    private fun createNotificationChannel() {
+        val channel =
+            NotificationChannel(
+                CHANNEL_ID,
+                CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_DEFAULT,
+            )
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
 }
 
