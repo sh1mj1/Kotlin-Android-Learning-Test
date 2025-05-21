@@ -1,0 +1,99 @@
+package com.example.learningtest.fourComponents.service
+
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
+import android.os.Bundle
+import android.os.IBinder
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
+
+class SimpleBoundMusicActivity : ComponentActivity() {
+    private lateinit var playbackService: SimpleBoundMusicService
+    private var bound by mutableStateOf(false)
+
+    private val isPlaying = mutableStateOf(false)
+    private val progress = mutableFloatStateOf(0f)
+    private val currentSecond = derivedStateOf { progress.floatValue.toInt() }
+
+    private val connection =
+        object : ServiceConnection {
+            override fun onServiceConnected(
+                name: ComponentName?,
+                binder: IBinder?,
+            ) {
+                playbackService = (binder as SimpleBoundMusicService.LocalBinder).getService()
+                bound = true
+                observeServiceState()
+            }
+
+            override fun onServiceDisconnected(name: ComponentName?) {
+                bound = false
+            }
+        }
+
+    private fun observeServiceState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                playbackService.progress.collect { value ->
+                    progress.floatValue = value
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                playbackService.isPlaying.collect { value ->
+                    isPlaying.value = value
+                }
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Intent(this, SimpleBoundMusicService::class.java).also {
+            bindService(it, connection, BIND_AUTO_CREATE)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (bound) {
+            unbindService(connection)
+            bound = false
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setContent {
+            MaterialTheme {
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    PlaybackControlUI(
+                        isBound = bound,
+                        isPlaying = isPlaying.value,
+                        progress = progress.floatValue,
+                        currentSecond = currentSecond.value,
+                        onPlay = { playbackService.play() },
+                        onPause = { playbackService.pause() },
+                    )
+                }
+            }
+        }
+    }
+}
