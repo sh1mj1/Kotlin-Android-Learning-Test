@@ -17,5 +17,7 @@
     <string name="title_activity_music_player">MusicPlayerActivity</string>
     <string name="title_activity_network">NetworkActivity</string>
     <string name="title_activity_alarm">AlarmActivity</string>
+    <string name="title_activity_shipment">ShipmentActivity</string>
+    <string name="title_activity_contacts">ContactsActivity</string>
 
 </resources>
