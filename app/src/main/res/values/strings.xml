@@ -15,5 +15,7 @@
     <string name="bottom_navigation_profile">profile</string>
     <string name="title_activity_soothe">SootheActivity</string>
     <string name="title_activity_music_player">MusicPlayerActivity</string>
+    <string name="title_activity_network">NetworkActivity</string>
+    <string name="title_activity_alarm">AlarmActivity</string>
 
 </resources>

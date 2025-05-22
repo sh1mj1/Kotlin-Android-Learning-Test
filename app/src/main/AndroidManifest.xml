@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
         android:allowBackup="true"
@@ -16,33 +19,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LearningTest"
         tools:targetApi="31">
-
         <activity
-            android:name=".compose.basiclayout.SootheActivity"
+            android:name=".fourComponents.broadcast.AlarmActivity"
             android:exported="true"
-            android:label="@string/title_activity_soothe"
-            android:theme="@style/Theme.LearningTest">
-
-        </activity>
-
-        <activity
-            android:name=".fourComponents.service.ForegroundBoundMusicActivity"
-            android:exported="true"
-            android:label="@string/title_activity_music_player"
-            android:theme="@style/Theme.LearningTest">
-
-        </activity>
-
-        <activity
-            android:name=".compose.state.BasicStateActivity"
-            android:exported="true"
-            android:label="@string/title_activity_basic_state"
-            android:theme="@style/Theme.LearningTest" />
-
-        <activity
-            android:name=".compose.basic.codelab.BasicComposeActivity"
-            android:exported="true"
-            android:label="@string/title_activity_main2"
+            android:label="@string/title_activity_alarm"
             android:theme="@style/Theme.LearningTest">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,11 +30,36 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".fourComponents.broadcast.NetworkActivity"
+            android:exported="true"
+            android:label="@string/title_activity_network"
+            android:theme="@style/Theme.LearningTest" />
+        <activity
+            android:name=".compose.basiclayout.SootheActivity"
+            android:exported="true"
+            android:label="@string/title_activity_soothe"
+            android:theme="@style/Theme.LearningTest" />
+        <activity
+            android:name=".fourComponents.service.ForegroundBoundMusicActivity"
+            android:exported="true"
+            android:label="@string/title_activity_music_player"
+            android:theme="@style/Theme.LearningTest" />
+        <activity
+            android:name=".compose.state.BasicStateActivity"
+            android:exported="true"
+            android:label="@string/title_activity_basic_state"
+            android:theme="@style/Theme.LearningTest" />
+        <activity
+            android:name=".compose.basic.codelab.BasicComposeActivity"
+            android:exported="true"
+            android:label="@string/title_activity_main2"
+            android:theme="@style/Theme.LearningTest">
 
+        </activity>
         <activity
             android:name=".fourComponents.service.SimpleBoundMusicActivity"
             android:exported="true" />
-
         <activity
             android:name=".MainActivity"
             android:exported="true" />
@@ -62,12 +67,16 @@
         <service
             android:name=".fourComponents.service.SimpleBoundMusicService"
             android:exported="false" />
-
         <service
             android:name=".fourComponents.service.ForegroundBoundService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
+
+        <receiver
+            android:name=".fourComponents.broadcast.NotificationReceiver"
+            android:exported="false">
+        </receiver>
 
     </application>
 
