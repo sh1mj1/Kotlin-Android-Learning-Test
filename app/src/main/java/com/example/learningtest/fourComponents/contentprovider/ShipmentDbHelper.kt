@@ -30,5 +30,8 @@ class ShipmentDbHelper(context: Context) : SQLiteOpenHelper(context, SHIPMENT_DA
 
     companion object {
         private const val SHIPMENT_DATABASE_NAME = "shipment.db"
+        const val ITEM_NAME = "item_name"
+        const val QUANTITY = "quantity"
+        const val DESTINATION = "destination"
     }
 }
