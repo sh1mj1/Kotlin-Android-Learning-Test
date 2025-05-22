@@ -23,12 +23,12 @@ OS 가 알아서 일정 조건에서 브로드캐스트를 보내는 것이 많�
 
 ## 네트워크 상태 예시 (동적으로 Broadcast 등록)
 
-[NetworkChangeReceiver.kt](NetworkChangeReceiver.kt)
+[NetworkChangeReceiver.kt](dynamic/NetworkChangeReceiver.kt)
 
 이 리시버는 네트워크 상태 변경 브로드캐스트를 수신하기 위해 만들어졌다.
 
 * 다만, 네트워크 연결 여부 판단 로직을 갖고 있지 않다
-    * 콜백을 통해 [NetworkActivity.kt](NetworkActivity.kt) 측에 알린다.
+    * 콜백을 통해 [NetworkActivity.kt](dynamic/NetworkActivity.kt) 측에 알린다.
     * 액티비티에서 `CONNECTIVITY_ACTION`(네트워크 상태 변경 브로드 캐스트)이 발생하면, 이 객체에게 전달한다.
 
 ### 동작 순서

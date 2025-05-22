@@ -1,4 +1,4 @@
-package com.example.learningtest.fourComponents.broadcast
+package com.example.learningtest.fourComponents.broadcast.static
 
 import android.Manifest
 import android.app.AlarmManager
@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import kotlin.jvm.java
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 
@@ -47,15 +47,15 @@ class AlarmActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(modifier = Modifier.Companion.fillMaxSize()) { innerPadding ->
                     Column(
                         modifier =
-                            Modifier
+                            Modifier.Companion
                                 .padding(innerPadding)
                                 .padding(16.dp),
                     ) {
                         Text("아래 버튼을 누르면 6 초 이후에 알림이 도착합니다.")
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.Companion.height(16.dp))
 
                         Button(onClick = {
                             scheduleAlarm()
@@ -84,7 +84,7 @@ class AlarmActivity : ComponentActivity() {
             if (!alarmManager.canScheduleExactAlarms()) {
                 Toast.makeText(this, "알람 권한을 허용해주세요", Toast.LENGTH_SHORT).show()
                 Intent().apply {
-                    action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                    action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
                 }.also {
                     startActivity(it)
                 }

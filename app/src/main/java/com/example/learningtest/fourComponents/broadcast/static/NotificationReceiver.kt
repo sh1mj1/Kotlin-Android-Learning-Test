@@ -1,4 +1,4 @@
-package com.example.learningtest.fourComponents.broadcast
+package com.example.learningtest.fourComponents.broadcast.static
 
 import android.app.Notification
 import android.app.NotificationChannel

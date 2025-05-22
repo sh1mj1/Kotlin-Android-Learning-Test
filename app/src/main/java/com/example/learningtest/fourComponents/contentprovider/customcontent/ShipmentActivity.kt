@@ -1,4 +1,4 @@
-package com.example.learningtest.fourComponents.contentprovider
+package com.example.learningtest.fourComponents.contentprovider.customcontent
 
 import android.content.ContentResolver
 import android.content.ContentValues
@@ -18,9 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import com.example.learningtest.fourComponents.contentprovider.ShipmentDbHelper.Companion.DESTINATION
-import com.example.learningtest.fourComponents.contentprovider.ShipmentDbHelper.Companion.ITEM_NAME
-import com.example.learningtest.fourComponents.contentprovider.ShipmentDbHelper.Companion.QUANTITY
 
 class ShipmentActivity : ComponentActivity() {
     val shipmentUri = SHIPMENTS_URI.toUri()
@@ -73,9 +70,9 @@ class ShipmentActivity : ComponentActivity() {
         val cursor = contentResolver.query(shipmentUri, null, null, null, null)
         val results = mutableListOf<String>()
         cursor?.use { cursor ->
-            val itemNameIndex = cursor.getColumnIndexOrThrow(ITEM_NAME)
-            val quantityIndex = cursor.getColumnIndexOrThrow(QUANTITY)
-            val destinationIndex = cursor.getColumnIndexOrThrow(DESTINATION)
+            val itemNameIndex = cursor.getColumnIndexOrThrow(ShipmentDbHelper.Companion.ITEM_NAME)
+            val quantityIndex = cursor.getColumnIndexOrThrow(ShipmentDbHelper.Companion.QUANTITY)
+            val destinationIndex = cursor.getColumnIndexOrThrow(ShipmentDbHelper.Companion.DESTINATION)
 
             while (cursor.moveToNext()) {
                 val name = cursor.getString(itemNameIndex)

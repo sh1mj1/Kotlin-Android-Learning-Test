@@ -1,4 +1,4 @@
-package com.example.learningtest.fourComponents.contentprovider
+package com.example.learningtest.fourComponents.contentprovider.systemcontent
 
 import android.Manifest
 import android.content.pm.PackageManager
