@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
@@ -20,15 +19,22 @@
         android:theme="@style/Theme.LearningTest"
         tools:targetApi="31">
         <activity
-            android:name=".fourComponents.broadcast.AlarmActivity"
+            android:name=".fourComponents.contentprovider.ShipmentActivity"
             android:exported="true"
-            android:label="@string/title_activity_alarm"
+            android:label="@string/title_activity_shipment"
             android:theme="@style/Theme.LearningTest">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".fourComponents.broadcast.AlarmActivity"
+            android:exported="true"
+            android:label="@string/title_activity_alarm"
+            android:theme="@style/Theme.LearningTest">
+
         </activity>
         <activity
             android:name=".fourComponents.broadcast.NetworkActivity"
@@ -54,9 +60,7 @@
             android:name=".compose.basic.codelab.BasicComposeActivity"
             android:exported="true"
             android:label="@string/title_activity_main2"
-            android:theme="@style/Theme.LearningTest">
-
-        </activity>
+            android:theme="@style/Theme.LearningTest"></activity>
         <activity
             android:name=".fourComponents.service.SimpleBoundMusicActivity"
             android:exported="true" />
@@ -75,8 +79,12 @@
 
         <receiver
             android:name=".fourComponents.broadcast.NotificationReceiver"
-            android:exported="false">
-        </receiver>
+            android:exported="false" />
+
+        <provider
+            android:name=".fourComponents.contentprovider.ShipmentContentProvider"
+            android:authorities="com.other.shipment.provider"
+            android:exported="false" />
 
     </application>
 
