@@ -51,7 +51,7 @@
             android:label="@string/title_activity_soothe"
             android:theme="@style/Theme.LearningTest" />
         <activity
-            android:name=".fourComponents.service.ForegroundBoundMusicActivity"
+            android:name=".fourComponents.service.foregroundboud.ForegroundBoundMusicActivity"
             android:exported="true"
             android:label="@string/title_activity_music_player"
             android:theme="@style/Theme.LearningTest" />
@@ -66,17 +66,17 @@
             android:label="@string/title_activity_main2"
             android:theme="@style/Theme.LearningTest" />
         <activity
-            android:name=".fourComponents.service.SimpleBoundMusicActivity"
+            android:name=".fourComponents.service.bound.SimpleBoundMusicActivity"
             android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true" />
 
         <service
-            android:name=".fourComponents.service.SimpleBoundMusicService"
+            android:name=".fourComponents.service.bound.SimpleBoundMusicService"
             android:exported="false" />
         <service
-            android:name=".fourComponents.service.ForegroundBoundService"
+            android:name=".fourComponents.service.foregroundboud.ForegroundBoundService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />

@@ -26,14 +26,14 @@
 
 ### Bound Service 샘플 만들어보기
 
-[SimpleBoundMusicService.kt](SimpleBoundMusicService.kt),
-[SimpleBoundMusicActivity.kt](SimpleBoundMusicActivity.kt) 파일 참고.
+[SimpleBoundMusicService.kt](bound/SimpleBoundMusicService.kt),
+[SimpleBoundMusicActivity.kt](bound/SimpleBoundMusicActivity.kt) 파일 참고.
 
 * 바운드 방식: `bindService()` + LocalBinder
 * 통신 방식: 서비스와 액티비티가 같은 앱, 같은 프로세스에서 동작하므로 직접 메서드 호출할 수 있다.
 * 인터페이스 제공: Binder 를 상속한 LocalBinder 클래스에서 `getService()`로 서비스 인스턴스 전달한다.
 * 액티비티에서의 사용: `onServiceConnected()` 에서 서비스 인스턴스를 받아 직접 메서드(`play()`, `pause()`, `progress`) 호출한다.
-* 서비스 수명: 모든 클라이언트(여기서는 [SimpleBoundMusicActivity.kt](SimpleBoundMusicActivity.kt) 가 언바인드 되면 자동
+* 서비스 수명: 모든 클라이언트(여기서는 [SimpleBoundMusicActivity.kt](bound/SimpleBoundMusicActivity.kt) 가 언바인드 되면 자동
   종료된다.)
 
 1. 액티비티에서 `ServiceConnection` 객체를 만든다. 여기서 서비스가 연결될 때 서비스를 초기화한다.
@@ -100,8 +100,8 @@ UI 없이 독립적으로 작업을 수행하는 경우에 사용된다.
 
 ### 포그라운드 + 바운드 서비스 (Foreground + Bound Service)
 
-[ForegroundBoundMusicActivity.kt](ForegroundBoundMusicActivity.kt), 
-[ForegroundBoundService.kt](ForegroundBoundService.kt) 파일
+[ForegroundBoundMusicActivity.kt](foregroundboud/ForegroundBoundMusicActivity.kt), 
+[ForegroundBoundService.kt](foregroundboud/ForegroundBoundService.kt) 파일
 
 - `MediaPlayer`를 직접 제어하고, 음악 재생을 관리
 - `startForeground()`와 알림(Notification)을 통해 포그라운드 상태 유지

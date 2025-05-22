@@ -1,4 +1,4 @@
-package com.example.learningtest.fourComponents.service
+package com.example.learningtest.fourComponents.service.foregroundboud
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

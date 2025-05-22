@@ -1,4 +1,4 @@
-package com.example.learningtest.fourComponents.service
+package com.example.learningtest.fourComponents.service.foregroundboud
 
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.Notification
