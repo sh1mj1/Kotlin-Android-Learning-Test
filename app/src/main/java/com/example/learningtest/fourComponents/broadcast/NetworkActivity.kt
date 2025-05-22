@@ -33,6 +33,12 @@ class NetworkActivity : ComponentActivity() {
                 }
             }
 
+        /*
+         * CONNECTIVITY_ACTION은 Android 7.0(API 24)+ 이상에서 제한됨
+         * 대신 registerNetworkCallback()을 사용할 것
+         * 하지만 현 예제에서는 BroadcastReceiver를 사용하는 예제를 구현하기 위해 사용함.
+         * */
+        @Suppress("DEPRECATION")
         val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         registerReceiver(networkReceiver, filter)
 

@@ -6,8 +6,8 @@ import android.content.Intent
 
 class NetworkChangeReceiver(private val onNetworkChanged: () -> Unit) : BroadcastReceiver() {
     override fun onReceive(
-        context: Context?,
-        intent: Intent?,
+        context: Context,
+        intent: Intent,
     ) {
         onNetworkChanged()
     }
