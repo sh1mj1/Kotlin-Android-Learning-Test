@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -93,13 +92,9 @@ class AlarmActivity : ComponentActivity() {
 
             if (alarmManager.canScheduleExactAlarms()) {
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent)
-                Log.d(TAG, "scheduleAlarm: 예약 완료!")
-            } else {
-                Log.d("Alarm", "정확한 알람 예약 권한이 없음")
             }
         } else {
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent)
-            Log.d(TAG, "scheduleAlarm: 예약 완료!")
         }
     }
 }
