@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -20,10 +20,10 @@
         android:theme="@style/Theme.LearningTest"
         tools:targetApi="31">
         <activity
-            android:name=".fourComponents.contentprovider.ShipmentActivity"
+            android:name=".fourComponents.contentprovider.ContactsActivity"
             android:exported="true"
-            android:label="@string/title_activity_shipment"
-            android:theme="@style/Theme.LearningTest">
+            android:label="@string/title_activity_contacts"
+            android:theme="@style/Theme.LearningTest" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,12 +31,15 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".fourComponents.contentprovider.ShipmentActivity"
+            android:exported="true"
+            android:label="@string/title_activity_shipment"
+            android:theme="@style/Theme.LearningTest" />
+        <activity
             android:name=".fourComponents.broadcast.AlarmActivity"
             android:exported="true"
             android:label="@string/title_activity_alarm"
-            android:theme="@style/Theme.LearningTest">
-
-        </activity>
+            android:theme="@style/Theme.LearningTest" />
         <activity
             android:name=".fourComponents.broadcast.NetworkActivity"
             android:exported="true"
@@ -61,7 +64,7 @@
             android:name=".compose.basic.codelab.BasicComposeActivity"
             android:exported="true"
             android:label="@string/title_activity_main2"
-            android:theme="@style/Theme.LearningTest"></activity>
+            android:theme="@style/Theme.LearningTest" />
         <activity
             android:name=".fourComponents.service.SimpleBoundMusicActivity"
             android:exported="true" />
@@ -86,7 +89,6 @@
             android:name=".fourComponents.contentprovider.ShipmentContentProvider"
             android:authorities="com.other.shipment.provider"
             android:exported="false" />
-
     </application>
 
 </manifest>
