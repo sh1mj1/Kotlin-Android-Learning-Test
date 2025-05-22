@@ -75,7 +75,7 @@
 
         <receiver
             android:name=".fourComponents.broadcast.NotificationReceiver"
-            android:exported="true">
+            android:exported="false">
         </receiver>
 
     </application>
