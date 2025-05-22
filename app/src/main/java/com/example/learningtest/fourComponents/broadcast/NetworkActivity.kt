@@ -3,6 +3,7 @@ package com.example.learningtest.fourComponents.broadcast
 import android.app.AlertDialog
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,7 +24,8 @@ class NetworkActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         networkReceiver =
-            NetworkChangeReceiver { isConnected ->
+            NetworkChangeReceiver {
+                val isConnected = isNetworkConnected()
                 if (!isConnected) {
                     showNetworkDialog()
                 } else {
@@ -75,9 +77,12 @@ class NetworkActivity : ComponentActivity() {
     }
 
     private fun isNetworkConnected(): Boolean {
-        val cm = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = cm.activeNetworkInfo
-        return activeNetwork?.isConnectedOrConnecting == true
+        val connectivityManager =
+            this.getSystemService(CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val network = connectivityManager?.activeNetwork
+        val capabilities = connectivityManager?.getNetworkCapabilities(network)
+
+        return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) ?: false
     }
 }
 
