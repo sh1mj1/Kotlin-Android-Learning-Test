@@ -1,46 +1,45 @@
-# Activity
+# 액티비티
 
 <!-- TOC -->
-* [Activity](#activity)
-  * [What is an activity? (simple)](#what-is-an-activity-simple)
-    * [Why do we need to use activity?](#why-do-we-need-to-use-activity)
-    * [the activity that don't show UI (no `setContentView`)](#the-activity-that-dont-show-ui-no-setcontentview)
-    * [How does the mobile app experience differ from a traditional desktop experience?](#how-does-the-mobile-app-experience-differ-from-a-traditional-desktop-experience)
+
+* [액티비티](#액티비티)
+    * [액티비티란 무엇인가요? (간단하게)](#액티비티란-무엇인가요-간단하게)
+        * [왜 액티비티를 사용해야 하나요?](#왜-액티비티를-사용해야-하나요)
+        * [UI를 표시하지 않는 액티비티 (`setContentView` 없음)](#ui를-표시하지-않는-액티비티-setcontentview-없음)
+            * [UI를 전혀 표시하지 않는 액티비티를 갖는 것의 이점은 무엇인가요?](#ui를-전혀-표시하지-않는-액티비티를-갖는-것의-이점은-무엇인가요)
+        * [모바일 앱 경험은 기존 데스크톱 경험과 어떻게 다른가요?](#모바일-앱-경험은-기존-데스크톱-경험과-어떻게-다른가요)
+
 <!-- TOC -->
 
-## What is an activity? (simple)
+## 액티비티란 무엇인가요? (간단하게)
 
-An activity is basically one screen of your app where the user sees and interacts with your
-interface.  
-It's the main place where the app shows what's important right now.  
-And it can manage saving and restoring states if your app gets paused or stopped.  
-Activities also make it easier for apps to work together, like when sharing stuff between apps.
+액티비티는 사용자가 인터페이스를 보고 상호작용하는 컴포넌트입니다.
+기본적으로 하나의 화면을 표시합니다.
 
-### Why do we need to use activity?
+### 왜 액티비티를 사용해야 하나요?
 
-Unlike programming paradigms in which apps are launched with a `main()` method,  
-the Android system initiates code in an Activity instance by invoking specific callback methods that
-correspond to specific stages of its lifecycle.
+앱이 `main()` 메서드로 시작하는 JVM 앱과는 달리,
+Android 시스템은 액티비티 인스턴스의 특정 생명주기에 해당하는 특정 콜백 메서드를 호출하여 코드를 시작합니다.
+앱이 일시 중지되거나 중지될 경우, 상태를 저장하고 복원하는 것을 관리할 수 있습니다.
+또한 Intent 를 통해 앱들이 함께 동작하는 것을 쉽게 만듭니다.
 
-### the activity that don't show UI (no `setContentView`)
+### UI를 표시하지 않는 액티비티 (`setContentView` 없음)
 
-You can have an activity with no UI that basically acts like a traffic controller(front controller)
-for the rest of your apps.  
-For example, it could take incoming data or intents, then immediately decide which other Activity or
-Fragment the user should see next, without showing its own layout.
+앱의 나머지 부분을 위한 트래픽 컨트롤러(프론트 컨트롤러) 역할을 하는 UI 가 없는 액티비티를 가질 수 있습니다.
+예를 들어, 들어오는 데이터 or 인텐트를 받아서 자체 레이아웃을 표시하지 않고
+사용자가 다음에 봐야 할 다른 액티비티를 결정할 수 있습니다. (Navigator 처럼)
 
-_What’s the benefit of having an Activity that doesn’t show any UI at all?_
+#### UI를 전혀 표시하지 않는 액티비티를 갖는 것의 이점은 무엇인가요?
 
-it can simplify navigation.  
-it can keep your code cleaner and make it easier to manage the overall user journey.  
-Instead of having complex logic scattered around different parts of the app,  
-this 'front controller' Activity can handle all the decision-making in one place.  
-When the user opens the app, it checks conditions-like whether the user is logged in or has
-completed a tutorial-and then sends them straight to the right screen.
+중앙 진입점(Front Controller) 역할로 앱 흐름을 제어할 수 있습니다.
+권한 요청, 딥링크 처리처럼 UI 없이 처리할 작업에 활용됩니다.
 
-### How does the mobile app experience differ from a traditional desktop experience?
+하지만 단순 프론트 컨트롤러를 사용하기 위해 사용하기에는 다소 무거운 객체가 될 수 있습니다.
+대체로 Service, BroadcastReceiver, Navigation graph 등으로 대체 가능합니다.
 
-Mobile apps often let the user jump in at different screens depending on what’s calling them—like
-opening your email app’s compose screen directly from a social media link.  
-The Activity class supports this flexibility by letting your app launch at the right place based on
-the user’s action, rather than always starting from a single “home” screen.
+### 모바일 앱 경험은 기존 데스크톱 경험과 어떻게 다른가요?
+
+모바일 앱은 종종 사용자를 호출하는 내용에 따라 다른 화면으로 바로 이동할 수 있도록 합니다. 
+예를 들어 소셜 미디어 링크에서 직접 이메일 앱의 작성 화면을 여는 것과 같습니다.
+Activity 클래스는 항상 단일 "홈" 화면에서 시작하는 대신에 
+사용자의 작업에 따라 앱이 올바른 위치에서 시작되도록 할 수 있습니다.
