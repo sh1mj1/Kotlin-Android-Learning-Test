@@ -20,7 +20,7 @@
         android:theme="@style/Theme.LearningTest"
         tools:targetApi="31">
         <activity
-            android:name=".fourComponents.contentprovider.ContactsActivity"
+            android:name=".fourComponents.contentprovider.systemcontent.ContactsActivity"
             android:exported="true"
             android:label="@string/title_activity_contacts"
             android:theme="@style/Theme.LearningTest" >
@@ -31,17 +31,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".fourComponents.contentprovider.ShipmentActivity"
+            android:name=".fourComponents.contentprovider.customcontent.ShipmentActivity"
             android:exported="true"
             android:label="@string/title_activity_shipment"
             android:theme="@style/Theme.LearningTest" />
         <activity
-            android:name=".fourComponents.broadcast.AlarmActivity"
+            android:name=".fourComponents.broadcast.static.AlarmActivity"
             android:exported="true"
             android:label="@string/title_activity_alarm"
             android:theme="@style/Theme.LearningTest" />
         <activity
-            android:name=".fourComponents.broadcast.NetworkActivity"
+            android:name=".fourComponents.broadcast.dynamic.NetworkActivity"
             android:exported="true"
             android:label="@string/title_activity_network"
             android:theme="@style/Theme.LearningTest" />
@@ -51,7 +51,7 @@
             android:label="@string/title_activity_soothe"
             android:theme="@style/Theme.LearningTest" />
         <activity
-            android:name=".fourComponents.service.ForegroundBoundMusicActivity"
+            android:name=".fourComponents.service.foregroundboud.ForegroundBoundMusicActivity"
             android:exported="true"
             android:label="@string/title_activity_music_player"
             android:theme="@style/Theme.LearningTest" />
@@ -66,27 +66,27 @@
             android:label="@string/title_activity_main2"
             android:theme="@style/Theme.LearningTest" />
         <activity
-            android:name=".fourComponents.service.SimpleBoundMusicActivity"
+            android:name=".fourComponents.service.bound.SimpleBoundMusicActivity"
             android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true" />
 
         <service
-            android:name=".fourComponents.service.SimpleBoundMusicService"
+            android:name=".fourComponents.service.bound.SimpleBoundMusicService"
             android:exported="false" />
         <service
-            android:name=".fourComponents.service.ForegroundBoundService"
+            android:name=".fourComponents.service.foregroundboud.ForegroundBoundService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
 
         <receiver
-            android:name=".fourComponents.broadcast.NotificationReceiver"
+            android:name=".fourComponents.broadcast.static.NotificationReceiver"
             android:exported="false" />
 
         <provider
-            android:name=".fourComponents.contentprovider.ShipmentContentProvider"
+            android:name=".fourComponents.contentprovider.customcontent.ShipmentContentProvider"
             android:authorities="com.other.shipment.provider"
             android:exported="false" />
     </application>

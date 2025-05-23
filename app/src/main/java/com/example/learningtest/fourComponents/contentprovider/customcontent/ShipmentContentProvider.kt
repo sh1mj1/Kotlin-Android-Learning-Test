@@ -1,4 +1,4 @@
-package com.example.learningtest.fourComponents.contentprovider
+package com.example.learningtest.fourComponents.contentprovider.customcontent
 
 import android.content.ContentProvider
 import android.content.ContentUris

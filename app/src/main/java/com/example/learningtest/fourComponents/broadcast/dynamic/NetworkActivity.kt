@@ -1,4 +1,4 @@
-package com.example.learningtest.fourComponents.broadcast
+package com.example.learningtest.fourComponents.broadcast.dynamic
 
 import android.app.AlertDialog
 import android.content.IntentFilter

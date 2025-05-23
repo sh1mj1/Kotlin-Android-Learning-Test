@@ -1,4 +1,4 @@
-package com.example.learningtest.fourComponents.service
+package com.example.learningtest.fourComponents.service.foregroundboud
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

@@ -1,4 +1,4 @@
-package com.example.learningtest.fourComponents.service
+package com.example.learningtest.fourComponents.service.bound
 
 import android.content.ComponentName
 import android.content.Intent

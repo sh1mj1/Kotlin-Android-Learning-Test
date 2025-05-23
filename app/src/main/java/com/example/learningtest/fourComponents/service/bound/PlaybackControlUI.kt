@@ -1,4 +1,4 @@
-package com.example.learningtest.fourComponents.service
+package com.example.learningtest.fourComponents.service.bound
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
