@@ -89,4 +89,36 @@ class CoroutineBasicStateTest : FreeSpec({
             isCompleted shouldBe true
         }
     }
+
+    /*
+     * StructuredConcurrencyTest.kt 를 이해한다면
+     * 코루틴이 실행 완료 중인 상태인 것을 이해할 수 있다
+     * 실행 완료 중 상태란 부모 코루틴의 모든 코드가 실행되었지만,
+     * 자식 코루틴이 실행 중인 경우 부모 코루틴이 갖는 상태이다
+     * 실행 중과 같은 flag 값을 같는다
+     * */
+    "부모 코루틴의 모든 코드가 실행되었지만, 자식 코루틴이 실행 중인 경우, 코루틴은 실행 완료 중 상태" {
+        val startTime = System.currentTimeMillis()
+
+        val parentJob =
+            launch {
+                launch {
+                    delay(1000L)
+                    println("${elapsedTimeMilli(startTime)} 자식 코루틴 실행 완료")
+                }
+
+                println("${elapsedTimeMilli(startTime)} 부모 코루틴의 마지막 코드 실행됨")
+            }
+
+        parentJob.invokeOnCompletion {
+            println("${elapsedTimeMilli(startTime)} 부모 코루틴 실횅 완료")
+        }
+
+        delay(300L)
+        with(parentJob) {
+            isActive shouldBe true
+            isCancelled shouldBe false
+            isCompleted shouldBe false
+        }
+    }
 })

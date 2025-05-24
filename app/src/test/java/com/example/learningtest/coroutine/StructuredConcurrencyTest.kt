@@ -1,14 +1,21 @@
 package com.example.learningtest.coroutine
 
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.comparables.shouldBeGreaterThanOrEqualTo
+import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.sequences.shouldContain
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
 
@@ -76,4 +83,58 @@ class StructuredConcurrencyTest : FreeSpec({
             }
         }
     }
+
+    "코루틴으로 취소가 요청되면 자식 코루틴으로 전파된다" {
+        var allDataFetched = false
+        val parentJob =
+            launch(Dispatchers.IO) {
+                val dbResultsDeferred: List<Deferred<String>> =
+                    listOf("db1", "db2", "db3").map { db ->
+                        async {
+                            loadDataFromDBSimulation()
+                            return@async "[$db] data"
+                        }
+                    }
+                dbResultsDeferred.awaitAll()
+                allDataFetched = true
+            }
+        parentJob.cancel() // 더 이상 데이터를 가져올 필요가 없는 상황
+        allDataFetched shouldBe false // 부모 코루틴에 취소가 요청되어 자식 코루틴에게 취소가 전파되었다.
+    }
+
+    "부모 코루틴은 모든 자식 코루틴이 실행 완료되어야 완료될 수 있다" {
+        val startTime = System.currentTimeMillis()
+        var timeInParentJobLastCode: Long = 0
+        var timeWhenChildCompleted: Long = 0
+        var timeWhenParentCompleted: Long = 0
+
+        val parentJob =
+            launch {
+                launch {
+                    delay(100L)
+                    timeWhenChildCompleted =
+                        elapsedTimeMilli(startTime).also {
+                            println("자식 코루틴 완료: $it")
+                        }
+                }
+                timeInParentJobLastCode =
+                    elapsedTimeMilli(startTime).also {
+                        println("last code in parent job: $it")
+                    }
+            }
+        parentJob.invokeOnCompletion {
+            timeWhenChildCompleted =
+                elapsedTimeMilli(startTime).also {
+                    println("부모 코루틴 실행 완료: $it")
+                }
+        }
+        parentJob.join()
+
+        timeInParentJobLastCode shouldBeLessThan timeWhenChildCompleted
+        timeWhenChildCompleted shouldBeGreaterThanOrEqualTo timeWhenParentCompleted
+    }
 })
+
+private suspend fun loadDataFromDBSimulation() {
+    delay(100L)
+}
