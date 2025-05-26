@@ -4,6 +4,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -245,4 +246,106 @@ class CoroutineExceptionTest : FreeSpec({
             supervisorCoroutineCompletedWell shouldBe true
         }
     }
+
+    "CoroutineExceptionHandler 를 사용한 예외 처리" - {
+
+        /*
+        * 마지막으로 예외를 전파받는 위치(예외가 처리되는 위치)에 설정된 CoroutineExceptionhandler 객체만 예외를 처리한다.
+        * */
+        "에외를 부모 코루틴으로 전파하고 전파받은 코루틴의 exceptionHandler 가 처리한다".config(enabled = false) {
+            val rootJob = launch {
+                launch(CoroutineName("1") + myExceptionhandler) {
+                    throw Exception("1 에 예외가 발생했습니다.")
+                }
+                delay(100L)
+            }
+            rootJob.join()
+        }
+
+        "자식 코루틴에서 발생한 예외는 부모 CoroutineScope의 CoroutineExceptionHandler가 처리한다" {
+            var exceptionIsCaught = false
+            val myExceptionhandler = CoroutineExceptionHandler { couroutineContext, throwable ->
+                println("[예외 발생] $throwable")
+                exceptionIsCaught = true
+            }
+
+            val rootJob = launch {
+                CoroutineScope(myExceptionhandler).launch(CoroutineName("1")) {
+                    throw Exception("1 에서 예외 발생")
+                }
+                delay(100L)
+            }
+            rootJob.join()
+            exceptionIsCaught shouldBe true
+        }
+
+
+        "CoroutineExceptionHandler 객체를 Job 과 함께 설정하여 간단히 예외를 처리할 수 있다." {
+            var exceptionIsCaught = false
+            val job = launch {
+                val coroutineContext =
+                    Job() + CoroutineExceptionHandler { coroutineContext, throwable ->
+                        println("[예외 발생] $throwable")
+                        exceptionIsCaught = true
+                    }
+                launch(CoroutineName("1") + coroutineContext) {
+                    throw Exception("1 에서 예외 발생")
+                }
+                delay(100L)
+            }
+            job.join()
+            exceptionIsCaught shouldBe true
+        }
+
+        /*
+        * SupervisorJob 은 예외를 전파받지 않아도 예외에 대한 정보는 전달받는다.
+        * SupervisorJob 의 자식 코루틴에서 예외가 발생하면 부모에게 예외를 전파하지 않더라도 예외 정보를 전달받는다.
+        * 이 때 자식 코루틴이 예외 정보 전달만 해도 자식 코루틴은 예외를 처리된 것으로 본다.
+        * */
+        "SupervisorJob과 CoroutineExceptionHandler를 함께 사용하여 예외 처리 및 다른 코루틴의 정상 작동 보장" {
+            var coroutine2CompletedWell = false
+
+            var exceptionIsCaught = false
+            val myExceptionhandler = CoroutineExceptionHandler { couroutineContext, throwable ->
+                println("[예외 발생] $throwable")
+                exceptionIsCaught = true
+            }
+
+            val job = launch {
+                CoroutineScope(SupervisorJob() + myExceptionhandler).apply {
+                    launch(CoroutineName("1")) {
+                        throw Exception("1 에서 예외 발생")
+                    }
+                    launch(CoroutineName("2")) {
+                        delay(100L)
+                        coroutine2CompletedWell = true
+                    }
+                }
+                delay(100L)
+            }
+
+            job.join()
+            exceptionIsCaught shouldBe true
+            coroutine2CompletedWell shouldBe true
+        }
+
+        "CoroutineExceptionhandler 는 예외 전파를 제한하지 않는다".config(enabled = false) {
+            val myExceptionHandler = CoroutineExceptionHandler { context, throwable ->
+                println("[예외 발생] $throwable")
+            }
+
+            val job = launch {
+                launch(CoroutineName("1") + myExceptionHandler) {
+                    throw Exception("1 에 예외가 발생했습니다.")
+                }
+            }
+
+        }
+    }
+
+
 })
+
+val myExceptionhandler = CoroutineExceptionHandler { couroutineContext, throwable ->
+    println("[예외 발생] $throwable")
+}
