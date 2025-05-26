@@ -4,6 +4,8 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeInstanceOf
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -16,6 +18,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.withTimeout
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class CoroutineExceptionTest : FreeSpec({
@@ -350,6 +353,7 @@ class CoroutineExceptionTest : FreeSpec({
                 }
         }
     }
+
     "try-catch 문을 사용한 예외 처리" - {
         "코루틴 내부의 try-catch 블록은 예외를 처리하고 다른 코루틴의 실행에 영향을 주지 않는다" {
             var coroutine2CompletedWell = false
@@ -445,6 +449,67 @@ class CoroutineExceptionTest : FreeSpec({
                         }
                     }
                 }
+        }
+    }
+
+    "전파되지 않는 예외" - {
+        "코루틴은 CancellationException 예외가 발생해도 부모 코루틴으로 전파되지 않는다" {
+            var rootCoroutineCompletedWell: Boolean = false
+            var coroutine1CompletedWell = false
+            val rootJob =
+                launch {
+                    launch(CoroutineName("1")) {
+                        launch(CoroutineName("2")) {
+                            throw CancellationException()
+                        }
+                        delay(100L)
+                        coroutine1CompletedWell = true
+                    }
+                }
+            rootJob.join()
+            rootCoroutineCompletedWell = true
+
+            rootCoroutineCompletedWell shouldBe true
+            coroutine1CompletedWell shouldBe true
+        }
+
+        "CancellationException 은 코루틴의 취소에 사용되는 특별한 예외이다" {
+            val rootJob =
+                launch {
+                    val job =
+                        launch {
+                            delay(1000L)
+                        }
+                    job.invokeOnCompletion { exception ->
+                        exception.shouldBeInstanceOf<CancellationException>()
+                    }
+                    job.cancel()
+                }
+
+            rootJob.join()
+        }
+
+        "withTimeOut 함수는 제한 시간동안 완료되지 않으면 TimeoutCancellationException을 발생시켜 코루틴을 취소한다" {
+            var childCompletedWell = false
+            var rootCompletedWell = false
+            val rootJob =
+                launch {
+                    launch(CoroutineName("Child")) {
+                        withTimeout(100L) {
+                            delay(200L)
+                            childCompletedWell = true
+                        }
+                    }
+                    delay(300L)
+                    rootCompletedWell = true
+                }
+            rootJob.join()
+
+            childCompletedWell shouldBe false
+            rootCompletedWell shouldBe true
+            /*
+             * 추가로 withTimeOutOrNull 을 사용해 실행 시간 초과 시 null 을 반환받도록 할 수 있다.
+             * */
         }
     }
 })
