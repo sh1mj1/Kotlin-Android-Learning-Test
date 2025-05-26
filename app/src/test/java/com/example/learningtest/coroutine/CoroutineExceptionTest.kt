@@ -342,6 +342,50 @@ class CoroutineExceptionTest : FreeSpec({
 
         }
     }
+    "try-catch 문을 사용한 예외 처리" - {
+        "코루틴 내부의 try-catch 블록은 예외를 처리하고 다른 코루틴의 실행에 영향을 주지 않는다" {
+            var coroutine2CompletedWell = false
+            val rootJob = launch {
+                launch(CoroutineName("1")) {
+                    try {
+                        throw Exception("1에서 예외가 발생했습니다")
+                    } catch (e: Exception) {
+                        println(e.message)
+                    }
+                }
+                launch(CoroutineName("2")) {
+                    delay(100L)
+                    coroutine2CompletedWell = true
+                }
+            }
+            rootJob.join()
+
+            coroutine2CompletedWell shouldBe true
+        }
+
+        /*
+        * try catch 문을 코루틴 빌더 함수에 사용하면 코루틴에서 발생한 예외가 잡히지 않는다.
+        * launch 는 코루틴을 생성하는데 사용되는 함수일 뿐으로
+        * 람다식의 실행은 생성된 코루틴이 CoroutineDispatcher 에 의해 스레드로 분배되는 시점에 일어나기 때문이다.
+        * 아래 try catch 문은 launch 코루틴 빌더 함수 자체의 실행만 체크하며 람다식은 예외 처리 대상이 아니다.
+        * 즉, 코루틴에 대한 예외 처리를 위해서는 코루틴 빌더 함수의 람다식 내부에서 try catch 문을 사용해야 한다.
+        * */
+        "코루틴 빌더 함수에 대한 try catch 문은 코루틴의 예외를 잡지 못한다".config(enabled = false) {
+            val rootJob = launch {
+                try {
+                    launch(CoroutineName("1")) {
+                        throw Exception("1에서 예외가 발생했습니다")
+                    }
+                } catch (e: Exception) {
+                    println(e.message)
+                }
+                launch(CoroutineName("2")) {
+                    delay(100L)
+                }
+            }
+            rootJob.join()
+        }
+    }
 
 
 })
