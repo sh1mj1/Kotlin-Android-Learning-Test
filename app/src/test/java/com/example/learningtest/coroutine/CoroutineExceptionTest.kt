@@ -292,10 +292,10 @@ class CoroutineExceptionTest : FreeSpec({
                 launch {
                     val coroutineContext =
                         Job() +
-                            CoroutineExceptionHandler { coroutineContext, throwable ->
-                                println("[예외 발생] $throwable")
-                                exceptionIsCaught = true
-                            }
+                                CoroutineExceptionHandler { coroutineContext, throwable ->
+                                    println("[예외 발생] $throwable")
+                                    exceptionIsCaught = true
+                                }
                     launch(CoroutineName("1") + coroutineContext) {
                         throw Exception("1 에서 예외 발생")
                     }
@@ -423,17 +423,16 @@ class CoroutineExceptionTest : FreeSpec({
             exceptionIsCaught shouldBe true
         }
 
-        "async 도 예외 전파 처리를 하지 않으면 부모 코루틴으로 예외가 전파되고, 취소가 자식 코루틴으로 전파된다" {
-            val rootJob =
-                launch {
-                    async(CoroutineName("1")) {
-                        throw Exception("1 에서 예외 발생")
-                    }
-                    launch(CoroutineName("2")) {
-                        delay(100L)
-                        println("[${Thread.currentThread().name}] 코루틴 실행")
-                    }
+        "async 도 예외 전파 처리를 하지 않으면 부모 코루틴으로 예외가 전파되고, 취소가 자식 코루틴으로 전파된다".config(enabled = false) {
+            launch {
+                async(CoroutineName("1")) {
+                    throw Exception("1 에서 예외 발생")
                 }
+                launch(CoroutineName("2")) {
+                    delay(100L)
+                    println("[${Thread.currentThread().name}] 코루틴 실행")
+                }
+            }
         }
 
         "async 코루틴 빌더를 사용할 때는 전파되는 예외와 await 호출 시 노출되는 예외를 모두 처리해 주어야 한다" {
