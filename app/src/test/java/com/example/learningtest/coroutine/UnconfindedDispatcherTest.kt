@@ -1,7 +1,6 @@
 package com.example.learningtest.coroutine
 
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain

@@ -252,19 +252,67 @@
    반면에 코루틴은 서로 간의 스레드 사용 권한을 양보하며 함께 실행된다.
 4. `delay` 함수는 스레드를 양보하고 일정 시간동안 코루틴을 일시 중단시킨다.
 5. `join` 과 `await` 함수를 호출한 코루틴은
-   `join` 이나 `await` 의 대상이 된 코루틴의 작업이 완료될때까지 
+   `join` 이나 `await` 의 대상이 된 코루틴의 작업이 완료될때까지
    스레드를 양보하고 일시 중단한다.
 6. `yield` 함수는 스레드 사용 권한을 명시적으로 양보하고자 할 때 사용한다.
 7. 코루틴은 협력적으로 동작한다.
    코루틴은 스레드 사용 권한을 양보함으로써 스레드가 실제로 사용되지 않는 동안
    다른 코루틴이 스레드를 사용할 수 있도록 한다.
-8. 코루틴이 스레드를 양보하면 코루틴은 일시 중단되며, 
+8. 코루틴이 스레드를 양보하면 코루틴은 일시 중단되며,
    재개될 때 `CoroutineDispatcher` 객체를 통해 다시 스레드에 보내진다.
    `CoroutineDispatcher` 객체는 코루틴을 쉬고 있는 스레드 중 하나로 보낸다.
    그래서 코루틴은 일시 중단 전의 스레드와 다른 스레드에서 재개될 수 있다.
 9. 코루틴이 스레드를 양보하지 않으면 실행 스레드가 바뀌지 않는다.
-10. 코루틴 내부에서 `Thread.sleep` 함수를 사용하면 
+10. 코루틴 내부에서 `Thread.sleep` 함수를 사용하면
     코루틴이 대기하는 시간동안 스레드를 양보하지 않고 블로킹한다.
 
+## 메모리 가시성 & 경쟁 상태
 
+1. 멀티 스레드 환경에서 실행되는 복수의 코루틴이 공유 상태를 사용하면
+   메모리 가시성 문제나 경쟁 상태 문제로 인해 데이터 정합성 문제가 발생할 수 있다.
+2. 메모리 가시성 문제는 CPU 캐시와 메인 메모리 간의 데이터 불일치로 인해 일어난다.
+3. 경쟁 상태 문제는 다수의 스레드가 동시에 데이터를 읽고 쓸 때 발생한다.
+4. `@Volatile` 애노테이션을 사용해 메모리 가시성 문제를 해결할 수 있다.
+5. `Mutex` 객체를 사용하여 복수의 스레드가 특정 코드 블록에 동시에 접근하는 것을 막아
+   경쟁 상태 문제를 해결할 수 있다.
+6. 여러 스레드가 동시에 접근하면 안되는 코드 블록의 시작 지점에
+   `Mutex` 객체의 `lock` 함수를 사용하고
+   종료 지점에 `Mutex` 객체의 `unlock` 함수를 사용하면 된다.
+7. `Mutex` 객체의 `withLock` 함수를 사용하면 `lock - unlock` 쌍을 안전하게 관리할 수 있다.
+8. 경쟁 상태 문제는 다수의 스레드가 공유 상태의 데이터를 읽고 쓸 때 발생하기 때문에
+   `newSingleThreadContext` 함수를 통해 (혹은 `Dispatchers.IO.limitedParallelism(1)`)
+   공유 상태에 접근하기 위한 전용 스레드를 가진 `CoroutineDispatcher` 객체를 만들고
+   이 `CoroutineDispatcher` 객체를 사용하여
+   코루틴이 공유 상태에 접근하고 값을 변경하도록 하면 경쟁 상태 문제를 해결할 수 있다.
+9. `AtomicInteger` 같은 원자성 있는 객체를 사용하면 경쟁 상태 문제를 해결할 수 있다.
+
+## CoroutineStart 옵션
+
+1. `launch` 나 `async` 코루틴 빌더 함수에 `CoroutineStart` 옵션을 지정함으로써
+   코루틴의 실행 방법을 지정할 수 있다.
+   `CoroutineStart` 옵션의 종류에는
+   `CoroutineStart.DEFAULT`, `CoroutineStart.LAZY`,
+   `CoroutineStart.ATOMIC`, `CoroutineStart.UNDISPATCHED` 가 있다.
+2. `CoroutineStart.ATOMIC` 옵션은 실행 대기 상태의 코루틴이 취소되지 않도록 한다.
+3. `CoroutineStart.UNDISPATCHED` 옵션은 코루틴 빌더를 호출한 스레드에서
+   코루틴이 즉시 실행되도록 한다.
+4. 무제한 디스패처(`UnconfinedDispatcher`)는
+   코루틴을 자신을 실행시킨 스레드에서 즉시 실행되도록 한다.
+5. `UnconfinedDispatcher` 를 사용해 실행된 코루틴은
+   일시 중단 후 재개 시 자신을 재개시키는 스레드에서 실행된다.
+   이로 인해 `UnconfinedDispatcher` 를 사용해 실행된 코루틴은 동작을 예측하기 어렵다.
+
+## CPS(Continuation Passing Style)
+
+1. 코틀린은 코루틴의 일시 중단과 재개를 위해
+   CPS(Continuation Passing Style) 이라고 불리는 방식을 채택했다.
+   `Continuation` 은 이어서 실행되어야 하는 작업을 나타낸다.
+   일시 중단 시 이어서 해야 하는 작업을 전달함으로써 일시 중단과 재개가 가능해진다.
+2. CPS 를 채택한 코틀린은 코루틴의 실행 정보를 저장하는 데 `Continuation` 객체를 사용한다.
+3. `Continuation` 객체를 사용해 코루틴의 일시 중단 시 실행 정보를 저장하고
+   재개 시 저장된 정보를 사용해(`continuation.resume()`) 코루틴을 다시 실행할 수 있다.
+4. 코루틴 라이브러리의 고수준 API 는 `Continuation` 객체를 외부로 노출하지 않기 때문에
+   프로덕션 코드를 만들 때는 `Continuation` 객체를 직접 사용할 일은 거의 없다.
+5. 코루틴 라이브러리의 저수준 API 인 `suspendCancellableCoroutine` 함수를 사용해
+   `Continuation` 객체를 직접 다루는 코드를 만들 수 있다.
    
