@@ -81,31 +81,11 @@ var count by remember { mutableStateOf(0) }
 
 - 코루틴 범위를 기억해두다: CoroutineScope를 기억해두고, 필요할 때 내가 직접 launch 한다.
     - 컴포저블 함수이지만, 반환된 scope는 onClick 등 이벤트 핸들러에서 사용 가능하다.
-    - 코루틴의 Job을 저장해두고 수동으로 취소해야 할 때 사용한다.
-    - 컴포지션 종료 시 scope가 자동 취소되므로 메모리 누수 걱정 없이 안전하게 사용 가능하다.
+    - 코루틴의 Job을 저장해두고 코루틴 스코프에서 실행했다가 원할 때 취소하고 싶을 때 사용한다. 
+    - 컴포지션 종료 시 코루틴 스코프가 자동 취소되므로 메모리 누수 걱정 없이 안전하게 사용 가능하다.
     - 코루틴 수동 관리 예시: 애니메이션 취소: [AnimationCancellationScreen.kt](AnimationCancellationScreen.kt)
 
-LaunchedEffect는 key가 바뀔 때만 자동 취소되지만, 이렇게 사용자 이벤트로 직접 취소하려면 Job을 저장해두고 관리해야 한다.
-
-### LaunchedEffect vs rememberCoroutineScope
-
-| 구분 | LaunchedEffect        | rememberCoroutineScope |
-|----|-----------------------|------------------------|
-| 실행 | 자동 (Composition 진입 시) | 수동 (내가 직접 launch)      |
-| 용도 | 화면 진입 시 API 호출        | 버튼 클릭 등 이벤트 대응         |
-| 비유 | 자동문                   | 수동문 (손잡이를 기억해둠)        |
-
-```kotlin
-LaunchedEffect(Unit) {
-    doSomething()
-}
-
-val scope = rememberCoroutineScope()
-
-Button(onClick = {
-    scope.launch { doSomething() }
-})
-```
+>> TODO: 코루틴 스코프 공부를 다시 해야겠다.
 
 ---
 
@@ -150,6 +130,7 @@ DisposableEffect(lifecycleOwner) {
     - 매 Recomposition 마다 실행된다. (key 없음)
     - 코루틴이 아닌 동기 코드만 실행 가능하다.
     - Compose 상태를 Compose 가 아닌 외부 시스템에 동기화할 때 사용한다.
+    - 실습 예제: [SideEffectScreen.kt](SideEffectScreen.kt)
 
 ```kotlin
 SideEffect {
