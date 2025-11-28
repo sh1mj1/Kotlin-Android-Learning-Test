@@ -82,10 +82,10 @@ var count by remember { mutableStateOf(0) }
 - 코루틴 범위를 기억해두다: CoroutineScope를 기억해두고, 필요할 때 내가 직접 launch 한다.
     - 컴포저블 함수이지만, 반환된 scope는 onClick 등 이벤트 핸들러에서 사용 가능하다.
     - 코루틴의 Job을 저장해두고 코루틴 스코프에서 실행했다가 원할 때 취소하고 싶을 때 사용한다. 
-    - 컴포지션 종료 시 코루틴 스코프가 자동 취소되므로 메모리 누수 걱정 없이 안전하게 사용 가능하다.
+    - 컴포지션 종료 시 코루틴 스코프가 자동 취소된다.
     - 코루틴 수동 관리 예시: 애니메이션 취소: [AnimationCancellationScreen.kt](AnimationCancellationScreen.kt)
 
->> TODO: 코루틴 스코프 공부를 다시 해야겠다.
+TODO: 코루틴 스코프 공부를 다시 해야겠다.
 
 ---
 
@@ -94,12 +94,7 @@ var count by remember { mutableStateOf(0) }
 - 갱신된 상태를 기억해두다: 항상 최신(Updated) 값을 기억해둔다.
     - 실습 예제: [RememberUpdatedStateScreen.kt](RememberUpdatedStateScreen.kt)
 
-### 핵심 정리
-
-| 구분   | remember | rememberUpdatedState |
-|------|----------|----------------------|
-| 값 유지 | 처음 값 고정  | 항상 최신 값으로 갱신         |
-| 용도   | 일반 상태 저장 | Effect 내에서 최신 값 참조   |
+TODO: 업데이트 상태 기억. 
 
 ---
 
@@ -111,16 +106,6 @@ var count by remember { mutableStateOf(0) }
     - 리스너 등록 해제, 콜백 연결/해제 등 쌍으로 동작하는 작업.
     - 실습 예제: [DisposableEffectScreen.kt](DisposableEffectScreen.kt)
 
-```kotlin
-DisposableEffect(lifecycleOwner) {
-    val observer = LifecycleEventObserver { ... }
-    lifecycleOwner.lifecycle.addObserver(observer)
-
-    onDispose {
-        lifecycleOwner.lifecycle.removeObserver(observer)
-    }
-}
-```
 
 ---
 
@@ -143,17 +128,14 @@ SideEffect {
 
 ## produceState
 
+- 상태를 생산한다: 비컴포즈 데이터 소스를 컴포즈 상태로 변환
+  - 초기값 제공. 코루틴 내에서 value 를 갱신.
+  - 내부적으로 LaunchedEffect + mutableStateOf 조합. 
+
 - "상태를 생산한다" - 비-Compose 데이터 소스(Flow, LiveData, 콜백 등)를 Compose State로 생산(변환) 한다.
-    - 외부 데이터 → Compose State로의 변환기(converter) 역할
     - 초기값을 제공하고, 코루틴 내에서 `value`를 갱신하여 State를 "생산"
     - 내부적으로 LaunchedEffect + mutableStateOf를 조합한 것
 
-```kotlin
-val user by produceState<User?>(initialValue = null, userId) {
-    // 외부 데이터를 State로 "생산"
-    value = api.fetchUser(userId)
-}
-```
 
 ---
 

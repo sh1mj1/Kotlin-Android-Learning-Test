@@ -1,5 +1,6 @@
 package com.example.learningtest.compose.state.interview
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,14 +18,19 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,79 +43,38 @@ import com.example.learningtest.ui.theme.LearningTestTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.UUID
 
+private const val TAG = "SideEffectScreen"
 /**
- * User 데이터 클래스
+ * 외부 Analytics 시스템 시뮬레이션
+ * SideEffect는 Compose 상태를 읽어서 외부 시스템에 동기화합니다.
  */
-data class User(
-    val name: String,
-    val userType: String
-)
+object AnalyticsSystem {
+    // ✅ Compose State로 변경 - 로그 변경 시 자동으로 UI 업데이트
+    private val eventLog: SnapshotStateList<String> = mutableListOf<String>().toMutableStateList()
 
-/**
- * Analytics 시뮬레이션 클래스
- * 인스턴스 생성 시마다 고유 ID 할당하여 추적 가능
- */
-class MockAnalytics(val instanceId: String = UUID.randomUUID().toString().take(8)) {
-    var userProperty: String = ""
-        private set
-
-    private val propertyUpdateLog = mutableListOf<String>()
+    fun logInputChange(inputText: String) {
+        val timestamp = SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault()).format(Date())
+        eventLog.add(0, "[$timestamp] 🔵 SideEffect 실행 - input: \"$inputText\"")
+    }
 
     fun setUserProperty(key: String, value: String) {
-        userProperty = value
         val timestamp = SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault()).format(Date())
-        propertyUpdateLog.add("[$timestamp] $key=$value")
+        eventLog.add(0, "[$timestamp] 🟢 SideEffect 실행 - $key=$value")
     }
 
-    fun getUpdateLog(): List<String> = propertyUpdateLog.toList()
-}
+    fun getEventLog(): SnapshotStateList<String> = eventLog
 
-/**
- * ❌ 잘못된 방법: remember(user) 사용
- * → user가 바뀔 때마다 Analytics 인스턴스 재생성!
- */
-@Composable
-fun rememberAnalyticsWrong(user: User): MockAnalytics {
-    // ❌ user를 key로 사용 → user 바뀌면 Analytics 객체 재생성
-    val analytics = remember(user) {
-        MockAnalytics().apply {
-            setUserProperty("userType", user.userType)
-        }
+    fun clear() {
+        eventLog.clear()
     }
-    return analytics
-}
-
-/**
- * ✅ 올바른 방법: remember + SideEffect 분리
- * → Analytics는 한 번만 생성, 속성만 동기화
- */
-@Composable
-fun rememberAnalyticsCorrect(user: User): MockAnalytics {
-    // ✅ key 없이 remember → Analytics는 한 번만 생성
-    val analytics: MockAnalytics = remember {
-        MockAnalytics()
-    }
-
-    // ✅ SideEffect로 속성만 동기화
-    // user가 바뀔 때마다 성공적인 Recomposition 후에 실행
-    SideEffect {
-        analytics.setUserProperty("userType", user.userType)
-    }
-
-    return analytics
 }
 
 /**
  * SideEffect 예제 화면
- * remember + SideEffect 패턴의 장점 시연
  */
 @Composable
 fun SideEffectScreen() {
-    var wrongInstanceCount by remember { mutableIntStateOf(0) }
-    var correctInstanceCount by remember { mutableIntStateOf(0) }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -125,7 +90,7 @@ fun SideEffectScreen() {
         )
 
         Text(
-            text = "remember + SideEffect 패턴",
+            text = "Compose 상태를 외부 시스템에 동기화",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -149,18 +114,23 @@ fun SideEffectScreen() {
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Text(
-                    text = "객체는 안정적으로, 동기화는 반응적으로",
+                    text = "Composition 완료 후 외부 시스템에 부수효과 전달",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Text(
-                    text = "• 잘못된 방법: remember(user) → user 바뀌면 인스턴스 재생성",
+                    text = "• 매 Recomposition마다 실행 (key 없음)",
                     fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Text(
-                    text = "• 올바른 방법: remember + SideEffect → 인스턴스는 유지, 속성만 동기화",
+                    text = "• 코루틴이 아닌 동기 코드만 실행 가능",
+                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Text(
+                    text = "• Compose 상태 → 외부 시스템 동기화",
                     fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
@@ -169,58 +139,49 @@ fun SideEffectScreen() {
 
         HorizontalDivider()
 
-        // ❌ 잘못된 방법
-        WrongWayExample(
-            onInstanceCreated = { wrongInstanceCount++ }
-        )
+        // 예제 1: 매 Recomposition마다 실행
+        RecompositionTrackingExample()
 
         HorizontalDivider()
 
-        // ✅ 올바른 방법
-        CorrectWayExample(
-            onInstanceCreated = { correctInstanceCount++ }
-        )
+        // 예제 2: 외부 시스템 동기화
+        ExternalSyncExample()
 
         HorizontalDivider()
 
-        // 비교 요약
-        ComparisonSummary(
-            wrongInstanceCount = wrongInstanceCount,
-            correctInstanceCount = correctInstanceCount
-        )
+        // Analytics 로그
+        AnalyticsLogViewer()
 
         // 초기화 버튼
         Button(
-            onClick = {
-                wrongInstanceCount = 0
-                correctInstanceCount = 0
-            },
+            onClick = { AnalyticsSystem.clear() },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("카운터 초기화")
+            Text("로그 초기화")
         }
     }
 }
 
 /**
- * ❌ 잘못된 방법 예제
+ * 예제 1: 매 Recomposition마다 실행 확인
  */
 @Composable
-fun WrongWayExample(
-    onInstanceCreated: () -> Unit
-) {
-    var selectedUser by remember { mutableStateOf(User("게스트", "Guest")) }
-    val analytics = rememberAnalyticsWrong(selectedUser)
+fun RecompositionTrackingExample() {
+    var inputText by remember { mutableStateOf("") }
 
-    // 인스턴스가 새로 생성될 때마다 카운트 증가
+    // ⭐ 중요: 상태를 최상위에서 읽어야 전체 Composable이 recompose됨
+    val currentInput = inputText  // 명시적으로 상태 읽기
+
+
+    // ✅ SideEffect: Composition 성공 후 매번 실행
     SideEffect {
-        onInstanceCreated()
+        AnalyticsSystem.logInputChange(currentInput)
     }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFFFEBEE)
+            containerColor = Color(0xFFE3F2FD)
         )
     ) {
         Column(
@@ -228,66 +189,28 @@ fun WrongWayExample(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "❌ 잘못된 방법",
+                text = "📊 예제 1: 매 Recomposition마다 실행",
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
-                color = Color(0xFFC62828)
+                color = Color(0xFF1976D2)
             )
 
             Text(
-                text = "remember(user) 사용",
+                text = "TextField에 타이핑하면 SideEffect가 매번 실행됩니다",
                 fontSize = 14.sp,
                 color = Color.Gray
             )
 
-            // User 선택 버튼들
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        color = Color.White.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = "👤 사용자 선택",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
+            // TextField
+            TextField(
+                value = inputText,
+                onValueChange = { inputText = it },
+                label = { Text("텍스트 입력") },
+                placeholder = { Text("여기에 입력하세요...") },
+                modifier = Modifier.fillMaxWidth()
+            )
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Button(
-                        onClick = { selectedUser = User("게스트", "Guest") },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("게스트", fontSize = 12.sp)
-                    }
-                    Button(
-                        onClick = { selectedUser = User("무료회원", "Free") },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("무료", fontSize = 12.sp)
-                    }
-                    Button(
-                        onClick = { selectedUser = User("프리미엄", "Premium") },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("프리미엄", fontSize = 12.sp)
-                    }
-                }
-
-                Text(
-                    text = "현재: ${selectedUser.name} (${selectedUser.userType})",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-
+            // 현재 입력값 표시
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -295,70 +218,93 @@ fun WrongWayExample(
                         color = Color.White,
                         shape = RoundedCornerShape(8.dp)
                     )
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(16.dp)
             ) {
                 Text(
-                    text = "Analytics 인스턴스 ID: ${analytics.instanceId}",
-                    fontSize = 13.sp,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFFC62828)
-                )
-
-                Text(
-                    text = "현재 userType: ${analytics.userProperty}",
-                    fontSize = 13.sp
-                )
-
-                HorizontalDivider()
-
-                Text(
-                    text = "속성 업데이트 로그:",
+                    text = "현재 입력값",
                     fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold
+                    color = Color.Gray
                 )
-
-                analytics.getUpdateLog().takeLast(3).forEach { log ->
-                    Text(
-                        text = log,
-                        fontSize = 11.sp,
-                        fontFamily = FontFamily.Monospace,
-                        color = Color(0xFFFF5252)
-                    )
-                }
+                Text(
+                    text = if (inputText.isEmpty()) "(비어있음)" else "\"$inputText\"",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Monospace,
+                    color = Color(0xFF1976D2)
+                )
+                Text(
+                    text = "글자 수: ${inputText.length}",
+                    fontSize = 14.sp,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
             }
 
-            Text(
-                text = "⚠️ 문제점: User 바뀔 때마다 새 Analytics 인스턴스 생성!",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFFC62828)
-            )
-
-            Text(
-                text = "→ 기존 세션, 이벤트 기록 등이 모두 초기화됨",
-                fontSize = 12.sp,
-                color = Color(0xFFC62828)
-            )
+            // 설명
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = Color(0xFFBBDEFB),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = "💡 동작 원리:",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF0D47A1)
+                )
+                Text(
+                    text = "1. TextField 타이핑 → inputText 상태 변경",
+                    fontSize = 11.sp,
+                    color = Color(0xFF1565C0)
+                )
+                Text(
+                    text = "2. 상태 변경 → Recomposition 발생",
+                    fontSize = 11.sp,
+                    color = Color(0xFF1565C0)
+                )
+                Text(
+                    text = "3. Composition 성공 → SideEffect 실행",
+                    fontSize = 11.sp,
+                    color = Color(0xFF1565C0)
+                )
+                Text(
+                    text = "4. SideEffect에서 Analytics에 로그 기록",
+                    fontSize = 11.sp,
+                    color = Color(0xFF1565C0)
+                )
+                Text(
+                    text = "⭐ 아래 로그 뷰어에서 실시간 확인 가능",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF0D47A1)
+                )
+            }
         }
     }
 }
 
 /**
- * ✅ 올바른 방법 예제
+ * 예제 2: 외부 시스템 동기화
  */
 @Composable
-fun CorrectWayExample(
-    onInstanceCreated: () -> Unit
-) {
-    var selectedUser by remember { mutableStateOf(User("게스트", "Guest")) }
-    val analytics = rememberAnalyticsCorrect(selectedUser)
+fun ExternalSyncExample() {
+    var userName by remember { mutableStateOf("Guest") }
+    var userAge by remember { mutableFloatStateOf(25f) }
 
-    // 첫 composition 때만 카운트 (remember의 초기화 블록은 한 번만 실행)
-    remember {
-        onInstanceCreated()
-        null
+    // ⭐ 중요: 상태를 최상위에서 읽어야 전체 Composable이 recompose됨
+    val currentName = userName  // 명시적으로 상태 읽기
+    val currentAge = userAge.toInt()  // 명시적으로 상태 읽기
+
+
+    // ✅ SideEffect: Compose 상태를 외부 Analytics에 동기화
+    SideEffect {
+        AnalyticsSystem.setUserProperty("name", currentName)
+        AnalyticsSystem.setUserProperty("age", currentAge.toString())
     }
 
     Card(
@@ -372,32 +318,32 @@ fun CorrectWayExample(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "✅ 올바른 방법",
+                text = "👤 예제 2: 외부 시스템 동기화",
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
-                color = Color(0xFF2E7D32)
+                color = Color(0xFF388E3C)
             )
 
             Text(
-                text = "remember + SideEffect 분리",
+                text = "Compose 상태 변경 시 외부 Analytics에 자동 동기화",
                 fontSize = 14.sp,
                 color = Color.Gray
             )
 
-            // User 선택 버튼들
+            // 사용자 이름 선택
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        color = Color.White.copy(alpha = 0.5f),
+                        color = Color.White,
                         shape = RoundedCornerShape(8.dp)
                     )
                     .padding(12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "👤 사용자 선택",
-                    fontSize = 13.sp,
+                    text = "사용자 이름: $userName",
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold
                 )
 
@@ -406,32 +352,27 @@ fun CorrectWayExample(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Button(
-                        onClick = { selectedUser = User("게스트", "Guest") },
+                        onClick = { userName = "Alice" },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("게스트", fontSize = 12.sp)
+                        Text("Alice", fontSize = 12.sp)
                     }
                     Button(
-                        onClick = { selectedUser = User("무료회원", "Free") },
+                        onClick = { userName = "Bob" },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("무료", fontSize = 12.sp)
+                        Text("Bob", fontSize = 12.sp)
                     }
                     Button(
-                        onClick = { selectedUser = User("프리미엄", "Premium") },
+                        onClick = { userName = "Charlie" },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("프리미엄", fontSize = 12.sp)
+                        Text("Charlie", fontSize = 12.sp)
                     }
                 }
-
-                Text(
-                    text = "현재: ${selectedUser.name} (${selectedUser.userType})",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
             }
 
+            // 나이 조절
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -439,64 +380,74 @@ fun CorrectWayExample(
                         color = Color.White,
                         shape = RoundedCornerShape(8.dp)
                     )
-                    .padding(16.dp),
+                    .padding(12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Analytics 인스턴스 ID: ${analytics.instanceId}",
-                    fontSize = 13.sp,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF2E7D32)
-                )
-
-                Text(
-                    text = "현재 userType: ${analytics.userProperty}",
-                    fontSize = 13.sp
-                )
-
-                HorizontalDivider()
-
-                Text(
-                    text = "속성 업데이트 로그:",
-                    fontSize = 12.sp,
+                    text = "나이: ${userAge.toInt()}세",
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold
                 )
 
-                analytics.getUpdateLog().takeLast(3).forEach { log ->
-                    Text(
-                        text = log,
-                        fontSize = 11.sp,
-                        fontFamily = FontFamily.Monospace,
-                        color = Color(0xFF4CAF50)
-                    )
-                }
+                Slider(
+                    value = userAge,
+                    onValueChange = { userAge = it },
+                    valueRange = 18f..60f,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
 
-            Text(
-                text = "✅ 장점: Analytics 인스턴스는 유지, 속성만 업데이트!",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF2E7D32)
-            )
-
-            Text(
-                text = "→ 세션 연속성 유지, 메모리 효율적, 안정적",
-                fontSize = 12.sp,
-                color = Color(0xFF2E7D32)
-            )
+            // 설명
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = Color(0xFFC8E6C9),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = "💡 동작 방식:",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1B5E20)
+                )
+                Text(
+                    text = "1. userName 또는 userAge 변경 → Recomposition",
+                    fontSize = 11.sp,
+                    color = Color(0xFF2E7D32)
+                )
+                Text(
+                    text = "2. Composition 성공 후 SideEffect 실행",
+                    fontSize = 11.sp,
+                    color = Color(0xFF2E7D32)
+                )
+                Text(
+                    text = "3. 외부 Analytics에 최신 상태 동기화",
+                    fontSize = 11.sp,
+                    color = Color(0xFF2E7D32)
+                )
+                Text(
+                    text = "4. 동기 코드만 가능 (suspend 함수 불가)",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1B5E20)
+                )
+            }
         }
     }
 }
 
 /**
- * 비교 요약
+ * Analytics 로그 뷰어
  */
 @Composable
-fun ComparisonSummary(
-    wrongInstanceCount: Int,
-    correctInstanceCount: Int
-) {
+fun AnalyticsLogViewer() {
+    // ✅ SnapshotStateList를 직접 읽음 - 변경 시 자동으로 recompose
+    val logs = AnalyticsSystem.getEventLog()
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -507,64 +458,65 @@ fun ComparisonSummary(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(
-                text = "📊 인스턴스 생성 횟수 비교",
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = "❌ 잘못된 방법",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFFFF5252)
-                    )
-                    Text(
-                        text = "$wrongInstanceCount 회",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Monospace,
-                        color = Color(0xFFFF5252)
-                    )
-                }
+                Text(
+                    text = "📊 Analytics 로그 (${logs.size}개)",
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
 
-                Column(
-                    modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.End
-                ) {
-                    Text(
-                        text = "✅ 올바른 방법",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF4CAF50)
+                Text(
+                    text = "🔴 실시간",
+                    fontSize = 12.sp,
+                    color = Color(0xFFFF5252),
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = Color(0xFF37474F),
+                        shape = RoundedCornerShape(8.dp)
                     )
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                if (logs.isEmpty()) {
                     Text(
-                        text = "$correctInstanceCount 회",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Monospace,
-                        color = Color(0xFF4CAF50)
+                        text = "아직 로그가 없습니다",
+                        color = Color.Gray,
+                        fontSize = 12.sp
                     )
+                } else {
+                    // 최신 로그 10개 표시 (이미 최신이 앞에 있음)
+                    logs.take(10).forEach { log ->
+                        Text(
+                            text = log,
+                            color = if (log.contains("🔵")) Color(0xFF64B5F6) else Color(0xFF81C784),
+                            fontSize = 11.sp,
+                            fontFamily = FontFamily.Monospace
+                        )
+                    }
+
+                    if (logs.size > 10) {
+                        Text(
+                            text = "... 그 외 ${logs.size - 10}개 로그",
+                            color = Color.Gray,
+                            fontSize = 10.sp,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
                 }
             }
 
-            HorizontalDivider(color = Color(0xFF37474F))
-
             Text(
-                text = "💡 사용자를 여러 번 바꿔보세요!",
-                fontSize = 12.sp,
-                color = Color(0xFFB0BEC5)
-            )
-
-            Text(
-                text = "잘못된 방법은 사용자 바꿀 때마다 인스턴스 재생성,\n올바른 방법은 단 1회만 생성됩니다.",
+                text = "💡 SideEffect가 매 Recomposition마다 실행되며, 외부 Analytics에 이벤트가 즉시 기록됩니다 (최신 로그가 위에 표시)",
                 fontSize = 12.sp,
                 color = Color(0xFFB0BEC5)
             )
