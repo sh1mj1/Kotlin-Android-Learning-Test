@@ -48,10 +48,11 @@ scope.launch {
 
 ## LaunchedEffect
 
-- 실행된 부수효과: 컴포저블이 Composition 에 진입할 때 코루틴을 launch 하여 부수효과가 실행된다.
-    - key 가 변경되면 기존 코루틴을 취소하고 새로 launch 한다.
-    - 컴포저블의 생명주기에 맞춰 자동으로 취소되며, 리컴포지션 시에 다시 실행되지 않는다.
+- 실행된 부수효과: 컴포저블이 컴포지션될 때 코루틴 launch 를 실행한다.
+    - key 가 바뀌면 이전 코루틴은 취소하고 새 코루틴을 launch
+    - 컴포저블과 생명주기에 맞춰 자동으로 취소되며, 리컴포지션 시에는 다시 실행되지 않는다.
     - 일회성 이벤트(api 호출, 뷰모델에서 로드, 애니메이션 시작 등)에 적합하다.
+    - 실습 예제: [LaunchedEffectScreen.kt](LaunchedEffectScreen.kt)
 
 ```kotlin
 LaunchedEffect(userId) {
@@ -80,96 +81,20 @@ var count by remember { mutableStateOf(0) }
 
 - 코루틴 범위를 기억해두다: CoroutineScope를 기억해두고, 필요할 때 내가 직접 launch 한다.
     - 컴포저블 함수이지만, 반환된 scope는 onClick 등 이벤트 핸들러에서 사용 가능하다.
-    - 코루틴의 Job을 저장해두고 수동으로 취소해야 할 때 사용한다.
+    - 코루틴의 Job을 저장해두고 코루틴 스코프에서 실행했다가 원할 때 취소하고 싶을 때 사용한다. 
+    - 컴포지션 종료 시 코루틴 스코프가 자동 취소된다.
+    - 코루틴 수동 관리 예시: 애니메이션 취소: [AnimationCancellationScreen.kt](AnimationCancellationScreen.kt)
 
-LaunchedEffect는 컴포저블 함수라서 onClick 람다 내부에서 호출할 수 없다.
-rememberCoroutineScope도 컴포저블 함수이지만, 반환된 CoroutineScope는 일반 객체이므로 어디서든 launch 할 수 있다.
-컴포지션 종료 시 scope가 자동 취소되므로 메모리 누수 걱정 없이 안전하게 사용 가능하다.
-
-### 코루틴 수동 관리 예시: 애니메이션 취소
-
-```kotlin
-val scope = rememberCoroutineScope()
-var animationJob by remember { mutableStateOf<Job?>(null) }
-
-// 애니메이션 시작
-Button(onClick = {
-    animationJob = scope.launch {
-        animate(0f, 100f, animationSpec = tween(5000)) { value, _ ->
-            progress = value
-        }
-    }
-})
-
-// 사용자가 원할 때 애니메이션 취소
-Button(onClick = {
-    animationJob?.cancel()
-})
-```
-
-LaunchedEffect는 key가 바뀔 때만 자동 취소되지만, 이렇게 사용자 이벤트로 직접 취소하려면 Job을 저장해두고 관리해야 한다.
-
-### LaunchedEffect vs rememberCoroutineScope
-
-| 구분 | LaunchedEffect        | rememberCoroutineScope |
-|----|-----------------------|------------------------|
-| 실행 | 자동 (Composition 진입 시) | 수동 (내가 직접 launch)      |
-| 용도 | 화면 진입 시 API 호출        | 버튼 클릭 등 이벤트 대응         |
-| 비유 | 자동문                   | 수동문 (손잡이를 기억해둠)        |
-
-```kotlin
-LaunchedEffect(Unit) {
-    doSomething()
-}
-
-val scope = rememberCoroutineScope()
-
-Button(onClick = {
-    scope.launch { doSomething() }
-})
-```
+TODO: 코루틴 스코프 공부를 다시 해야겠다.
 
 ---
 
 ## rememberUpdatedState
 
 - 갱신된 상태를 기억해두다: 항상 최신(Updated) 값을 기억해둔다.
+    - 실습 예제: [RememberUpdatedStateScreen.kt](RememberUpdatedStateScreen.kt)
 
-### 문제 상황: Effect 안에서 오래된 값 참조
-
-```kotlin
-@Composable
-fun SplashScreen(onTimeout: () -> Unit) {
-    // ❌ 문제: LaunchedEffect는 한 번만 실행되므로
-    // 3초 동안 onTimeout이 바뀌면 이전(stale) 값을 호출하게 됨
-    LaunchedEffect(Unit) {
-        delay(3000)
-        onTimeout()  // 처음 캡처된 onTimeout만 호출됨!
-    }
-}
-```
-
-### 해결: rememberUpdatedState로 최신 값 유지
-
-```kotlin
-@Composable
-fun SplashScreen(onTimeout: () -> Unit) {
-    // ✅ 해결: "갱신된 상태를 기억" → 항상 최신 onTimeout 참조
-    val currentOnTimeout by rememberUpdatedState(onTimeout)
-
-    LaunchedEffect(Unit) {
-        delay(3000)
-        currentOnTimeout()  // 3초 후 "최신" onTimeout 호출
-    }
-}
-```
-
-### 핵심 정리
-
-| 구분   | remember | rememberUpdatedState |
-|------|----------|----------------------|
-| 값 유지 | 처음 값 고정  | 항상 최신 값으로 갱신         |
-| 용도   | 일반 상태 저장 | Effect 내에서 최신 값 참조   |
+TODO: 업데이트 상태 기억. 
 
 ---
 
@@ -179,17 +104,8 @@ fun SplashScreen(onTimeout: () -> Unit) {
     - onDispose 블록에서 cleanup 로직을 반드시 제공해야 한다.
     - key 변경 시 onDispose -> 재실행 순서로 동작
     - 리스너 등록 해제, 콜백 연결/해제 등 쌍으로 동작하는 작업.
+    - 실습 예제: [DisposableEffectScreen.kt](DisposableEffectScreen.kt)
 
-```kotlin
-DisposableEffect(lifecycleOwner) {
-    val observer = LifecycleEventObserver { ... }
-    lifecycleOwner.lifecycle.addObserver(observer)
-
-    onDispose {
-        lifecycleOwner.lifecycle.removeObserver(observer)
-    }
-}
-```
 
 ---
 
@@ -199,6 +115,7 @@ DisposableEffect(lifecycleOwner) {
     - 매 Recomposition 마다 실행된다. (key 없음)
     - 코루틴이 아닌 동기 코드만 실행 가능하다.
     - Compose 상태를 Compose 가 아닌 외부 시스템에 동기화할 때 사용한다.
+    - 실습 예제: [SideEffectScreen.kt](SideEffectScreen.kt)
 
 ```kotlin
 SideEffect {
@@ -211,17 +128,14 @@ SideEffect {
 
 ## produceState
 
+- 상태를 생산한다: 비컴포즈 데이터 소스를 컴포즈 상태로 변환
+  - 초기값 제공. 코루틴 내에서 value 를 갱신.
+  - 내부적으로 LaunchedEffect + mutableStateOf 조합. 
+
 - "상태를 생산한다" - 비-Compose 데이터 소스(Flow, LiveData, 콜백 등)를 Compose State로 생산(변환) 한다.
-    - 외부 데이터 → Compose State로의 변환기(converter) 역할
     - 초기값을 제공하고, 코루틴 내에서 `value`를 갱신하여 State를 "생산"
     - 내부적으로 LaunchedEffect + mutableStateOf를 조합한 것
 
-```kotlin
-val user by produceState<User?>(initialValue = null, userId) {
-    // 외부 데이터를 State로 "생산"
-    value = api.fetchUser(userId)
-}
-```
 
 ---
 
