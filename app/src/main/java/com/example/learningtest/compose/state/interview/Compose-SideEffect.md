@@ -86,6 +86,7 @@ var count by remember { mutableStateOf(0) }
     - 코루틴 수동 관리 예시: 애니메이션 취소: [AnimationCancellationScreen.kt](AnimationCancellationScreen.kt)
 
 TODO: 코루틴 스코프 공부를 다시 해야겠다.
+TODO: 리컴포지션 시에는 어떻게 되지? 
 
 ---
 
