@@ -53,6 +53,10 @@ android {
         animationsDisabled = true
         unitTests.isIncludeAndroidResources = true
     }
+    testOptions {
+        animationsDisabled = true
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 composeCompiler {
