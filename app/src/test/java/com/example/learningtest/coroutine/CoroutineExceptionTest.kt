@@ -292,10 +292,10 @@ class CoroutineExceptionTest : FreeSpec({
                 launch {
                     val coroutineContext =
                         Job() +
-                                CoroutineExceptionHandler { coroutineContext, throwable ->
-                                    println("[예외 발생] $throwable")
-                                    exceptionIsCaught = true
-                                }
+                            CoroutineExceptionHandler { coroutineContext, throwable ->
+                                println("[예외 발생] $throwable")
+                                exceptionIsCaught = true
+                            }
                     launch(CoroutineName("1") + coroutineContext) {
                         throw Exception("1 에서 예외 발생")
                     }
