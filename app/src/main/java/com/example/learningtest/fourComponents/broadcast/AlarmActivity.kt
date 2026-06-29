@@ -98,5 +98,3 @@ class AlarmActivity : ComponentActivity() {
         }
     }
 }
-
-const val TAG = "alarm"
