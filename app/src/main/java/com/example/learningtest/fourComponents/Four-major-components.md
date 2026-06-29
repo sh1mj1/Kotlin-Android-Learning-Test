@@ -10,7 +10,9 @@
 
 ## 구성요소
 
-* [Activity](activity/study-activity.md)
+* Activity
+    * [study-activity.md](activity/study-activity.md)
+    * [activity.md](activity/activity.md)
     * 사용자 인터페이스가 있는 단일 화면을 나타낸다.
     * A single screen with a user interface.
 * [Service](service/study-service.md)
