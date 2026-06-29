@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.yield
+import java.util.Collections
 import kotlin.time.Duration.Companion.seconds
 
 class CoroutineBuilderJobTest : FreeSpec({
@@ -68,7 +69,7 @@ class CoroutineBuilderJobTest : FreeSpec({
     }
 
     "여러 Job 이 완료된 후 다음 작업을 실행하려면 joinAll 로 순서를 보장할 수 있다" {
-        val logs = mutableListOf<String>()
+        val logs = Collections.synchronizedList(mutableListOf<String>())
 
         runBlocking {
             val convertImageJob1 =
