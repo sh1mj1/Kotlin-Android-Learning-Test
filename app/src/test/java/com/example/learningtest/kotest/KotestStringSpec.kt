@@ -18,7 +18,7 @@ class KotestStringSpec : StringSpec(
         "the sum of 2 and 3 is 5" {
             2 + 3 shouldBe 5
         }
-        "strings.length should return size of string".config(enabled = false) {
+        "strings.length should return size of string".config(enabled = false, invocations = 3) {
             shouldThrow<Exception> {
                 // This test is ignored
             }
