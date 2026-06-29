@@ -155,6 +155,80 @@ val highPriorityTasks by remember {
 }
 ```
 
+- 실제 구현 간소화한 버전으로 알아보기
+
+```kotlin
+interface State<out T> {
+  val value: T
+}
+
+private class DerivedState<T>(
+  private val calculation: () -> T
+) : State<T> {
+
+  private var currentValue: T? = null
+  private var isValid = false
+
+  // 의존하는 State들 추적
+  private val dependencies = mutableSetOf<State<*>>()
+
+  override val value: T
+      get() {
+          // 1. 의존성이 변경되었는지 확인
+          if (!isValid || dependenciesChanged()) {
+              // 2. 재계산 필요 → calculation 실행
+              currentValue = calculation()
+              isValid = true
+              updateDependencies()
+          }
+
+          // 3. 캐시된 값 반환
+          return currentValue!!
+      }
+
+  private fun dependenciesChanged(): Boolean {
+      // 의존하는 State 중 하나라도 변경되었는지 확인
+      return dependencies.any { it.hasChanged() }
+  }
+
+  private fun updateDependencies() {
+      // calculation 실행 중 접근한 State 추적
+      dependencies.clear()
+      // ... tracking logic
+  }
+}
+
+fun <T> derivedStateOf(calculation: () -> T): State<T> {
+  return DerivedState(calculation)
+}
+```
+
+- 핵심 매커니즘
+1. Snapshot System (의존성 추적)
+   Compose 는 Snapshot System 을 사용하여 자동으로 의존성을 추적한다.
+```kotlin
+val count by remember { mutableSetOf(0) }
+val isEven by remember {
+    derivedStateOf {
+        println("계산 중...")
+        count % 2 == 0 // count 읽기 -> 의존성 등록
+    }
+}
+```
+내부 동작: 
+1. derivedStateOf 블록 실행 시
+2. count.value 접근 -> Snapshot System 이 감지
+3. "isEven 은 count 에 의존한다" 자동 등록.
+4. count 변경 시 -> isEven 무효화 (isValid = false)
+
+Snapshot System 의 마법
+- 명시적으로 의존성을 선언할 필요 없음.
+- 블록 내에서 읽은 모든 State 를 자동 추적.
+- React 의 useMemo 의존성 배열과 달리 자동.
+
+
+
+
 ---
 
 ## snapshotFlow
